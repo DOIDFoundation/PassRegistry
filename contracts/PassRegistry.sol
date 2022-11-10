@@ -21,6 +21,13 @@ contract PassRegistry is PassRegistryStorage, ERC721Upgradeable {
 
     enum UserClass {A, B, C }
 
+    uint8 constant ClassAInvitationNum = 7;
+    uint8 constant ClassBInvitationNum = 6;
+    uint8 constant ClassCInvitationNum = 3;
+    bytes32 constant ClassA = "";
+    bytes32 constant ClassB = "";
+    bytes32 constant ClassC = "";
+
     CountersUpgradeable.Counter private passId;
     mapping(address => EnumerableSetUpgradeable.Bytes32Set) private userNames;
 
@@ -28,39 +35,55 @@ contract PassRegistry is PassRegistryStorage, ERC721Upgradeable {
         __ERC721_init(_name, _symbol);
     }
 
+
     /**
     * @notice lock a name by pass
      */
-    function lockPass(bytes memory _invitationCode, string memory _name) external {
-        bytes32 hashedName = keccak256(abi.encodePacked(_name));
-        address codeFrom = recoverSigner(hashedName, _invitationCode);
+    function lockPass(bytes memory _invitationCode, string memory _name, string memory _msg) external {
+        //bytes32 hashedName = keccak256(abi.encodePacked(_name));
+        bytes32 hashedMsg = keccak256(abi.encodePacked(_msg));
+        address codeFrom = recoverSigner(hashedMsg, _invitationCode);
         require(userInvitesMax[codeFrom] > userInvitedNum[codeFrom], "IC");
-        require(nameAvaliable(_name), "IN");
 
-        if(hashToOwner[hashedName] == address(0)) {
+        uint passNum = 0;
+        if (hashedMsg == ClassA){
+            passNum = ClassAInvitationNum;
+        }else if (hashedMsg == ClassB){
+            passNum = ClassBInvitationNum;
+        }else{
+            passNum = ClassCInvitationNum;
         }
 
-        userInvitedNum[codeFrom] += 1;
-        userNames[msg.sender].add(hashedName);
-        hashToName[hashedName] = _name;
-        hashToOwner[hashedName] = msg.sender;
-            
-        passId.increment();
-        _mint(msg.sender, passId.current());
+        // bind name if possible
+        if(nameAvaliable(_name)) {
+            userInvitedNum[codeFrom] += 1;
+
+            passId.increment();
+            _mint(msg.sender, passId.current());
+
+            lockName(passId.current(), _name);
+        }
+
+        // mint invitecodes
+        for (uint256 index = 0; index < passNum; index++) {
+            passId.increment();
+            _mint(msg.sender, passId.current());
+        }
     } 
 
     /**
     * @notice lock a name with given passid
      */
-    function lockName(uint _passId, string memory _name) external {
+    function lockName(uint _passId, string memory _name) public {
         require(ownerOf(_passId) == msg.sender, "IP");
         bytes32 hashedName = keccak256(abi.encodePacked(_name));
         require(hashToOwner[hashedName] != address(0), "IN");
 
+        //lock name
         userNames[msg.sender].add(hashedName);
         hashToName[hashedName] = _name;
         hashToOwner[hashedName] = msg.sender;
-        // 
+        // init invatations
         userInvitedNum[msg.sender] = 0;
         userInvitesMax[msg.sender] = 3;
     }
@@ -100,19 +123,13 @@ contract PassRegistry is PassRegistryStorage, ERC721Upgradeable {
 
 
     /**
-    * @notice generate request code by (from and prefix)
-     */
-    function getRequestMessage(bytes32 _from, bytes memory _prefix) public pure returns (bytes32) {
-       return keccak256(abi.encodePacked(_from, _prefix));
-    }
-
-    /**
     * @notice verify a request code by message and its signature
      */
-    function verifyInvitationCode(address _user, bytes32 _hashMessage, bytes memory _sig) public view returns (bool) {
+    function verifyInvitationCode(address _user, string memory _msg, bytes memory _sig) public pure returns (bool) {
         //address requestFrom = ownerOf(_requestId);
         //bytes memory prefix = "\x19Ethereum Signed Message:\n32";
         //bytes32 prefixedHashMessage = getRequestMessage(_hashedMessage, prefix);
+        bytes32 _hashMessage = keccak256(abi.encodePacked(_msg));
         if (_user == recoverSigner(_hashMessage, _sig)) {
             return true;
         }
