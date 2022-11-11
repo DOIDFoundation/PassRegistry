@@ -4,6 +4,7 @@ pragma solidity >=0.8.4;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import "hardhat/console.sol";
 
 contract PassRegistryStorage {
     struct PassInfo {
@@ -63,7 +64,7 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
      */
     function lockPass(bytes memory _invitationCode, string memory _name, string memory _class) external {
         bytes32 hashedMsg = keccak256(abi.encodePacked(_class));
-        address codeFrom = recoverSigner(hashedMsg, _invitationCode);
+        address codeFrom = verifyInvitationCode(hashedMsg, _invitationCode);
         if(codeFrom != admin){
             require(userInvitesMax[codeFrom] > userInvitedNum[codeFrom], "IC");
         }
@@ -195,15 +196,10 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
     /**
     * @notice verify a request code by message and its signature
      */
-    function verifyInvitationCode(address _user, string memory _msg, bytes memory _sig) public pure returns (bool) {
-        //address requestFrom = ownerOf(_requestId);
-        //bytes memory prefix = "\x19Ethereum Signed Message:\n32";
-        //bytes32 prefixedHashMessage = getRequestMessage(_hashedMessage, prefix);
-        bytes32 _hashMessage = keccak256(abi.encodePacked(_msg));
-        if (_user == recoverSigner(_hashMessage, _sig)) {
-            return true;
-        }
-        return false;
+    function verifyInvitationCode(bytes32 _msg, bytes memory _sig) public pure returns (address) {
+        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
+        bytes32 _hashMessage = keccak256(abi.encodePacked(prefix, _msg));
+        return recoverSigner(_hashMessage, _sig);
     }
 
     function recoverSigner(bytes32 _hashMessage, bytes memory _sig) internal pure returns (address)
