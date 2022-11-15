@@ -7,8 +7,12 @@
 const hre = require("hardhat");
 
 async function main() {
+  const accounts = await hre.ethers.getSigners()
+  admin = accounts[0]
+  console.log("admin:", admin.address)
+
   const Registry = await hre.ethers.getContractFactory('PassRegistry')
-  const reg = await upgrades.deployProxy(Registry, [])
+  const reg = await upgrades.deployProxy(Registry, [admin.address, "pass", "pass"])
 
   console.log(
     `✅deploy passRegistry ${reg.address}`
