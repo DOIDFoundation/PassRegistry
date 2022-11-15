@@ -63,6 +63,8 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
     * @notice lock a name with code
      */
     function lockPass(bytes memory _invitationCode, string memory _name, string memory _class) external {
+        //bytes32 hashedMsg = keccak256(abi.encodePacked(msg.sender, _class));
+        //console.logBytes32(hashedMsg);
         bytes32 hashedMsg = keccak256(abi.encodePacked(_class));
         address codeFrom = verifyInvitationCode(hashedMsg, _invitationCode);
         if(codeFrom != admin){
@@ -101,17 +103,16 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
         bytes32 hashedName = keccak256(abi.encodePacked(_name));
         PassInfo memory pass = passInfo[_passId];
 
-        (uint passNum, uint nameLen, bytes32 class) = getClassInfo(pass.passClass);
+        (, uint nameLen, ) = getClassInfo(pass.passClass);
 
-        require(_lockName(_passId, _name, hashedName, nameLen));
+        require(_lockName(_passId, _name, hashedName, nameLen), "IV");
     }
 
     function _lockName(uint _passId, string memory _name, bytes32 _hashedName, uint _minLen) internal returns (bool){
+        require(ownerOf(_passId) == msg.sender, "IP");
         if(!nameAvaliable(_minLen, _name)){
             return false;
         }
-        require(ownerOf(_passId) == msg.sender, "IP");
-        require(hashToOwner[_hashedName] != address(0), "IN");
 
         //lock name
         hashToName[_hashedName] = _name;
@@ -138,6 +139,15 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
             passList[index] = tokenOfOwnerByIndex(_user, index);
         }
         return passList;
+    }
+
+    function getUserPassesInfo(address _user) external view returns (PassInfo[] memory) {
+        PassInfo[] memory info = new PassInfo[](balanceOf(_user));
+
+        for (uint256 index = 0; index < balanceOf(_user); index++) {
+            info[index] = passInfo[tokenOfOwnerByIndex(_user, index)];
+        }
+        return info;
     }
 
     /**
