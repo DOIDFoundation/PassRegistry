@@ -144,7 +144,7 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
     * @notice check name length
     */
     function lenValid(uint _minLen, string memory _name) public pure returns (bool){
-        return strlen(_name) >= _minLen;
+        return strlen(_name) >= _minLen && strlen(_name) <= 64;
     }
 
     /**
@@ -154,16 +154,24 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
         return false;
     }
 
-    function nameAvaliable(uint _minLen, string memory _name) public view returns (bool) {
-        if(lenValid(_minLen, _name)){
-
-        }
+    function nameExists(string memory _name) public view returns (bool) {
         // is locked before
         bytes32 nameHash = keccak256(bytes(_name));
         if(hashToOwner[nameHash] == address(0)){
             return false;
         }
-        // name deny list
+        return true;
+    }
+
+    function nameAvaliable(uint _minLen, string memory _name) public view returns (bool) {
+        if(!lenValid(_minLen, _name)){
+            return false;
+        }
+
+        if(nameExists(_name)){
+            return false;
+        }
+
         if(matchDenyList(_name)){
             return false;
         }

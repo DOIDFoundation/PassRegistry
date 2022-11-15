@@ -2,19 +2,19 @@
   "manifestVersion": "3.2",
   "admin": {
     "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    "txHash": "0xdf189fa5ed5dce52d6535af21137ede70a0f66de96f1ca6e11aabeb8f5b34453"
+    "txHash": "0x54d25b9bde2778666b29355e111894a8103d64c21bc264b5742737102d1e5643"
   },
   "proxies": [
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0xcfd299db3a5bb084afa1ec2a2ceba16a4b641d1e8c3561f369f820b1dc519e31",
+      "txHash": "0x46bdbb2ea8bcace9c3725d481807ddc17bc61497ddd7e76be6eb36ce6cad6dd4",
       "kind": "transparent"
     }
   ],
   "impls": {
-    "e6e7f0f6841792a3cecd7930bbca9e633e338ca56df321e8b6c59e831e9523ec": {
+    "0746e82a10f34c188fa07e635ab5c8061fc7aa628c7aa076544e1a06c97ff6cf": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x9dd37947786c3d4b8b033041c31c8d010fb6325c06d7038c031732b0ad2fb728",
+      "txHash": "0x4f086d412ac362491a8c047d7a092bc9433fa6b1b335f28d3127728507ebf2c5",
       "layout": {
         "solcVersion": "0.8.4",
         "storage": [
@@ -54,7 +54,7 @@
             "label": "passInfo",
             "offset": 0,
             "slot": "4",
-            "type": "t_mapping(t_uint256,t_struct(PassInfo)2245_storage)",
+            "type": "t_mapping(t_uint256,t_struct(PassInfo)2244_storage)",
             "contract": "PassRegistryStorage",
             "src": "contracts/PassRegistry.sol:19"
           },
@@ -261,7 +261,7 @@
             "label": "mapping(uint256 => address)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(PassInfo)2245_storage)": {
+          "t_mapping(t_uint256,t_struct(PassInfo)2244_storage)": {
             "label": "mapping(uint256 => struct PassRegistryStorage.PassInfo)",
             "numberOfBytes": "32"
           },
@@ -285,7 +285,7 @@
             ],
             "numberOfBytes": "32"
           },
-          "t_struct(PassInfo)2245_storage": {
+          "t_struct(PassInfo)2244_storage": {
             "label": "struct PassRegistryStorage.PassInfo",
             "members": [
               {
