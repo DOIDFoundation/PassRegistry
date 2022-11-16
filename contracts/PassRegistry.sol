@@ -150,6 +150,18 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
         return info;
     }
 
+    function getUserInvitedNumber(address _user) external view returns (uint, uint) {
+        return (userInvitedNum[_user], userInvitesMax[_user]);
+    }
+
+    function getNameByHash(bytes32 _hash) public view returns (string memory) {
+        return hashToName[_hash];
+    }
+
+    function getUserByHash(bytes32 _hash) public view returns (address) {
+        return hashToOwner[_hash];
+    }
+
     /**
     * @notice check name length
     */

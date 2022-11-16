@@ -7,6 +7,12 @@
 const hre = require("hardhat");
 
 async function main() {
+  if (true){
+    const Registry = await hre.ethers.getContractFactory('PassRegistry')
+    const proxy = await upgrades.upgradeProxy("0xd0587d2ff8759912961c70dee6aa931547c9b0c3", Registry)
+    console.log("upgrade proxy", proxy.address)
+    return
+  }
   const accounts = await hre.ethers.getSigners()
   admin = accounts[0]
   console.log("admin:", admin.address)
