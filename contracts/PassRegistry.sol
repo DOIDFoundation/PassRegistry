@@ -200,7 +200,7 @@ contract PassRegistry is
         return info;
     }
 
-    function getUserPassInfo(uint _passId) external view returns (PassInfo memory){
+    function getUserPassInfo(uint _passId) external view returns (PassInfo memory) {
         return passInfo[_passId];
     }
 
