@@ -1,13 +1,23 @@
-const hre = require("hardhat");
+const hre = require('hardhat')
 
 // upgrade contract
 async function main() {
-    const Registry = await hre.ethers.getContractFactory('PassRegistry')
-    const proxy = await upgrades.upgradeProxy("0xd0587d2ff8759912961c70dee6aa931547c9b0c3", Registry)
-    console.log("upgrade proxy", proxy.address)
+  const Registry = await hre.ethers.getContractFactory('PassRegistry')
+  const proxy = await upgrades.upgradeProxy(
+    '0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE',
+    Registry,
+  )
+  console.log('upgrade proxy', proxy.address)
+  console.log(
+    'implementation',
+    await upgrades.erc1967.getImplementationAddress(proxy.address),
+  )
+  await hre.run('verify:verify', {
+    address: await upgrades.erc1967.getImplementationAddress(proxy.address),
+  })
 }
 
 main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+  console.error(error)
+  process.exitCode = 1
+})

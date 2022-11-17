@@ -98,7 +98,7 @@ contract PassRegistry is
             require(userInvitesMax[codeFrom] > userInvitedNum[codeFrom], "IC");
         } else {
             // code from foudation can be used only once.
-            require(userInvitedNum[codeFrom] == 0, "IC");
+            // require(userInvitedNum[codeFrom] == 0, "IC");
         }
 
         (uint passNum, uint nameLen, bytes32 class) = getClassInfo(hashedMsg);
@@ -185,7 +185,7 @@ contract PassRegistry is
         return info;
     }
 
-    function getUserPassInfo(uint _passId) external view returns (PassInfo memory){
+    function getUserPassInfo(uint _passId) external view returns (PassInfo memory) {
         return passInfo[_passId];
     }
 
