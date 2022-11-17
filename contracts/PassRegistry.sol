@@ -93,7 +93,11 @@ contract PassRegistry is
         bytes32 hashedMsg = keccak256(abi.encodePacked(_class));
         address codeFrom = verifyInvitationCode(hashedMsg, _invitationCode);
         if (!hasRole(INVITER_ROLE, codeFrom)) {
+            // code from users can be used no more than limit
             require(userInvitesMax[codeFrom] > userInvitedNum[codeFrom], "IC");
+        } else {
+            // code from foudation can be used only once.
+            require(userInvitedNum[codeFrom] == 0, "IC");
         }
 
         (uint passNum, uint nameLen, bytes32 class) = getClassInfo(hashedMsg);

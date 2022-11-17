@@ -23,13 +23,29 @@ const hre = require("hardhat");
 
     describe("LockPass", function() {
         it("use A invitation code", async function () {
-
+          const accounts = await hre.ethers.getSigners()
           const hashedMsg = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("A"))
           const sig = await admin.signMessage(ethers.utils.arrayify(hashedMsg))
-          console.log(sig)
+          // console.log(sig)
           
           await expect(proxy.lockPass(sig, "", "A"))
             .not.to.be.reverted
+          
+          await expect(proxy.lockPass(sig, "", "A"))
+            .to.be.reverted
+
+          await proxy.grantRole(INVITER_ROLE,accounts[3].address)
+          const sig2 = await accounts[3].signMessage(ethers.utils.arrayify(hashedMsg))
+          const sig3 = await accounts[3].signMessage(ethers.utils.arrayify(hashedMsg))
+
+          await expect(proxy.lockPass(sig2, "", "A"))
+            .not.to.be.reverted
+
+          await expect(proxy.lockPass(sig2, "", "A"))
+            .to.be.reverted
+
+          await expect(proxy.lockPass(sig3, "", "A"))
+            .to.be.reverted
         })
 
         it("using a C type invitation code", async function(){
