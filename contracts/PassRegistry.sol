@@ -41,7 +41,7 @@ contract PassRegistry is
     uint8 constant ClassBInvitationNum = 6;
     uint8 constant ClassCInvitationNum = 1;
     uint8 constant ClassANameLen = 2;
-    uint8 constant ClassBNameLen = 3;
+    uint8 constant ClassBNameLen = 4;
     uint8 constant ClassCNameLen = 6;
     bytes32 constant ClassA = 0x03783fac2efed8fbc9ad443e592ee30e61d65f471140c10ca155e937b435b760; // A
     bytes32 constant ClassB = 0x1f675bff07515f5df96737194ea945c36c41e7b4fcef307b7cd4d0e602a69111; // B
@@ -61,6 +61,7 @@ contract PassRegistry is
     ) public initializer {
         _setupRole(DEFAULT_ADMIN_ROLE, _admin);
         __ERC721_init(_name, _symbol);
+        passId._value = 1000;
     }
 
     function getClassInfo(
@@ -86,27 +87,44 @@ contract PassRegistry is
     function lockPass(
         bytes memory _invitationCode,
         string memory _name,
-        string memory _class
+        string memory _class,
+        uint _passId
     ) external {
-        //bytes32 hashedMsg = keccak256(abi.encodePacked(msg.sender, _class));
-        //console.logBytes32(hashedMsg);
-        bytes32 hashedMsg = keccak256(abi.encodePacked(_class));
-        address codeFrom = verifyInvitationCode(hashedMsg, _invitationCode);
-        if (!hasRole(INVITER_ROLE, codeFrom)) {
-            // code from users can be used no more than limit
-            require(keccak256(bytes(_class)) == ClassC, "IC");
+        //address codeFrom = verifyInvitationCode(classHash, _invitationCode);
+        //if (!hasRole(INVITER_ROLE, codeFrom)) {
+        //    // code from users can be used no more than limit
+        //    require(keccak256(bytes(_class)) == ClassC, "IC");
+        //} else {
+        //    // code from foudation can be used only once.
+        //    //require(userInvitedNum[codeFrom] == 0, "IC");
+        //    // bind name if possible
+        //}
+
+        bytes32 classHash = keccak256(abi.encodePacked(_class));
+        (uint passNum, uint nameLen, ) = getClassInfo(classHash);
+        if(_passId == 0) {
+            address codeFrom = verifyInvitationCode(classHash, _invitationCode);
             require(userInvitesMax[codeFrom] > userInvitedNum[codeFrom], "IC");
-        } else {
-            // code from foudation can be used only once.
-            require(userInvitedNum[codeFrom] == 0, "IC");
+            userInvitedNum[codeFrom] += 1;
+        }else{
+            require(!_exists(_passId), "II");
+            bytes32 hashedMsg = keccak256(abi.encodePacked(_passId, _class));
+            address codeFrom = verifyInvitationCode(hashedMsg, _invitationCode);
+            require(hasRole(INVITER_ROLE, codeFrom) ,"IR");
+
+            bytes32 hashedName = keccak256(abi.encodePacked(_name));
+            passInfo[_passId] = PassInfo({
+                passId: _passId,
+                passClass: classHash,
+                passHash: hashedName
+            });
+            if (_lockName(_passId, _name, hashedName, nameLen))
+                passInfo[_passId].passHash = hashedName;
         }
 
-        (uint passNum, uint nameLen, bytes32 class) = getClassInfo(hashedMsg);
-
-        uint lockingPassId = passId.current() + 1;
 
         // mint passes
-        for (uint256 index = 0; index < passNum; index++) {
+        for (uint256 index = 0; index < passNum - 1; index++) {
             passId.increment();
             passInfo[passId.current()] = PassInfo({
                 passId: passId.current(),
@@ -115,13 +133,6 @@ contract PassRegistry is
             });
             _mint(msg.sender, passId.current());
         }
-
-        // bind name if possible
-        bytes32 hashedName = keccak256(abi.encodePacked(_name));
-        userInvitedNum[codeFrom] += 1;
-        passInfo[lockingPassId].passClass = class;
-        if (_lockName(lockingPassId, _name, hashedName, nameLen))
-            passInfo[lockingPassId].passHash = hashedName;
 
         emit LockPass(msg.sender, passNum);
     }
@@ -146,6 +157,10 @@ contract PassRegistry is
     ) internal returns (bool) {
         require(ownerOf(_passId) == msg.sender, "IP");
         if (!nameAvaliable(_minLen, _name)) {
+            return false;
+        }
+
+        if(passInfo[_passId].passHash.length > 0){
             return false;
         }
 
