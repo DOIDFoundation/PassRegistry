@@ -37,9 +37,9 @@ contract PassRegistry is
 {
     using CountersUpgradeable for CountersUpgradeable.Counter;
 
-    uint8 constant ClassAInvitationNum = 7;
+    uint8 constant ClassAInvitationNum = 6;
     uint8 constant ClassBInvitationNum = 6;
-    uint8 constant ClassCInvitationNum = 3;
+    uint8 constant ClassCInvitationNum = 1;
     uint8 constant ClassANameLen = 2;
     uint8 constant ClassBNameLen = 3;
     uint8 constant ClassCNameLen = 6;
@@ -94,6 +94,7 @@ contract PassRegistry is
         address codeFrom = verifyInvitationCode(hashedMsg, _invitationCode);
         if (!hasRole(INVITER_ROLE, codeFrom)) {
             // code from users can be used no more than limit
+            require(keccak256(bytes(_class)) == ClassC, "IC");
             require(userInvitesMax[codeFrom] > userInvitedNum[codeFrom], "IC");
         } else {
             // code from foudation can be used only once.
@@ -154,7 +155,7 @@ contract PassRegistry is
         // init invatations at first time
         if (userInvitesMax[msg.sender] == 0) {
             userInvitedNum[msg.sender] = 0;
-            userInvitesMax[msg.sender] = 3;
+            userInvitesMax[msg.sender] = 3 * balanceOf(msg.sender);
         }
 
         emit LockName(msg.sender, _passId, _name);
