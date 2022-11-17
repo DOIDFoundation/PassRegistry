@@ -119,8 +119,8 @@ contract PassRegistry is
         bytes32 hashedName = keccak256(abi.encodePacked(_name));
         userInvitedNum[codeFrom] += 1;
         passInfo[lockingPassId].passClass = class;
-        passInfo[lockingPassId].passHash = hashedName;
-        _lockName(lockingPassId, _name, hashedName, nameLen);
+        if (_lockName(lockingPassId, _name, hashedName, nameLen))
+            passInfo[lockingPassId].passHash = hashedName;
 
         emit LockPass(msg.sender, passNum);
     }
