@@ -4,6 +4,7 @@ pragma solidity >=0.8.4;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+
 //import "hardhat/console.sol";
 
 contract PassRegistryStorage {
@@ -19,7 +20,10 @@ contract PassRegistryStorage {
     mapping(uint => PassInfo) passInfo;
 }
 
-contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
+contract PassRegistry is
+    PassRegistryStorage,
+    ERC721EnumerableUpgradeable,
+{
     using CountersUpgradeable for CountersUpgradeable.Counter;
 
     uint8 constant ClassAInvitationNum = 7;
@@ -39,20 +43,26 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
     event LockPass(address user, uint passNumber);
     event LockName(address user, uint passId, string name);
 
-    function initialize(address _admin, string memory _name, string memory _symbol) public initializer {
+    function initialize(
+        address _admin,
+        string memory _name,
+        string memory _symbol
+    ) public initializer {
         admin = _admin;
         __ERC721_init(_name, _symbol);
     }
 
-    function getClassInfo(bytes32 _hash) public pure returns (uint invNum, uint nameLen, bytes32 class) {
+    function getClassInfo(
+        bytes32 _hash
+    ) public pure returns (uint invNum, uint nameLen, bytes32 class) {
         invNum = ClassCInvitationNum;
         nameLen = ClassCNameLen;
         class = ClassC;
-        if(_hash == ClassA) {
+        if (_hash == ClassA) {
             invNum = ClassAInvitationNum;
             nameLen = ClassANameLen;
             class = ClassA;
-        }else if(_hash == ClassB){
+        } else if (_hash == ClassB) {
             invNum = ClassBInvitationNum;
             nameLen = ClassANameLen;
             class = ClassB;
@@ -62,12 +72,16 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
     /**
     * @notice lock a name with code
      */
-    function lockPass(bytes memory _invitationCode, string memory _name, string memory _class) external {
+    function lockPass(
+        bytes memory _invitationCode,
+        string memory _name,
+        string memory _class
+    ) external {
         //bytes32 hashedMsg = keccak256(abi.encodePacked(msg.sender, _class));
         //console.logBytes32(hashedMsg);
         bytes32 hashedMsg = keccak256(abi.encodePacked(_class));
         address codeFrom = verifyInvitationCode(hashedMsg, _invitationCode);
-        if(codeFrom != admin){
+        if (codeFrom != admin) {
             require(userInvitesMax[codeFrom] > userInvitedNum[codeFrom], "IC");
         }
 
@@ -99,7 +113,7 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
     /**
     * @notice lock a name with given passid
      */
-    function lockName (uint _passId, string memory _name) external {
+    function lockName(uint _passId, string memory _name) external {
         bytes32 hashedName = keccak256(abi.encodePacked(_name));
         PassInfo memory pass = passInfo[_passId];
 
@@ -108,9 +122,14 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
         require(_lockName(_passId, _name, hashedName, nameLen), "IV");
     }
 
-    function _lockName(uint _passId, string memory _name, bytes32 _hashedName, uint _minLen) internal returns (bool){
+    function _lockName(
+        uint _passId,
+        string memory _name,
+        bytes32 _hashedName,
+        uint _minLen
+    ) internal returns (bool) {
         require(ownerOf(_passId) == msg.sender, "IP");
-        if(!nameAvaliable(_minLen, _name)){
+        if (!nameAvaliable(_minLen, _name)) {
             return false;
         }
 
@@ -118,7 +137,7 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
         hashToName[_hashedName] = _name;
         hashToOwner[_hashedName] = msg.sender;
         // init invatations at first time
-        if(userInvitesMax[msg.sender] == 0){
+        if (userInvitesMax[msg.sender] == 0) {
             userInvitedNum[msg.sender] = 0;
             userInvitesMax[msg.sender] = 3;
         }
@@ -165,7 +184,7 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
     /**
     * @notice check name length
     */
-    function lenValid(uint _minLen, string memory _name) public pure returns (bool){
+    function lenValid(uint _minLen, string memory _name) public pure returns (bool) {
         return strlen(_name) >= _minLen && strlen(_name) <= 64;
     }
 
@@ -179,22 +198,22 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
     function nameExists(string memory _name) public view returns (bool) {
         // is locked before
         bytes32 nameHash = keccak256(bytes(_name));
-        if(hashToOwner[nameHash] == address(0)){
+        if (hashToOwner[nameHash] == address(0)) {
             return false;
         }
         return true;
     }
 
     function nameAvaliable(uint _minLen, string memory _name) public view returns (bool) {
-        if(!lenValid(_minLen, _name)){
+        if (!lenValid(_minLen, _name)) {
             return false;
         }
 
-        if(nameExists(_name)){
+        if (nameExists(_name)) {
             return false;
         }
 
-        if(matchDenyList(_name)){
+        if (matchDenyList(_name)) {
             return false;
         }
         return true;
@@ -232,8 +251,10 @@ contract PassRegistry is PassRegistryStorage, ERC721EnumerableUpgradeable {
         return recoverSigner(_hashMessage, _sig);
     }
 
-    function recoverSigner(bytes32 _hashMessage, bytes memory _sig) internal pure returns (address)
-    {
+    function recoverSigner(
+        bytes32 _hashMessage,
+        bytes memory _sig
+    ) internal pure returns (address) {
         bytes32 r;
         bytes32 s;
         uint8 v;
