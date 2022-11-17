@@ -185,6 +185,10 @@ contract PassRegistry is
         return info;
     }
 
+    function getUserPassInfo(uint _passId) external view returns (PassInfo memory){
+        return passInfo[_passId];
+    }
+
     function getUserInvitedNumber(address _user) external view returns (uint, uint) {
         return (userInvitedNum[_user], userInvitesMax[_user]);
     }
