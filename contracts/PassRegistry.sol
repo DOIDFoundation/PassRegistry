@@ -1,8 +1,8 @@
-
 // SPDX-License-Identifier: None
 pragma solidity >=0.8.4;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
 //import "hardhat/console.sol";
@@ -18,11 +18,22 @@ contract PassRegistryStorage {
     mapping(bytes32 => address) hashToOwner;
     mapping(bytes32 => string) hashToName;
     mapping(uint => PassInfo) passInfo;
+    CountersUpgradeable.Counter internal passId;
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * The size of the __gap array is calculated so that the amount of storage used by a
+     * contract always adds up to the same number (in this case 50 storage slots).
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[44] private __gap;
 }
 
 contract PassRegistry is
     PassRegistryStorage,
     ERC721EnumerableUpgradeable,
+    AccessControlEnumerableUpgradeable
 {
     using CountersUpgradeable for CountersUpgradeable.Counter;
 
@@ -36,8 +47,8 @@ contract PassRegistry is
     bytes32 constant ClassB = 0x1f675bff07515f5df96737194ea945c36c41e7b4fcef307b7cd4d0e602a69111; // B
     bytes32 constant ClassC = 0x017e667f4b8c174291d1543c466717566e206df1bfd6f30271055ddafdb18f72; //C
 
-    address public admin;
-    CountersUpgradeable.Counter private passId;
+    /** @dev 全局邀请权限 */
+    bytes32 public constant INVITER_ROLE = keccak256("INVITER_ROLE");
 
     // EVENTs
     event LockPass(address user, uint passNumber);
@@ -48,7 +59,7 @@ contract PassRegistry is
         string memory _name,
         string memory _symbol
     ) public initializer {
-        admin = _admin;
+        _setupRole(DEFAULT_ADMIN_ROLE, _admin);
         __ERC721_init(_name, _symbol);
     }
 
@@ -70,7 +81,7 @@ contract PassRegistry is
     }
 
     /**
-    * @notice lock a name with code
+     * @notice lock a name with code
      */
     function lockPass(
         bytes memory _invitationCode,
@@ -81,7 +92,7 @@ contract PassRegistry is
         //console.logBytes32(hashedMsg);
         bytes32 hashedMsg = keccak256(abi.encodePacked(_class));
         address codeFrom = verifyInvitationCode(hashedMsg, _invitationCode);
-        if (codeFrom != admin) {
+        if (!hasRole(INVITER_ROLE, codeFrom)) {
             require(userInvitesMax[codeFrom] > userInvitedNum[codeFrom], "IC");
         }
 
@@ -108,10 +119,10 @@ contract PassRegistry is
         _lockName(lockingPassId, _name, hashedName, nameLen);
 
         emit LockPass(msg.sender, passNum);
-    } 
+    }
 
     /**
-    * @notice lock a name with given passid
+     * @notice lock a name with given passid
      */
     function lockName(uint _passId, string memory _name) external {
         bytes32 hashedName = keccak256(abi.encodePacked(_name));
@@ -147,7 +158,7 @@ contract PassRegistry is
     }
 
     /**
-    * @notice request user's pass list
+     * @notice request user's pass list
      */
     function getUserPassList(address _user) external view returns (uint[] memory) {
         //string[] memory names = new string[](balanceOf(_user));
@@ -182,14 +193,14 @@ contract PassRegistry is
     }
 
     /**
-    * @notice check name length
-    */
+     * @notice check name length
+     */
     function lenValid(uint _minLen, string memory _name) public pure returns (bool) {
         return strlen(_name) >= _minLen && strlen(_name) <= 64;
     }
 
     /**
-    * @notice check if name match some patterns
+     * @notice check if name match some patterns
      */
     function matchDenyList(string memory _name) internal pure returns (bool) {
         return false;
@@ -243,7 +254,7 @@ contract PassRegistry is
     }
 
     /**
-    * @notice verify a request code by message and its signature
+     * @notice verify a request code by message and its signature
      */
     function verifyInvitationCode(bytes32 _msg, bytes memory _sig) public pure returns (address) {
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
@@ -277,5 +288,18 @@ contract PassRegistry is
         }
 
         return ecrecover(_hashMessage, v, r, s);
+    }
+
+    // The following functions are overrides required by Solidity.
+    function supportsInterface(
+        bytes4 interfaceId
+    )
+        public
+        view
+        virtual
+        override(AccessControlEnumerableUpgradeable, ERC721EnumerableUpgradeable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 }

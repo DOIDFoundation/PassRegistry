@@ -9,19 +9,20 @@ const hre = require("hardhat");
   describe("PassRegistry", function () {
     let proxy;
     let admin, bob, carl;
+    const INVITER_ROLE = web3.utils.soliditySha3('INVITER_ROLE')
 
-    async function deployFixture() {
+    beforeEach(async function () {
       const accounts = await hre.ethers.getSigners()
       admin = accounts[0]
       bob = accounts[1]
       carl = accounts[2]
       const PassRegistry = await hre.ethers.getContractFactory("PassRegistry")
       proxy = await upgrades.deployProxy(PassRegistry, [admin.address , "pass", "pass"])
-    }
+      await proxy.grantRole(INVITER_ROLE,admin.address)
+    })
 
     describe("LockPass", function() {
         it("use A invitation code", async function () {
-          await deployFixture()
 
           const hashedMsg = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("A"))
           const sig = await admin.signMessage(ethers.utils.arrayify(hashedMsg))
@@ -32,7 +33,6 @@ const hre = require("hardhat");
         })
 
         it("using a C type invitation code", async function(){
-          await deployFixture()
           const AHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("A"))
           let sig = await admin.signMessage(ethers.utils.arrayify(AHash))
           // bob lock A pass
@@ -72,7 +72,6 @@ const hre = require("hardhat");
 
     describe("LockName", function(){
       it("lock name with passid", async function() {
-          await deployFixture()
           const classHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("A"))
           signature = await admin.signMessage(ethers.utils.arrayify(classHash))
           await expect(proxy.lockPass(signature, "", "A"))
