@@ -8,6 +8,8 @@
     "@openzeppelin/hardhat-upgrades": "^1.19.0",
     "@openzeppelin/test-helpers": "^0.5.15",
     "dotenv": "^16.0.1",
+    "hardhat-gas-reporter": "^1.0.9",
+    "idna-uts46-hx": "^4.0.4",
     "prettier-plugin-solidity": "^1.0.0-rc.1"
   }
 }
