@@ -478,6 +478,24 @@ describe('PassRegistry', function () {
       )
     })
 
+    it('lock name should success only once', async function () {
+      let passId = 1
+      const sig = await admin.signMessage(
+        ethers.utils.arrayify(
+          ethers.utils.keccak256(
+            ethers.utils.solidityPack(['uint256', 'bytes32'], [passId, AHash]),
+          ),
+        ),
+      )
+      await expect(proxy.lockPass(sig, 'ab', AHash, passId)).not.to.be.reverted
+      await expect(proxy.lockName(passId, 'abc')).to.be.revertedWith('AL')
+
+      // 1 * A pass
+      passId = await proxy.tokenOfOwnerByIndex(admin.address, 1)
+      await expect(proxy.lockName(passId, 'abcdef')).not.to.be.reverted
+      await expect(proxy.lockName(passId, 'abcdefg')).to.be.revertedWith('AL')
+    })
+
     describe('Name available', function () {
       it('invalid name length', async function () {
         expect(await proxy.lenValid(2, 'c')).to.equals(false)

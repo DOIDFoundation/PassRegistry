@@ -119,7 +119,7 @@ contract PassRegistry is
             _mint(msg.sender, passId.current());
         }
 
-        if (_lockName(_passId, _name, hashedName, nameLen)) passInfo[_passId].passHash = hashedName;
+        _lockName(_passId, _name, hashedName, nameLen);
 
         emit LockPass(msg.sender, passNum);
     }
@@ -152,6 +152,7 @@ contract PassRegistry is
         //lock name
         hashToName[_hashedName] = _name;
         hashToOwner[_hashedName] = msg.sender;
+        passInfo[_passId].passHash = _hashedName;
         // init invatations at first time
         if (userInvitesMax[msg.sender] == 0) {
             userInvitedNum[msg.sender] = 0;
