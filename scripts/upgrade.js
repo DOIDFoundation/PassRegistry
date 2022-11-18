@@ -8,6 +8,7 @@ async function main() {
     Registry,
   )
   console.log('upgrade proxy', proxy.address)
+  await proxy.deployed()
   console.log(
     'implementation',
     await upgrades.erc1967.getImplementationAddress(proxy.address),
