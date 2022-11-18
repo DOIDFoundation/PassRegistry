@@ -213,6 +213,7 @@ const hre = require("hardhat");
         expect(await proxy.lenValid(3, "ab")).to.equals(false)
         expect(await proxy.lenValid(4, "abc")).to.equals(false)
       })
+
       it("valid name length", async function() {
         expect(await proxy.lenValid(2, "12")).to.equals(true)
         expect(await proxy.lenValid(2, "123")).to.equals(true)
@@ -224,16 +225,28 @@ const hre = require("hardhat");
         expect(await proxy.lenValid(4, "测试12")).to.equals(true)
       })
 
-      it("in denylist" ,async function() {
+      it("reserve name" ,async function() {
+        let testname = [ethers.utils.keccak256(ethers.utils.toUtf8Bytes("aa"))]
+        await proxy.reserveName(testname)
+        expect(await proxy.nameReserves("aa")).to.equals(true)
 
-      })
-
-      it("not in denylist" ,async function() {
+        let testnames = [
+          ethers.utils.keccak256(ethers.utils.toUtf8Bytes("aa")),
+          ethers.utils.keccak256(ethers.utils.toUtf8Bytes("bb")),
+          ethers.utils.keccak256(ethers.utils.toUtf8Bytes("111122")),
+          ethers.utils.keccak256(ethers.utils.toUtf8Bytes("测试名字"))
+        ]
+        await proxy.reserveName(testnames)
+        expect(await proxy.nameReserves("111122")).to.equals(true)
+        expect(await proxy.nameReserves("ab")).to.equals(false)
+        expect(await proxy.nameReserves("测试名字")).to.equals(true)
+        expect(await proxy.nameReserves("测试x名字")).to.equals(false)
       })
 
       it("dup name", async function(){
 
       })
+
       it("name max_length=64", async function(){
         expect(await proxy.lenValid(2, "1111111111111111111111111111111111111111111111111111111111111111")).to.equals(true)
         expect(await proxy.lenValid(2, "11111111111111111111111111111111111111111111111111111111111111111")).to.equals(false)
