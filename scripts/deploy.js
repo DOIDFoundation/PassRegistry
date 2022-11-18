@@ -21,7 +21,7 @@ async function main() {
   //const reg = await upgrades.deployProxy(Registry, [admin.address, "pass", "pass"])
   const proxy = await hre.ethers.getContractAt('PassRegistry', "0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE")
 
-  await generate_codes()
+  await proxy.updatePassIdStart(150)
 //
 //  //await proxy.lockPass(sig, "bob", "A")
 //  const sig1 = ethers.utils.toUtf8Bytes("0x01debac705ebed9d2b48316e65889af05e263bec986b9fc238febcc913f38c3b31549fcfbebead15b496bf777e289f82a113282d4a7334617c40c5bd967a020a1c")
