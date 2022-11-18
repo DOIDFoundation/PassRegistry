@@ -313,6 +313,31 @@ contract PassRegistry is
         return ecrecover(_hashMessage, v, r, s);
     }
 
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        _requireMinted(tokenId);
+
+        string memory nameInfo;
+        PassInfo memory passInfo = passInfo[tokenId];
+        if (passInfo.passHash != 0) {
+            nameInfo = string(
+                abi.encodePacked(bytes(getNameByHash(passInfo.passHash)), bytes("%20locked"))
+            );
+        } else nameInfo = "no%20name%20locked%20yet";
+
+        return
+            string(
+                abi.encodePacked(
+                    bytes("data:application/json;utf8,%7B%22name%22%3A%22DOID%20Lock%20Pass%20%23"),
+                    tokenId,
+                    bytes("%22%2C%22description%22%3A%22A%20DOID%20lock%20pass%2C%20with%20"),
+                    bytes(nameInfo),
+                    bytes(
+                        ".%22%2C%22image%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Butf8%2C%253Csvg%2520xmlns%253D%2522http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg%2522%2520viewBox%253D%25220%25200%252040.02%252051.9%2522%253E%253Cpath%2520d%253D%2522M28.81%252012.52l9.26%25204.91c1.2.74%25201.95%25201.95%25201.95%25203.33v21.03c0%25201.3-.65%25202.41-1.67%25203.15l-9.82%25206.3c-1.2.83-2.69.83-3.89.19l-7.87-4.26%252013.53-8.15.09-15.75L20.2%252017.9l8.62-5.37zm-6.02%252026.4l2.22%25201.11-8.62%25205.28-2.22-1.11%25208.62-5.28zm-1.48-3.8l2.22%25201.11-8.62%25205.28-2.32-1.11%25208.71-5.28zM15.75.57l7.5%25203.98L9.73%252012.8l-.09%252015.66%252010.19%25205.47-8.62%25205.37-8.89-4.82C.84%252033.74%25200%252032.16%25200%252030.59v-20.2c0-1.48.74-2.96%25202.04-3.8L11.12.76a4.39%25204.39%25200%25200%25201%25204.63-.19zm10.56%25208.89l2.22%25201.11-8.62%25205.28-2.22-1.11%25208.62-5.28zm-1.57-3.8l2.32%25201.2-8.62%25205.28-2.32-1.2%25208.62-5.28z%2522%2520fill%253D%2522%2523373737%2522%2520fill-rule%253D%2522evenodd%2522%252F%253E%253C%252Fsvg%253E%22%7D"
+                    )
+                )
+            );
+    }
+
     // The following functions are overrides required by Solidity.
     function supportsInterface(
         bytes4 interfaceId
