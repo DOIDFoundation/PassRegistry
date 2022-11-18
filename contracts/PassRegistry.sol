@@ -65,6 +65,11 @@ contract PassRegistry is
         passId._value = 100000;
     }
 
+    function updatePassIdStart(uint _start) external {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender));
+        passId._value = _start;
+    }
+
     function getClassInfo(
         bytes32 _hash
     ) public pure returns (uint invNum, uint nameLen, bytes32 class) {
@@ -261,16 +266,19 @@ contract PassRegistry is
             bytes1 b = bytes(s)[i];
             if (b < 0x80) {
                 i += 1;
-            } else if (b < 0xE0) {
-                i += 2;
-            } else if (b < 0xF0) {
-                i += 3;
-            } else if (b < 0xF8) {
-                i += 4;
-            } else if (b < 0xFC) {
-                i += 5;
-            } else {
-                i += 6;
+            }else{
+                len++;
+                if (b < 0xE0) {
+                    i += 2;
+                } else if (b < 0xF0) {
+                    i += 3;
+                } else if (b < 0xF8) {
+                    i += 4;
+                } else if (b < 0xFC) {
+                    i += 5;
+                } else {
+                    i += 6;
+                }
             }
         }
         return len;
