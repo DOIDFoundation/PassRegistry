@@ -19,6 +19,7 @@ contract PassRegistryStorage {
     mapping(bytes32 => string) hashToName;
     mapping(uint => PassInfo) passInfo;
     CountersUpgradeable.Counter internal passId;
+    mapping(bytes32 => bool) reserveNames;
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
@@ -27,7 +28,7 @@ contract PassRegistryStorage {
      * contract always adds up to the same number (in this case 50 storage slots).
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
-    uint256[44] private __gap;
+    uint256[43] private __gap;
 }
 
 contract PassRegistry is
@@ -208,12 +209,25 @@ contract PassRegistry is
     }
 
     /**
-     * @notice check if name match some patterns
+     * @notice reserve a brunch of name
      */
-    function matchDenyList(string memory _name) internal pure returns (bool) {
-        return false;
+    function reserveName(bytes32[] memory _hashes) external {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "IR");
+        for (uint256 index = 0; index < _hashes.length; index++) {
+            reserveNames[_hashes[index]] = true;
+        }
     }
 
+    /**
+     * @notice check if name in reservation list
+     */
+    function nameReserves(string memory _name) public view returns (bool) {
+        return reserveNames[keccak256(bytes(_name))];
+    }
+
+    /**
+     * @notice check if name has already been registered
+     */
     function nameExists(string memory _name) public view returns (bool) {
         // is locked before
         bytes32 nameHash = keccak256(bytes(_name));
@@ -232,7 +246,7 @@ contract PassRegistry is
             return false;
         }
 
-        if (matchDenyList(_name)) {
+        if (nameReserves(_name)) {
             return false;
         }
         return true;

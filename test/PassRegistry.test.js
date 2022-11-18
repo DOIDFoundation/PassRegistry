@@ -477,46 +477,62 @@ describe('PassRegistry', function () {
         'ERC721: invalid token ID',
       )
     })
-  })
 
-  describe('Name available', function () {
-    it('invalid name length', async function () {
-      expect(await proxy.lenValid(2, 'c')).to.equals(false)
-      expect(await proxy.lenValid(2, '1')).to.equals(false)
-      expect(await proxy.lenValid(2, '.')).to.equals(false)
-      expect(await proxy.lenValid(2, '测')).to.equals(false)
-      expect(await proxy.lenValid(3, 'ab')).to.equals(false)
-      expect(await proxy.lenValid(4, 'abc')).to.equals(false)
-    })
-    it('valid name length', async function () {
-      expect(await proxy.lenValid(2, '12')).to.equals(true)
-      expect(await proxy.lenValid(2, '123')).to.equals(true)
-      expect(await proxy.lenValid(2, 'ab')).to.equals(true)
-      expect(await proxy.lenValid(2, 'abc')).to.equals(true)
-      expect(await proxy.lenValid(2, '测试')).to.equals(true)
-      expect(await proxy.lenValid(2, '测试1')).to.equals(true)
-      expect(await proxy.lenValid(3, '测试1')).to.equals(true)
-      expect(await proxy.lenValid(4, '测试12')).to.equals(true)
-    })
+    describe('Name available', function () {
+      it('invalid name length', async function () {
+        expect(await proxy.lenValid(2, 'c')).to.equals(false)
+        expect(await proxy.lenValid(2, '1')).to.equals(false)
+        expect(await proxy.lenValid(2, '.')).to.equals(false)
+        expect(await proxy.lenValid(2, '测')).to.equals(false)
+        expect(await proxy.lenValid(3, 'ab')).to.equals(false)
+        expect(await proxy.lenValid(4, 'abc')).to.equals(false)
+      })
 
-    it('in denylist', async function () {})
+      it('valid name length', async function () {
+        expect(await proxy.lenValid(2, '12')).to.equals(true)
+        expect(await proxy.lenValid(2, '123')).to.equals(true)
+        expect(await proxy.lenValid(2, 'ab')).to.equals(true)
+        expect(await proxy.lenValid(2, 'abc')).to.equals(true)
+        expect(await proxy.lenValid(2, '测试')).to.equals(true)
+        expect(await proxy.lenValid(2, '测试1')).to.equals(true)
+        expect(await proxy.lenValid(3, '测试1')).to.equals(true)
+        expect(await proxy.lenValid(4, '测试12')).to.equals(true)
+      })
 
-    it('not in denylist', async function () {})
+      it('reserve name', async function () {
+        let testname = [ethers.utils.keccak256(ethers.utils.toUtf8Bytes('aa'))]
+        await proxy.reserveName(testname)
+        expect(await proxy.nameReserves('aa')).to.equals(true)
 
-    it('dup name', async function () {})
-    it('name max_length=64', async function () {
-      expect(
-        await proxy.lenValid(
-          2,
-          '1111111111111111111111111111111111111111111111111111111111111111',
-        ),
-      ).to.equals(true)
-      expect(
-        await proxy.lenValid(
-          2,
-          '11111111111111111111111111111111111111111111111111111111111111111',
-        ),
-      ).to.equals(false)
+        let testnames = [
+          ethers.utils.keccak256(ethers.utils.toUtf8Bytes('aa')),
+          ethers.utils.keccak256(ethers.utils.toUtf8Bytes('bb')),
+          ethers.utils.keccak256(ethers.utils.toUtf8Bytes('111122')),
+          ethers.utils.keccak256(ethers.utils.toUtf8Bytes('测试名字')),
+        ]
+        await proxy.reserveName(testnames)
+        expect(await proxy.nameReserves('111122')).to.equals(true)
+        expect(await proxy.nameReserves('ab')).to.equals(false)
+        expect(await proxy.nameReserves('测试名字')).to.equals(true)
+        expect(await proxy.nameReserves('测试x名字')).to.equals(false)
+      })
+
+      it('dup name', async function () {})
+
+      it('name max_length=64', async function () {
+        expect(
+          await proxy.lenValid(
+            2,
+            '1111111111111111111111111111111111111111111111111111111111111111',
+          ),
+        ).to.equals(true)
+        expect(
+          await proxy.lenValid(
+            2,
+            '11111111111111111111111111111111111111111111111111111111111111111',
+          ),
+        ).to.equals(false)
+      })
     })
   })
 })
