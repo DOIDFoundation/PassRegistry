@@ -81,7 +81,7 @@ async function main() {
 
   const chunkSize = 1000
   const start = 0
-  for (let i = start; i - chunkSize < hashnames.length; i += chunkSize) {
+  for (let i = start; i < hashnames.length; i += chunkSize) {
     console.log('starting', i)
     const chunk = hashnames.slice(i, i + chunkSize)
     console.log(await proxy.estimateGas.reserveName(chunk))
