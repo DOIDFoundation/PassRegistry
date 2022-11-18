@@ -134,6 +134,7 @@ contract PassRegistry is
         (, uint nameLen, ) = getClassInfo(pass.passClass);
 
         require(_lockName(_passId, _name, hashedName, nameLen), "IN");
+        passInfo[_passId].passHash = hashedName;
     }
 
     function _lockName(
