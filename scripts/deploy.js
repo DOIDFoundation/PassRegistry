@@ -6,31 +6,6 @@
 // global scope, and execute the script.
 const hre = require("hardhat");
 
-async function generate_codes() {
-  const AHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('A'))
-  console.log("class A Hash", AHash)
-  const BHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('B'))
-  console.log("class B Hash", BHash)
-  const CHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('C'))
-  console.log("class C Hash", CHash)
-
-  let passId = 1000
-  const classes = [AHash, BHash, CHash]
-  for (let i = 0; i < classes.length; i++) {
-    const classHash = classes[i]
-    console.log("---------class sig---------")
-    for (let index = passId; index < passId+5; index++) {
-      const hashedMsg = ethers.utils.keccak256(
-        ethers.utils.solidityPack(['uint256', 'bytes32'], [index, classHash]),
-      )
-      const sig = await admin.signMessage(ethers.utils.arrayify(hashedMsg))
-      console.log("passId:", index)
-      console.log("sig:",sig)
-    }
-    passId += 5
-  };
-}
-
 async function main() {
   if (false){
     const Registry = await hre.ethers.getContractFactory('PassRegistry')
