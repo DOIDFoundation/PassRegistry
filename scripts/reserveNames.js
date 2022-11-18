@@ -9,7 +9,7 @@ async function main() {
   )
 
   let names = [
-
+    ""
   ]
   let hashnames = []
   names.forEach(element => {
