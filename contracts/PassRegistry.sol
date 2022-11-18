@@ -37,9 +37,9 @@ contract PassRegistry is
 {
     using CountersUpgradeable for CountersUpgradeable.Counter;
 
-    uint8 constant ClassAInvitationNum = 6;
-    uint8 constant ClassBInvitationNum = 6;
-    uint8 constant ClassCInvitationNum = 1;
+    uint8 constant ClassAInvitationNum = 5;
+    uint8 constant ClassBInvitationNum = 5;
+    uint8 constant ClassCInvitationNum = 0;
     uint8 constant ClassANameLen = 2;
     uint8 constant ClassBNameLen = 4;
     uint8 constant ClassCNameLen = 6;
@@ -61,7 +61,7 @@ contract PassRegistry is
     ) public initializer {
         _setupRole(DEFAULT_ADMIN_ROLE, _admin);
         __ERC721_init(_name, _symbol);
-        passId._value = 1000;
+        passId._value = 100000;
     }
 
     function getClassInfo(
@@ -87,52 +87,38 @@ contract PassRegistry is
     function lockPass(
         bytes memory _invitationCode,
         string memory _name,
-        string memory _class,
+        bytes32 _classHash,
         uint _passId
     ) external {
-        //address codeFrom = verifyInvitationCode(classHash, _invitationCode);
-        //if (!hasRole(INVITER_ROLE, codeFrom)) {
-        //    // code from users can be used no more than limit
-        //    require(keccak256(bytes(_class)) == ClassC, "IC");
-        //} else {
-        //    // code from foudation can be used only once.
-        //    //require(userInvitedNum[codeFrom] == 0, "IC");
-        //    // bind name if possible
-        //}
-
-        bytes32 classHash = keccak256(abi.encodePacked(_class));
-        (uint passNum, uint nameLen, ) = getClassInfo(classHash);
-        if(_passId == 0) {
-            address codeFrom = verifyInvitationCode(classHash, _invitationCode);
+        if (_passId == 0) {
+            address codeFrom = verifyInvitationCode(_classHash, _invitationCode);
             require(userInvitesMax[codeFrom] > userInvitedNum[codeFrom], "IC");
             userInvitedNum[codeFrom] += 1;
-        }else{
+            passId.increment();
+            _passId = passId.current();
+        } else {
             require(!_exists(_passId), "II");
-            bytes32 hashedMsg = keccak256(abi.encodePacked(_passId, _class));
+            bytes32 hashedMsg = keccak256(abi.encodePacked(_passId, _classHash));
             address codeFrom = verifyInvitationCode(hashedMsg, _invitationCode);
-            require(hasRole(INVITER_ROLE, codeFrom) ,"IR");
-
-            bytes32 hashedName = keccak256(abi.encodePacked(_name));
-            passInfo[_passId] = PassInfo({
-                passId: _passId,
-                passClass: classHash,
-                passHash: hashedName
-            });
-            if (_lockName(_passId, _name, hashedName, nameLen))
-                passInfo[_passId].passHash = hashedName;
+            require(hasRole(INVITER_ROLE, codeFrom), "IR");
         }
+        bytes32 hashedName = keccak256(abi.encodePacked(_name));
+        passInfo[_passId] = PassInfo({passId: _passId, passClass: _classHash, passHash: ""});
+        _mint(msg.sender, _passId);
+        (uint passNum, uint nameLen, ) = getClassInfo(_classHash);
 
-
-        // mint passes
-        for (uint256 index = 0; index < passNum - 1; index++) {
+        // mint extra passes
+        for (uint256 index = 0; index < passNum; index++) {
             passId.increment();
             passInfo[passId.current()] = PassInfo({
                 passId: passId.current(),
                 passClass: ClassC,
-                passHash: ""
+                passHash: 0
             });
             _mint(msg.sender, passId.current());
         }
+
+        if (_lockName(_passId, _name, hashedName, nameLen)) passInfo[_passId].passHash = hashedName;
 
         emit LockPass(msg.sender, passNum);
     }
@@ -146,7 +132,7 @@ contract PassRegistry is
 
         (, uint nameLen, ) = getClassInfo(pass.passClass);
 
-        require(_lockName(_passId, _name, hashedName, nameLen), "IV");
+        require(_lockName(_passId, _name, hashedName, nameLen), "IN");
     }
 
     function _lockName(
@@ -155,12 +141,10 @@ contract PassRegistry is
         bytes32 _hashedName,
         uint _minLen
     ) internal returns (bool) {
+        if (bytes(_name).length <= 0) return false;
         require(ownerOf(_passId) == msg.sender, "IP");
+        require(passInfo[_passId].passHash == 0, "AL");
         if (!nameAvaliable(_minLen, _name)) {
-            return false;
-        }
-
-        if(passInfo[_passId].passHash.length > 0){
             return false;
         }
 
