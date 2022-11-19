@@ -21,6 +21,7 @@ contract PassRegistryStorage {
     mapping(uint => PassInfo) passInfo;
     CountersUpgradeable.Counter internal passId;
     mapping(bytes32 => bool) reserveNames;
+    mapping(address => bool) userActivated;
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
@@ -89,6 +90,10 @@ contract PassRegistry is
         }
     }
 
+    function isUserActivated(address _user) public view returns (bool) {
+        return userActivated[_user];
+    }
+
     /**
      * @notice lock a name with code
      */
@@ -98,6 +103,8 @@ contract PassRegistry is
         bytes32 _classHash,
         uint _passId
     ) external {
+        require(!isUserActivated(msg.sender), "IU");
+        userActivated[msg.sender] = true;
         if (_passId == 0) {
             address codeFrom = verifyInvitationCode(_classHash, _invitationCode);
             require(userInvitesMax[codeFrom] > userInvitedNum[codeFrom], "IC");
