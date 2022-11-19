@@ -1,647 +1,219 @@
-Aden 
-Alps 
-Asia 
-Bali 
-Bath 
-Bonn 
-Cook 
-Cuba 
-Doha 
-Eire 
-Fiji 
-Fuji 
-Guam 
-Iran 
-Java 
-Kama 
-Kent 
-Kiev 
-Kobe 
-Laos 
-Nice 
-Nile 
-Oman 
-Peru 
-Pisa 
-Rome 
-Siam 
-Suez 
-York 
-Amman 
-Andes 
-Burma 
-Cairo 
-Chile 
-China 
-Congo 
-Dakar 
-Delhi 
-Egypt 
-Ghana 
-Haiti 
-India 
-Italy 
-Japan 
-Jibuti
-Katar 
-Kenya 
-Kiyev 
-Korea 
-Kuweit
-Kyoto 
-Leeds 
-Libya 
-Macao 
-Malta 
-Mexico
-Miami 
-Milan 
-Nauru 
-Nepal 
-Omaha 
-Osaka 
-Paris 
-Pusan 
-Qatar 
-Rhine 
-Sabah 
-Seoul 
-Spain 
-Syria 
-Tokyo 
-Tunis 
-Tyler 
-Volga 
-Wales 
-Yemen 
-Aegean 
+San Francisco 
+Los Angeles 
+Switzerland 
+California 
+Manchester 
+Washington 
+Hollywood 
+Manhattan 
+Singapore 
+Vancouver 
+Atlantic 
+New York 
+Thailand 
+America 
+Beijing 
+Britain 
+England 
+Finland 
+Germany 
+Hamburg 
+Holland 
+Iceland 
+Ireland 
+Malaysia
+Morocco 
+Pacific 
+Red Sea 
+Seattle 
+Ukraine 
 Africa 
 Alaska 
-Amazon 
-Angkor 
-Angola 
-Arabia 
-Athens 
-Baikal 
-Balkan 
-Bengal 
-Bering 
-Berlin 
-Bhutan 
-Bombay 
-Borneo 
 Boston 
 Brazil 
-Brunei 
 Canada 
-Cayman 
-Choson 
-Crimea 
-Cyprus 
-Danube 
 Denver 
 France 
-Ganges 
 Geneva 
 Greece 
-Guinea 
 Hawaii 
-Inchon 
-Israel 
-Jordan 
-Kowait 
-Kuwait 
-Kyrshu 
 Lisbon 
 London 
 Madrid 
-Mekong 
-Midway 
 Monaco 
 Moscow 
-Munich 
-Nagoya 
 Norway 
-Ottawa 
-Oxford 
-Panama 
 Persia 
 Poland 
-Ruanda 
 Russia 
-Ryukyu 
-Sahara 
-Santos 
-Sicily 
-Sparta 
 Sweden 
-Sydney 
-Taipei 
-Taiwan 
-Thames 
 Turkey 
-Uganda 
-Venice 
-Vienna 
 Vietnam
-Zambia 
-Zurich 
-America 
-Arizona 
-Atlanta 
-Austria 
-Bahamas 
-Bahrein 
-Bangkok 
-Beijing 
-Belgium 
-Bolivia 
-Britain 
-Caspian 
-Chicago 
-DeadSea 
-Denmark 
-Detroit 
-Dunkirk 
-Ecuador 
-England 
-Estonia 
-Finland 
-Florida 
-Fukuoka 
-Georgia 
-Germany 
-Ha Noi  
-Hamburg 
-Himalay 
-Holland 
-Hungary 
-Iceland 
-Indiana 
-Ireland 
-Jackson 
-Jakarta 
-Jamaica 
-Keelung 
-Lebanon 
-Liberia 
-Malacca 
-Malaysia
-Morocco 
-Oceania 
-Okinawa 
-Pacific 
-Red Sea 
-Romania 
-Seattle 
-Siberia 
-Somalia 
-Surinam 
-Toronto 
-Ukraine 
-Uruguay 
-Atlantic 
-Berkeley 
-Bordeaux 
-Brasilia 
-Brisbane 
-Brooklyn 
-Brussels 
-Budapest 
-Bulgaria 
-Calcutta 
-Cameroun 
-Canberra 
-Capetown 
-Colorado 
-Columbia 
-Damascus 
-Djakarta 
-Dominica 
-Edinburg 
-Ethiopia 
-Florence 
-Franklin 
-Hamilton 
-Helsinki 
-Hokkaido 
-HongKong 
-Honolulu 
-Huang He 
-Istanbul 
-Kentucky 
-Maldives 
-Mongolia 
-Nagasaki 
-New York 
-Normandy 
-Pakistan 
-Paraguay 
-Portugal 
-Sardinia 
-Scotland 
-Srilanka 
-Stamford 
-Thailand 
-Victoria 
-Abu Dhabi 
-Alexandre 
-Amsterdam 
-Argentina 
-Australia 
-Barcelona 
-Black Sea 
-Cambridge 
-Caribbean 
-Champagne 
-Edinburgh 
-Frankfurt 
-Gibraltar 
-Greenland 
-Greenwich 
-Hiroshima 
-HoChiMinh 
-Hollywood 
-Indonesia 
-Islamabad 
-Kampuchea 
-Kaohsiung 
-Las Vegas 
-Leningard 
-Lithuania 
-Liverpool 
-Luxemburg 
-Manhattan 
-Mauritius 
-Melbourne 
-North-Sea 
-Pnom Penh 
-Polynesia 
-Pyongyang 
-Sheffield 
-Singapore 
-Stuttgart 
-Vancouver 
-Yugoslavia
-Antarctica 
-Azerbaijan 
-Baltic-Sea 
-Bangladesh 
-California 
-Copenhagen 
-Costa Rica 
-Georgetown 
-Gold-Coast 
-Jugoslavia 
-Kazaksatan 
-Madagascar 
-Manchester 
-Nottingham 
-Phnom Penh 
-Porto Rico 
-Pueto Rico 
-Seychelles 
-Tajikistan 
-Uzbekistan 
-Washington 
-Afghanistan 
-Constantine 
-Los Angeles 
-Mississippi 
-Netherlands 
-New Zealand 
-Philippines 
-Switzerland 
-Yellowstone 
-Kuala Lumpur 
-Pearl Harbor 
-Philadelphia 
-Sardi Arabia 
-Tadzhikistan 
-Mediterranean 
-San Francisco 
-Czechoslovakia 
-Irish Republic 
-Rio de Janeiro 
-Northern Island 
-
-
-Aaron
+Chile 
+China 
+Egypt 
+India 
+Italy 
+Japan 
+Korea 
+Mexico
+Milan 
+Nepal 
+Omaha 
+Paris 
+Spain 
+Syria 
+Tokyo 
+Asia 
+Cook 
+Cuba 
+Doha 
+Fiji 
+Kiev 
+Rome 
+Rio 
+Ailsa
+Alice
+Billy
+Candy
+Chloe
+Chris
+Clair
+David
+Ellen
+Fiona
+Frank
+Grace
+Harry
+James
+Jason
+Jerry
+Jimmy
+Kelly
+Kevin
+Larry
+Linda
+Louis
+Lydia
+Molly
+Oscar
+Pearl
+Peter
+Roger
+Sally
+Sammy
+Sarah
+Simon
+Spark
+Stacy
+Sunny
+Susan
+Terry
+Tommy
+Wendy
 Abby
 Abel
 Adam
-Ada
-Adeline
-Adrian
-Aidan
-Ailsa
-Aimee
 Alan
-Albert
-Alexander
 Alex
-Alice
 Alva
-Amanda
-Amy
-Andrew
 Andy
-Angela
-Angel
-Anita
 Anna
 Anne
-Annie
-Ann
-Anthony
-Apollo
-April
-August
-Austin
-Barbie
-Beata
-Becky
-Bella
-Benson
-Ben
 Bert
 Bess
-Bette
-Betty
-Billy
 Bill
-Blake
-Bobby
-Bob
-Bonnie
 Brad
-Brandon
-Brant
-Brian
-Britney
-Brown
-Bruce
-Bryan
-Candy
-Carlos
 Carl
-Carmen
-Carrie
-Carry
-Caspar
-Cassandra
-Cassie
-Cathy
-Charles
-Chelsea
-Cherry
-Chloe
-Christine
-Chris
-Cindy
-Clair
-Clark
 Cody
 Cole
-Colin
-Connie
 Cora
-Crystal
-Daisy
-Daniel
-Darwin
 Dave
-David
 Demi
-Dennis
-Denny
-Diana
 Dick
-Donna
 Dora
-Doris
 Duke
-Dylan
-Eddie
-Edison
-Edward
-Edwin
 Ella
-Ellen
 Elsa
-Emily
-Enid
-Ethan
 Evan
-Eva
-Evelyn
-Eve
-Fiona
-Flora
 Ford
-Francis
-Frank
 Fred
-Gavin
-George
 Gina
 Gino
 Glen
-Gloria
-Grace
-Haley
 Hank
-Hannah
-Hardy
-Harry
 Hebe
-Heidi
-Hellen
-Henna
-Henry
-Hilton
-Howard
 Hugo
 Hunk
-Ian
-Irene
 Iris
-Isaac
 Ivan
-Ivy
-Jackson
 Jack
 Jade
-James
-Janet
 Jane
-Jason
-Jay
-Jeffery
-Jenny
-Jerry
-Jesse
-Jessica
-Jimmy
-Jim
 Joan
-Joe
-Johnny
 John
-Jordan
-Joseph
 Jose
-Joyce
-Joy
 Judy
-Julia
 June
-Justin
-Karen
 Kate
-Kathy
-Katie
 Katy
-Kayla
-Kay
-Keith
-Kelly
-Kenny
-Ken
-Kevin
-Kitty
 Kyle
-Larry
-Laura
-Lee
-Lena
-Leo
 Lily
-Linda
 Lisa
-Liz
 Lora
-Loren
-Louis
 Lucy
-Luke卢
-Lulu
-Lydia
 Lynn
-Maggie
-Manda
-Mandy
-Maria
 Mark
 Mars
-Martin
 Mary
-Mason
-Mayme
-May
-Melody
-Mia
-Michael
-Michelle
 Mike
-Miranda
 Miya
-Molly
-Monica
-Morgan
-Nancy
-Natasha
-Nathan
 Neil
-Nicole
 Nina
 Nora
-Norman
-Oliver
-Olivia
-Oscar
 Owen
-Patrick
-Patty
-Paula
 Paul
-Pearl
-Peggy
-Peter
-Philip
-Rachel
-Randy
-Raymond
-Ray
-Rebecca
-Rex
-Richard
-Rita
-Robert
-Robinson
 Rock
-Roger
 Rose
-Roy
-Sabrina
-Sally
 Sami
-Sammy
-Samuel
-Sam
-Sandy
-Sarah
 Sara
 Sean
-Selina
-Serena
-Shelly
-Shirley
-Simon
-Sophia
-Spark
-Stacy
-Stanley
-Stella
-Steve
-Sue
-Sunny
-Susan
-Tanya
-Ted
-Teresa
-Terry
 Tess
-Thomas
-Tiffany
-Tim
 Tina
 Todd
-Tommy
-Tom
 Tony
-Tracy
-Tyler
-Van
-Venus
 Vera
-Vern
-Vicky
-Victoria
-Victor
-Vincent
 Vita
-Vivian
-Warren
-Wayne
-Wendy
-William
-Winnie
 Zack
 Zara
+Ada
+Amy
+Ann
+Ben
+Bob
+Eva
+Eve
+Ian
+Ivy
+Jay
+Jim
+Joe
+Joy
+Kay
+Ken
+Lee
+Leo
+May
+Ray
+Rex
+Roy
+Sam
+Sue
+Ted
+Tim
+Tom
+Van
 Zoe
-
-
 Scarlett Johansson
 Robert Downey, Jr.
 Samuel L. Jackson
@@ -681,968 +253,7 @@ Bruce Willis
 Eddie Murphy
 Letitia Wright
 Liam Neeson
-Benedict Wong
-Ben Stiller
-Hugh Jackman
-Ian McKellen
-Danai Gurira
-Gwyneth Paltrow
-Mark Wahlberg
-Jennifer Lawrence
-Nicolas Cage
-Cameron Diaz
-Ewan McGregor
-Pom Klementieff
-Jim Carrey
-Idris Elba
-Natalie Portman
-Christian Bale
-Josh Gad
-Julia Roberts
-Sandra Bullock
-Adam Sandler
-Ryan Reynolds
-Ralph Fiennes
-Jack Black
-Ben Affleck
-Robert De Niro
-Jason Statham
-Sylvester Stallone
-Paul Rudd
-Owen Wilson
-Adam Driver
-Daniel Craig
-Daisy Ridley
-John Boyega
-Morgan Freeman
-Robin Williams
-Keanu Reeves
-Orlando Bloom
-Mel Gibson
-George Clooney
-Kevin Hart
-Robert Pattinson
-Brie Larson
-Simon Pegg
-Arnold Schwarzenegger
-Shia LaBeouf
-Martin Freeman
-Meryl Streep
-Anthony Mackie
-Jude Law
-Jon Favreau
-Mark Hamill
-Denzel Washington
-Anthony Hopkins
-Keegan-Michael Key
-Tim Allen
-Keira Knightley
-Sam Worthington
-Geoffrey Rush
-Channing Tatum
-Mike Myers
-Russell Crowe
-Paul Walker
-Kristen Stewart
-Angelina Jolie
-Michelle Rodriguez
-John Travolta
-Colin Farrell
-Evangeline Lilly
-Nicole Kidman
-Anne Hathaway
-Seth Rogen
-Taylor Lautner
-Viggo Mortensen
-Cate Blanchett
-Lupita Nyong'o
-Michael Douglas
-Pierce Brosnan
-John Leguizamo
-Michelle Pfeiffer
-Chiwetel Ejiofor
-Andy Serkis
-Tommy Lee Jones
-Colin Firth
-Kate Winslet
-Kristen Bell
-Woody Harrelson
-Charlize Theron
-James McAvoy
-Ben Kingsley
-Rachel McAdams
-Matthew McConaughey
-Henry Cavill
-Oscar Isaac
-Denis Leary
-Kevin Costner
-Ray Romano
-Chris Pine
-Jon Hamm
-Will Ferrell
-Jamie Foxx
-Tobey Maguire
-Reese Witherspoon
-John Goodman
-Gerard Butler
-Carrie Fisher
-Chris Rock
-Bill Murray
-Zendaya
-Kevin James
-Alan Tudyk
-Kristen Wiig
-Ben Mendelsohn
-Jackie Chan
-Michael Fassbender
-Bryce Dallas Howard
-Dustin Hoffman
-Emma Thompson
-Sacha Baron Cohen
-Jake Gyllenhaal
-Amy Adams
-Antonio Banderas
-Javier Bardem
-Terry Notary
-Richard Gere
-Queen Latifah
-Angela Bassett
-Tom Hardy
-Gal Gadot
-Idina Menzel
-Emily Blunt
-Robert Redford
-Michael Caine
-Michael Peña
-Jada Pinkett Smith
-Patrick Stewart
-Willem Dafoe
-Ezra Miller
-Zach Galifianakis
-Eddie Redmayne
-Aaron Taylor-Johnson
-Elijah Wood
-Tilda Swinton
-Beyoncé Knowles
-Jennifer Aniston
-Helena Bonham Carter
-Michael Keaton
-Clint Eastwood
-Kevin Kline
-Alec Baldwin
-Kurt Russell
-Tyrese Gibson
-Emma Stone
-Amanda Seyfried
-Jack Nicholson
-Anthony Daniels
-Al Pacino
-Jonah Hill
-Alan Rickman
-Dennis Quaid
-Zac Efron
-Jesse Eisenberg
-Rami Malek
-Rowan Atkinson
-Penélope Cruz
-Steve Martin
-Jeff Bridges
-Jason Momoa
-John Cusack
-David Spade
-Donnie Yen
-Margot Robbie
-Jason Bateman
-Taron Egerton
-Catherine Zeta-Jones
-John C. Reilly
-Chris ‘Ludacris’ Bridges
-Michael B. Jordan
-Rachel Weisz
-Karl Urban
-Jordana Brewster
-Bill Hader
-Justin Long
-Matthew Broderick
-Annette Bening
-Eva Green
-Benicio del Toro
-Forest Whitaker
-Eric Andre
-Julie Walters
-Hugh Grant
-Donald Glover
-Danny DeVito
-Holly Hunter
-Demi Moore
-Billy Crystal
-Jay Baruchel
-Michelle Williams
-Michael J. Fox
-Nathalie Emmanuel
-Luke Evans
-Jennifer Lopez
-Ellen DeGeneres
-Jet Li
-Dolph Lundgren
-Tessa Thompson
-Nick Jonas
-Mads Mikkelsen
-Kenneth Branagh
-Laurence Fishburne
-John Cena
-Dan Fogler
-Miles Teller
-Salma Hayek
-Riz Ahmed
-Andy Samberg
-David Schwimmer
-Patrick Wilson
-Craig T. Nelson
-Daniel Kaluuya
-Renée Zellweger
-Martin Lawrence
-Drew Barrymore
-Sarah Vowell
-Albert Brooks
-Will Arnett
-Brendan Fraser
-T.J. Miller
-Alison Sudol
-Megan Fox
-Bill Nighy
-Hayden Christensen
-James Earl Jones
-Seann William Scott
-Steve Buscemi
-Jessica Alba
-Ed Helms
-Kate Beckinsale
-Andy Garcia
-Maggie Smith
-James Spader
-Vince Vaughn
-Jeff Goldblum
-Milla Jovovich
-Halle Berry
-Joaquin Phoenix
-Selena Gomez
-Joseph Gordon-Levitt
-Sean Connery
-John Oliver
-Rebecca Ferguson
-Jodie Foster
-Christoph Waltz
-Glenn Close
-Andrew Garfield
-Cedric the Entertainer
-Katherine Waterston
-Alfre Woodard
-Tom McGrath
-James Franco
-Lea Seydoux
-Glen Powell
-Ryan Gosling
-Julianne Moore
-Mindy Kaling
-Elizabeth Debicki
-Kelly Marie Tran
-Billy Eichner
-Dan Stevens
-Jai Courtney
-Guy Pearce
-Florence Kasumba
-JD McCrary
-Shahadi Wright Joseph
-John Kani
-Jay Ellis
-Meg Ryan
-Awkwafina
-Djimon Hounsou
-Viola Davis
-Susan Sarandon
-Dakota Johnson
-Sigourney Weaver
-Dylan O’Brien
-Tom Wilkinson
-Georgie Henley
-Skandar Keynes
-Lewis James Pullman
-Jason Sudeikis
-Gemma Chan
-Robbie Coltrane
-Paul Newman
-Chloë Grace Moretz
-Anna Kendrick
-Stellan Skarsgård
-Domhnall Gleeson
-Melissa McCarthy
-Michelle Monaghan
-Anna Faris
-Stanley Tucci
-Ben Whishaw
-Isla Fisher
-Eiza González
-Seth MacFarlane
-Naomie Harris
-Heath Ledger
-Danny Ramirez
-Monica Barbaro
-Greg Tarzan Davis
-Zoë Kravitz
-Joonas Suotamo
-Felicity Jones
-Elizabeth Banks
-Edward Norton
-Gugu Mbatha-Raw
-Ashton Kutcher
-Dominic Cooper
-Judi Dench
-Jeremy Irons
-Jesse McCartney
-Danny Glover
-Kevin Spacey
-Wesley Snipes
-Jamie Dornan
-Hailee Steinfeld
-John Malkovich
-Helen Mirren
-Diego Luna
-Jared Leto
-Hannibal Buress
-Ray Winstone
-Bette Midler
-James Corden
-Matthew Gray Gubler
-Marisa Tomei
-Rebel Wilson
-Michael Shannon
-Nick Nolte
-Mickey Rourke
-Lake Bell
-Wanda Sykes
-Ian McShane
-John Cho
-Keri Russell
-Jenny Slate
-Ice Cube
-Andy Richter
-Gwendoline Christie
-Eric Stonestreet
-Ana de Armas
-Mizuo Peck
-Patrick Gallagher
-Mila Kunis
-Christopher Walken
-Frances McDormand
-Joel Kinnaman
-Diane Keaton
-Jamie Lee Curtis
-Richard Dreyfuss
-Jordan Peele
-Yahya Abdul-Mateen II
-Nathan Lane
-Jonathan Groff
-Audra McDonald
-Keke Palmer
-Naomi Scott
-Santino Fontana
-Sam Rockwell
-Ginnifer Goodwin
-Huck Milner
-Eric Bana
-Paula Patton
-Amber Heard
-Alexander Skarsgård
-Val Kilmer
-Zachary Quinto
-Ving Rhames
-Craig Ferguson
-Noomi Rapace
-Sarah Jessica Parker
-Teri Polo
-Maya Rudolph
-Hannah John-Kamen
-Roger Moore
-Amy Poehler
-Lily James
-Jack Reynor
-Christopher Mintz-Plasse
-Dana Carvey
-Karen Allen
-Ellie Kemper
-Richard Harris
-Bill Skarsgård
-Katherine Heigl
-Barbra Streisand
-Conrad Vernon
-Blythe Danner
-Sofia Boutella
-Haley Joel Osment
-Rose Byrne
-Emilia Clarke
-Shailene Woodley
-William Moseley
-Jennifer Garner
-Armie Hammer
-Lee Pace
-Anna Popplewell
-Trey Parker
-Clark Gregg
-Lashana Lynch
-Josh Hutcherson
-Octavia Spencer
-Christine Baranski
-Tyler Perry
-Elliot Page
-Sarah Silverman
-Christina Hendricks
-Ron Perlman
-Byung-hun Lee
-Freida Pinto
-Aaron Eckhart
-Nicola Peltz
-Elle Fanning
-Gael Garcia Bernal
-Annie Potts
-Wang Baoqiang
-Benjamin Bratt
-Adewale Akinnuoye-Agbaje
-Alyson Hannigan
-Tony Hale
-Kaya Scodelario
-Patton Oswalt
-Jimmy Vee
-Patrick Swayze
-Vera Farmiga
-Alicia Vikander
-Regina Hall
-Goldie Hawn
-Ken Jeong
-Callum Turner
-Jay Hernandez
-William Shatner
-Ethan Hawke
-Sharon Stone
-Justin Timberlake
-Zhang Hanyu
-Marwan Kenzari
-Clive Owen
-Mena Massoud
-Navid Negahban
-Cara Delevingne
-Dan Aykroyd
-Zachary Levi
-Tori Kelly
-Marion Cotillard
-Will Poulter
-Charlie Day
-Dan Whitney
-Christopher Eccleston
-Steve Coogan
-Jake Lloyd
-Christina Ricci
-Diane Lane
-Gene Hackman
-Sienna Miller
-Gary Oldman
-Tracy Morgan
-James Marsden
-Benjamin Barnes
-Robert Guillaume
-Bill Pullman
-Tiffany Haddish
-Jason Biggs
-Rihanna
-Joe Pesci
-Michael Stuhlbarg
-Ben Schwartz
-Thomas Ian Nicholas
-Eddie Kaye Thomas
-Téa Leoni
-Ernie Sabella
-Jonathan Taylor Thomas
-Josh Hartnett
-Mark Strong
-Chao Deng
-Giancarlo Esposito
-Macaulay Culkin
-Justin Bartha
-George Lopez
-Chris Miller
-Natasha Lyonne
-Kate McKinnon
-Heather Graham
-Jack Davenport
-Kirsten Dunst
-Neel Sethi
-Joel Edgerton
-Xochitl Gomez
-Sarah Michelle Gellar
-Barry Humphries
-Naomi Watts
-Lewis Black
-Mandy Moore
-Charlie Sheen
-Thomas Brodie-Sangster
-Paul Dano
-Dev Patel
-Maria Bello
-James Caviezel
-Dave Franco
-Tony Jaa
-Brittany Snow
-Jonathan Winters
-Katy Perry
-Jaden Smith
-Toby Kebbell
-Karan Soni
-Patrick Dempsey
-Eugene Levy
-Daniel Stern
-Louis C.K.
-Nick Kroll
-Diane Kruger
-Chris Tucker
-Bernie Mac
-Abigail Breslin
-Huang Bo
-Adam Beach
-Leslie Mann
-Neve Campbell
-Bobby Moynihan
-Kristin Davis
-Liu Haoran
-Tye Sheridan
-William H. Macy
-Xu Zheng
-Freddie Highmore
-Edward Burns
-Michael Rooker
-Anton Yelchin
-Zhang Ziyi
-Clark Duke
-Audrey Tautou
-Russell Brand
-Christopher Lloyd
-Snoop Dogg
-Kumail Nanjiani
-Tara Reid
-Ioan Gruffudd
-Zach Braff
-Jennifer Connelly
-Ike Barinholtz
-Phyllis Smith
-Jason Lee
-Michael Nyqvist
-Brianna Hildebrand
-Jason Clarke
-Hilary Swank
-Sean Penn
-John Candy
-Taika Waititi
-Jonathan Pryce
-Carmen Ejogo
-Rosie O'Donnell
-Jeff Daniels
-Ben Foster
-Terrence Howard
-AnnaSophia Robb
-Linda Cardellini
-Theo James
-Julie Andrews
-Rosamund Pike
-Zhang Yi
-Samantha Morton
-Toni Collette
-Chris Sanders
-Cloris Leachman
-Logan Lerman
-Henry Thomas
-Olivia Wilde
-Mark Rylance
-Jessica Chastain
-Scott Eastwood
-Adrien Brody
-Daniel Day-Lewis
-Daveed Diggs
-Jack McBrayer
-Jessica Biel
-Bob Hoskins
-Whoopi Goldberg
-Terry Crews
-Sean Harris
-Janeane Garofalo
-Famke Janssen
-Danny McBride
-Zazie Beetz
-Catherine Keener
-Chris O'Donnell
-Anthony Gonzalez
-John Krasinski
-Craig Robinson
-Jackie Earle Haley
-Daveigh Chase
-Kim Cattrall
-Jane Fonda
-Joey King
-Morena Baccarin
-Rick Moranis
-Leslie Uggams
-Stefan Kapicic
-Vanessa Hudgens
-Walton Goggins
-Gina Rodriguez
-Mena Suvari
-Gemma Arterton
-Taylor Kitsch
-Saoirse Ronan
-Florence Pugh
-Alison Brie
-Anjelica Huston
-Charlie Hunnam
-Carla Gugino
-Vanessa Kirby
-Omar Sy
-Chris Klein
-Uma Thurman
-Anil Kapoor
-Karen Fukuhara
-Jared Harris
-Yanting Lü
-Minnie Driver
-Ed Harris
-Garrett Hedlund
-Shannon Elizabeth
-Winona Ryder
-Edward Asner
-Jordan Nagai
-Marlon Wayans
-Brian Tyree Henry
-Roy Scheider
-Annabelle Wallis
-Michael Clarke Duncan
-Jamie Bell
-Cher
-Steven Seagal
-Mahershala Ali
-Liv Tyler
-Lucy Alexis Liu
-Cynthia Nixon
-Maggie Grace
-Lena Waithe
-Josh Holloway
-Rooney Mara
-Bonnie Hunt
-Jaeden Lieberher
-Olivia Cooke
-Gu Chuxiao
-Vladimir Mashkov
-Jemaine Clement
-William Hurt
-Satoshi Tsumabuki
-Kate Hudson
-Sally Field
-Michelle Yeoh
-Cobie Smulders
-America Ferrera
-Taraji P. Henson
-Bridget Moynahan
-Shen Teng
-Mélanie Laurent
-Chevy Chase
-Corey Stoll
-Taylor Swift
-Rosa Salazar
-Asa Butterfield
-Peter Dinklage
-Dakota Fanning
-Said Taghmaoui
-Rene Russo
-Steve Guttenberg
-Ray Fisher
-Blake Lively
-Eugenio Derbez
-Ryan Potter
-Claudia Kim
-Scott Adsit
-Tom Hulce
-Jaimie Alexander
-Lance Henriksen
-Jon Bernthal
-Hank Azaria
-Hugh Bonneville
-Ester Dean
-Kevin Bacon
-Auli'i Cravalho
-Spencer Fox
-Jacob Tremblay
-David Koechner
-Eddie Peng
-Lindsay Lohan
-Burt Reynolds
-Jim Parsons
-Lou Romano
-Ian Holm
-Jeremy Piven
-Tom Sizemore
-Ansel Elgort
-Zhang Yuqi
-Rob Schneider
-Suraj Sharma
-Chris O'Dowd
-Billy Connolly
-Dafne Keen
-Emily Mortimer
-Matthew Lillard
-Hugh Laurie
-Tobin Bell
-Nicholas Hoult
-Paul Hogan
-Peter Cullen
-Christopher Knights
-Li Bingbing
-Ed Skrein
-Lady Gaga
-Kristin Scott Thomas
-Jake Johnson
-Courteney Cox
-Winston Chao
-Jay Chou
-Malin Akerman
-Alexis Knapp
-Anna Camp
-William Fichtner
-Dennis Haysbert
-Catherine O'Hara
-Ashley Judd
-Jim Sturgess
-Greg Kinnear
-Philip Zhao
-Win Morisaki
-Lena Headey
-Alan Arkin
-Ki Hong Lee
-Cliff Curtis
-Sofia Vergara
-Dane Cook
-Whitney Houston
-Jane Lynch
-Kelly Macdonald
-Cuba Gooding, Jr.
-Freddie Prinze, Jr.
-Jean-Claude Van Damme
-Michael Ealy
-Bryan Cranston
-Thandiwe Newton
-Cheech Marin
-Qianyuan Wang
-Salman Khan
-Jeremy Irvine
-Elizabeth Perkins
-Elsie Fisher
-Timothée Chalamet
-Alice Eve
-Andy Lau
-James Garner
-Paul Giamatti
-Kevin McKidd
-David Arquette
-Emma Roberts
-Chuck Norris
-Mary Elizabeth Winstead
-Shawn Wayans
-Ken Watanabe
-Juliette Binoche
-Dana Gaier
-Miranda Cosgrove
-Li Chen
-Don Lee
-François Cluzet
-Rainn Wilson
-Josh Peck
-F. Murray Abraham
-Angelababy
-Wayne Knight
-Ben Burtt
-Aldis Hodge
-Mary Steenburgen
-Christopher Reeve
-Tony Shalhoub
-Ruby Rose
-Ray Stevenson
-Dan Castellaneta
-Tina Fey
-Talitha Bateman
-Show Luo
-Lin Yun
-Michael Sheen
-Demián Bichir
-Bobby Cannavale
-Robert Shaw
-Fionn Whitehead
-J.B. Smoove
-Ed O'Neill
-Christopher Plummer
-Baihe Bai
-Elodie Yung
-Lizzy Caplan
-Penelope Wilton
-Carey Mulligan
-Joe Manganiello
-Tom Kenny
-Carrie Anne Moss
-Henry Golding
-Zheng Kai
-Emilio Estevez
-Sanaa Lathan
-Lea Salonga
-Scott Weinger
-Jonathan Freeman
-Brad Kane
-Linda Larkin
-Jenifer Lewis
-Andie MacDowell
-Mia Wasikowska
-Pedro Pascal
-Joe Lo Truglio
-Louis Koo
-Jean Reno
-Tony Goldwyn
-Adrianne Palicki
-Daryl Sabara
-Alexa Vega
-James Jude Courtney
-Kellan Lutz
-Kathleen Turner
-will.i.am
-RZA
-Alan Ritchson
-Noel Fisher
-Pete Ploszek
-Tohoru Masamune
-Jeremy Howard
-David Ogden Stiers
-Chow Yun-Fat
-John David Washington
-John Heard
-Peter Stormare
-Lu Han
-Wallace Chung
-Randy Couture
-John Rhys-Davies
-Denholm Elliott
-Julia Winter
-Jordon Fry
-Philip Wiegratz
-Madonna
-Liam Hemsworth
-Alison Doody
-Michael Byrne
-Jiang Wu
-John Corbett
-Imelda Staunton
-Ou Hao
-Du Chun
-Mckenna Grace
-Amanda Peet
-Robert Duvall
-Ma Li
-Wei Xiang
-Helen Hunt
-Jonny Solomon
-Sadie Sandler
-Sunny Sandler
-Asher Blinkoff
-Amy Smart
-Nia Vardalos
-Tika Sumpter
-Joe Pantoliano
-Til Schweiger
-Gabrielle Union
-John Ratzenberger
-Paul Dooley
-Richard Petty
-George Carlin
-Guido Quaroni
-Michael Wallis
-Katherine Helmond
-Joe Ranft
-Lance Reddick
-Rupert Everett
-Mary Ma
-Anthony LaPaglia
-Alden Ehrenreich
-Koyuki Kato
-Robby Benson
-Skyler Gisondo
-Charlotte Rampling
-Kodi Smit-McPhee
-Christopher Guest
-Marc Maron
-DeForest Kelley
-Leonard Nimoy
-Ty Burrell
-Rodrigo Santoro
-Mary Elizabeth Mastrantonio
-Tony Leung Chiu Wai
-Jason Segel
-Ricky Gervais
-Johnny Knoxville
-Justice Smith
-Lisa Jakob
-Travis Fimmel
-Bono
-Sam Neill
-Paige O'Hara
-Joseph Fiennes
-Piper Perabo
-Sally Hawkins
-Arnold Vosloo
-Oded Fehr
-Edgar Ramirez
-Jackson Yee
-Aaron Kwok
-David Harbour
-John Hurt
-Nick Stahl
-Li Qin
-Du Jiang
-Shu Qi
-Simu Liu
-Finn Wolfhard
-Xuan Huang
-Shemar Moore
-Donald Sutherland
-Max von Sydow
-Aamir Khan
-Stephanie Beatriz
-Ashley Tisdale
-Amanda Bynes
-Casey Affleck
-George MacKay
-Kelsey Grammer
-Leslie Odom Jr.
-Song Kang-ho
-Kal Penn
-Tim Robbins
-Warren Beatty
-Christina Applegate
-Molly Shannon
-Alex Pettyfer
-Richard Madden
-Rinko Kikuchi
-Alessandro Nivola
-Alain Chabat
-Jason Schwartzman
-Leslie Jones
-Topher Grace
-Kathy Bates
-Barry Keoghan
-Hilary Duff
-Shirley MacLaine
-Clark Gable
-
+ElonMusk
 red
 grey
 blue
@@ -1661,8 +272,6 @@ tomato
 yellow
 silver
 purple
-
-
 oat
 fig
 pea
@@ -1720,623 +329,323 @@ pizza
 squid
 water
 juice
-Sesame
-cherry
-shrimp
-banana
-tomato
-salmon
-cheese
-pawpaw
-oyster
-noodle
-potato
-litchi
-fillet
-ginger
-garlic
-butter
-peanut
-carrot
-pepper
-orange
-turtle
-brandy
-coconut
-sausage
-lobster
-chicken
-cookies
-ketchup
-sandwich
-mushroom
-cocktail
-icecream
-lollipop
-blueberry
-hotpepper
-hamburger
-chocolate
-watermelon
-
-porno
-sam
-deepak
-opensea
-games
-wallet
-patriots
-crypto
-samsung
-artdao
-google
-apple
-tasi
-starbucks
-ukraine
-hermes
-trade
-sony
-wei
-sex
-defi
-coke
-porn
-btc
-eth
-kevin
-com
-dapp
-jobs
-arteka
-game
-joseph
-play
-name
-rug
-poker
-amazon
-tim
-david
 discord
-mystic
-ladygaga
-nba
-monaco
-market
-art
-bigbag
-gas
-tobi
-mee6
-sportsbet
-asset
-fidenza
-login
-lego
-ddd
+opensea
 pornhub
-ooo
-lend
-martin
-beer
-moon
-mars
-punk
-shell
-funds
-tiffany
-zachxbt
-japan
-disney
-conked
-adidas
-dima
-0x8
-bank
-etoro
-degengod
-dao
-anon
-goose
-nhl
-virtual
-jim
-loan
+artdao
+bigbag
 coffee
-gold
-fund
-madrid
-gal
-hoe
-joy
-rent
-usa
+crypto
+deepak
+domain
+hacker
+hotels
+market
+martin
+mystic
+square
+wallet
+asset
+casey
+david
+etoro
+funds
+goose
+grail
+hotel
+japan
+kevin
+legal
+login
+memes
 music
+pixar
+poker
+porno
+shell
+spain
+sward
+trade
+union
+alex
+anon
+baby
+bank
+beer
+cash
+coco
+coke
+cold
+dapp
+defi
+dima
+dydx
+eran
+fiat
+fund
+game
+girl
+gold
+golf
+jobs
+lego
+lend
+loan
+mars
+mee6
+moon
+name
+only
+play
+porn
+prun
+punk
+rent
+rose
+shop
+song
+sony
+swap
+taco
+tasi
+time
+tobi
+weed
+0x8
+art
+axe
+boy
+btc
+car
+com
+dao
+ddd
+dex
+eth
+gal
+gas
+gem
+gmi
+hoe
+jim
+joy
+nba
 nfl
 nft
-hotel
-greece
-cold
-toyota
-roided
-gmi
-gem
-only
-hacker
-nike
-dotswoosh
-pixar
-4games
-sward
-weed
-casey
-grail
-rose
-hotels
-prun
-coco
-looksrare
-dydx
-fiat
-car
-time
-dex
-shop
-square
-legal
-swap
-kakao
-cash
-alex
-axe
-spain
-baby
-song
-memes
-golf
-boy
-girl
+nhl
+ooo
+rug
+sam
+sex
 suz
-lemon
-domain
-taco
-eran
-union
-deepak
-
+tim
+usa
+wei
 3M
-7-Eleven
 ABB
-Abbott
-AbbVie
 ABC
-Adidas
-ADNOC
-Adobe
-ADP
-Aetna
-AIA
-Airbus
-Airtel
-Aldi
-Allstate
-Amazon
-AMD
-Anthem
-ANZ
-Apple
-Aramco
-Asda
-ASML
-AT&T
-au
-Audi
-AutoZone
-Aviva
+AMG
 AXA
-Baidu
-Barclays
-BASF
-Bayer
-BBVA
-Bell
-Best Buy
-BHP
-BMO
 BMW
-BNSF
 BOE
-Boeing
-Bosch
-Bouygues
-BP
-Broadcom
-BT
-BUICK
-Burberry
-BYD
-Canon
-Carmax
-Carrefour
-Cartier
 CBS
-CCCC
 CDW
-CFLD
-Chanel
-Chase
-Chevrolet
-Chevron
-Chubb
-CIBC
-Cigna
-Circle K
-Cisco
-Citi
-Claro
-Clinique
-CNBM
-CNOOC
-CNRL
-COACH
-Coca-Cola
-Coles
-Conad
-Conch
-Corona
-Costco
-Coupang
-CPIC
-CRCC
-CRECG
-CRRC
-CSCEC
 CSX
-Cummins
 CVS
-Daikin
-Danaher
-Danone
 DBS
-Deloitte
-Delta
 DHL
-Dior
-Discover
-Disney
-Dove
-Dunkin'
-E.ON
-eBay
-Edeka
 EDF
-Emirates
-Enel
-Engie
 Eni
-Equinor
-ESPN
-Etisalat
-EY
-Facebook
-FedEx
-Ferrari
 FIS
-Ford
 Fox
-Gazprom
-Geely
-GEICO
-Gillette
-Goertek
-Google
-Gree
-GUCCI
-Guerlain
-H&M
-Haier
-Haitian
-Haval
 HCA
 HCL
-Heineken
-Hermès
-Hilton
-Hitachi
-Honda
-HP
 HPE
-HSBC
-Huawei
-Humana
-Hyatt
 IBM
-ICBC
-IKEA
-Infosys
 ING
-Instagram
-Intel
-IQVIA
-Itaú
-Jeep
 Jio
-JP Morgan
-JR
-Kakao
-KEPCO
 KFC
 Kia
-Kohl's
-KPMG
-Kroger
-L&M
-Lay's
-Lego
-LENNAR
-Lenovo
-Lexus
-LG Group
 LIC
-Lidl
-LinkedIn
-L'Oréal
-Lowe's
-Lukoil
-Maersk
-Marlboro
-Marubeni
 MCC
-McCain
-McLane
-Meituan
-Mengniu
-Merrill
-Metlife
-Michelin
-Microsoft
-Midea
-Mitsui
-Monster
-Moutai
-Movistar
-MSCI
-MUFG
-NatWest
-Naver
 NBC
-Nescafé
-Nestlé
-NetEase
-Netflix
-Nike
-Nintendo
-Nissan
-Nivea
-Nokia
-Nordea
-Nvidia
-O2
-Optum
-Oracle
-Orange
-Pampers
-Pantene
-PayPal
-Pepsi
-Petronas
-Pfizer
-Philips
-PICC
-Ping An
-Playstation
 PNC
-Porsche
 PTT
-Publix
-Purina
 PWC
 QNB
-Quaker
-Rabobank
-Rakuten
 RBC
-Red Bull
-Reliance
-Renault
-Repsol
-Roche
-Rogers
-Rolex
-SABIC
-Safeway
-Santander
 SAP
-Sber
-Sephora
 SFR
-Shell
-Sinopec
-SK Group
 Sky
-Snapchat
-SoftBank
-Sony
-SPAR
-Spectrum
-Spotify
-Sprite
-Starbucks
 STC
-Subaru
-Subway
-Sunac
-Suzuki
-Sysco
-Taobao
-Target
-TD
-Telenor
-Telia
-Telstra
-Telus
-Tencent
-Tesco
-Tesla
-Tide
 TIM
-TJ Maxx
-Tmall
-Toyota
-Truist
-TSMC
-Twitter
-Tyson
-Uber
 UBS
-UNIQLO
-Universal
 UOB
 UPS
-USPS
-Valero
-Vanke
-Verizon
-Viettel
-Vinci
+Audi
+Bell
+Citi
+Dior
+Dove
+Ford
+IKEA
+Lego
+Nike
+Sony
+Uber
 VISA
-VMWARE
-Vodafone
-Volvo
-Walmart
-WeChat
-Wendy's
-Wipro
-Wrigley
 Xbox
-Xfinity
-Xiaomi
-Yanghe
-Yili
-Youku
+Bosch
+COACH
+GUCCI
+Intel
+Lexus
+Midea
+Pepsi
+Rolex
+Shell
+Tesla
+Adidas
+Airbus
+Amazon
+Boeing
+Chanel
+Disney
+Google
+Hermes
+Hilton
+Nvidia
+Sprite
+Toyota
+loreal
+Cartier
+Ferrari
+Monster
+Netflix
+Porsche
+Spotify
+Twitter
 YouTube
-Zalando
-ZARA
-Zurich
+CocaCola
+Burberry
+Discover
+Heineken
+Nintendo
+Red Bull
+Microsoft
+Starbucks
+Universal
+Decentraland
+cryptopunk
 
-1inch
-a16z
-aave
+
+larvalabs
+
+Ethereum
+
+
+
+Metamask
+
+Protocol
 Apecoin
-aptos
-Avalanche
-axie
-bayc
-biance
-bit
 Bitcoin
-bnb
-btse
 Cardano
-cash
-cdai
-celo
-ceth
-chain
-Chainlink
-coin
+harmony
+network
+Osmosis
+Polygon
+Sandbox
+Stellar
+Uniswap
+Vechain
+biance
 cosmos
 cronos
 crypto
-cryptopunk
-curve
-dai
-dash
-Decentraland
-defi
-Dogecoin
-ecash
-enjin
-eos
-Ethereum
-evmos
 Fantom
-Filecoin
-flow
-frax
-frax
-ftx
-gala
 gamefi
-gate
 gemini
-gmx
-gold
-graph
-harmony
 hedera
 helium
-holo
-huobi
-Internet
-iota
 Klaytn
 kucoin
-larvalabs
-leo
-lido
-Litecoin
-luna
-maker
-math
-meta
-Metamask
-mina
 monero
-money
-move
 movevm
-near
-neo
-network
-nexo
+solana
+tether
+wallet
+1inch
+aptos
+chain
+curve
+ecash
+enjin
+evmos
+graph
+huobi
+maker
+money
 oasis
-okb
-Osmosis
-pax
-Polkadot
-poly
-Polygon
-pool
-Protocol
 quant
 radix
-safe
-Sandbox
 shiba
-solana
-Stellar
 sushi
 swiss
 terra
 terra
-tether
 token
+trust
+waves
+zcash
+a16z
+aave
+axie
+bayc
+btse
+cash
+cdai
+celo
+ceth
+coin
+dash
+defi
+flow
+frax
+frax
+gala
+gate
+gold
+holo
+iota
+lido
+luna
+math
+meta
+mina
+move
+near
+nexo
+poly
+pool
+safe
 tron
 true
-trust
-ufo
-Uniswap
-usd
 usdc
 usdt
-Vechain
-wallet
-waves
+bit
+bnb
+dai
+eos
+ftx
+gmx
+leo
+neo
+okb
+pax
+ufo
+usd
 xrp
-zcash
-
 PAK
 DRIFT
 Beeple
@@ -2374,7 +683,6 @@ Elmgreen & Dragset
 Michael Winkelmann
 Rafael Lozano-Hemmer
 Random International
-
 cz
 dk
 ll
@@ -2548,14 +856,28 @@ chengcheng
 zhoushuoji
 zhuzichuan
 raymondwang
-
-yl
-WMG
-WMC
-sky
-max
-jue
-jam
+cosmospeople
+sunnymagic
+carterfang
+ninechen
+jamhsiao
+chenheng
+Rchord 
+leahdou
+icyball
+zengyu
+warner
+summer
+sherry
+mayday
+mattew
+Hamen 
+feifei
+joseph
+steve
+lyrra
+eason
+alvin
 yuki
 yuan
 shao
@@ -2566,247 +888,61 @@ fifi
 echo
 cool
 xylo
-steve
-lyrra
-eason
-alvin
-zengyu
-warner
-summer
-sherry
-mayday
-mattew
-Hamen 
-feifei
-Rchord 
-leahdou
-icyball
-ninechen
-jamhsiao
-chenheng
-sunnymagic
-carterfang
-cosmospeople
+WMG
+WMC
+max
+jue
+jam
+lulu
+☺️
+🦊
 
-😀
-😀
-😃
-😄
-😁
+🥳
+🥲
+🥰
+🤣
+🤖
+
+
+🙈
+🙃
+🙂
+😻
+😷
+😶
+😵
+😭
+😬
+😪
+😤
+😢
+
+
+
+😛
+😚
+😙
+😘
+😑
+😐
+😏
+😍
+😋
+😊
+😉
+😇
 😆
 😅
+😃
 😂
-🤣
-🥲
-🥹
-☺️
-😊
-😇
-🙂
-🙃
-😉
-😌
-😍
-🥰
-😘
-😗
-😙
-😚
-😋
-😛
-😝
-😜
-🤪
-🤨
-🧐
-🤓
-😎
-🥸
-🤩
-🥳
-😏
-😒
-😞
-😔
-😟
-😕
-🙁
-☹️
-😣
-😖
-😫
-😩
-🥺
-😢
-😭
-😮‍💨
-😤
-😠
-😡
-🤬
-🤯
-😳
-🥵
-🥶
-😱
-😨
-😰
-😥
-😓
-🫣
-🤗
-🫡
-🤔
-🫢
-🤭
-🤫
-🤥
-😶
-😶‍🌫️
-😐
-😑
-😬
-🫠
-🙄
-😯
-😦
-😧
-😮
-😲
-🥱
-😴
-🤤
-😪
-😵
-😵‍💫
-🫥
-🤐
-🥴
-🤢
-🤮
-🤧
-😷
-🤒
-🤕
-🤑
-🤠
-😈
-👿
-👹
-👺
-🤡
 💩
-👻
-💀
-☠️
-👽
 👾
-🤖
-🎃
-😺
-😸
-😹
-😻
-😼
-😽
-🙀
-😿
-😾
-👋
-🤚
-🖐
-✋
-🖖
-👌
-🤌
-🤏
-✌️
-🤞
-🫰
-🤟
-🤘
-🤙
-🫵
-🫱
-🫲
-🫳
-🫴
-👈
-👉
-👆
-🖕
-👇
-☝️
-👍
-👎
-✊
-👊
-🤛
-🤜
-👏
-🫶
-🙌
-👐
-🤲
-🤝
-🙏
-👶
-👧
-🧒
-👦
-👩
-🧑
-👨
-👩‍🦱
-🧑‍🦱
-👨‍🦱
-👩‍🦰
-🧑‍🦰
-👨‍🦰
-👱‍♀️
-👱
-👱‍♂️
-👩‍🦳
-🧑‍🦳
-👨‍🦳
-👩‍🦲
-🧑‍🦲
-👨‍🦲
-🧔‍♀️
-🧔
-🧔‍♂️
-👵
-🧓
-👴
-👲
-👳‍♀️
-👳
-👳‍♂️
-🧕
-🐶
-🐱
-🐭
-🐹
-🐰
-🦊
-🐻
+👽
+👻
 🐼
-🐻‍❄️
-🐨
-🐯
-🦁
+🐶
 🐮
-🐷
-🐽
-🐸
-🐵
-🙈
-🙉
-🙊
-🐒
-🐔
-🐧
-🐦
+🐨
 🐤
 李
 王
@@ -2858,53 +994,3 @@ cosmospeople
 丁
 沈
 姜
-范
-江
-傅
-钟
-卢
-汪
-戴
-崔
-任
-陆
-廖
-姚
-方
-金
-邱
-夏
-谭
-韦
-贾
-邹
-石
-熊
-孟
-秦
-阎
-薛
-侯
-雷
-白
-龙
-段
-郝
-孔
-邵
-史
-毛
-常
-万
-顾
-赖
-武
-康
-贺
-严
-尹
-钱
-施
-牛
-洪
-龚
