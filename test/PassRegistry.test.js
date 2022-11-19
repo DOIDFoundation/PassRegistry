@@ -496,6 +496,111 @@ describe('PassRegistry', function () {
       await expect(proxy.lockName(passId, 'abcdefg')).to.be.revertedWith('AL')
     })
 
+    it('lock name length limit with A code', async function () {
+      let passId = 1
+      let sig = await admin.signMessage(
+        ethers.utils.arrayify(
+          ethers.utils.keccak256(
+            ethers.utils.solidityPack(['uint256', 'bytes32'], [passId, AHash]),
+          ),
+        ),
+      )
+      await expect(proxy.lockPass(sig, '', AHash, passId)).not.to.be.reverted
+      await expect(proxy.lockName(passId, 'a')).to.be.revertedWith('IN')
+      await expect(proxy.lockName(passId, 'ab')).not.to.be.reverted
+
+      passId++
+      sig = await admin.signMessage(
+        ethers.utils.arrayify(
+          ethers.utils.keccak256(
+            ethers.utils.solidityPack(['uint256', 'bytes32'], [passId, AHash]),
+          ),
+        ),
+      )
+      await expect(proxy.connect(bob).lockPass(sig, '', AHash, passId)).not.to
+        .be.reverted
+      await expect(proxy.connect(bob).lockName(passId, '😄')).not.to.be.reverted
+    })
+
+    it('lock name length limit with B code', async function () {
+      let passId = 1
+      let classHash = BHash
+      let sig = await admin.signMessage(
+        ethers.utils.arrayify(
+          ethers.utils.keccak256(
+            ethers.utils.solidityPack(
+              ['uint256', 'bytes32'],
+              [passId, classHash],
+            ),
+          ),
+        ),
+      )
+      await expect(proxy.lockPass(sig, '', classHash, passId)).not.to.be
+        .reverted
+      await expect(proxy.lockName(passId, 'a')).to.be.revertedWith('IN')
+      await expect(proxy.lockName(passId, 'ab')).to.be.revertedWith('IN')
+      await expect(proxy.lockName(passId, 'abc')).to.be.revertedWith('IN')
+      await expect(proxy.lockName(passId, '😄')).to.be.revertedWith('IN')
+      await expect(proxy.lockName(passId, 'abcd')).not.to.be.reverted
+
+      passId++
+      sig = await admin.signMessage(
+        ethers.utils.arrayify(
+          ethers.utils.keccak256(
+            ethers.utils.solidityPack(
+              ['uint256', 'bytes32'],
+              [passId, classHash],
+            ),
+          ),
+        ),
+      )
+      await expect(proxy.connect(bob).lockPass(sig, '', classHash, passId)).not
+        .to.be.reverted
+      await expect(proxy.connect(bob).lockName(passId, '😄😄')).not.to.be
+        .reverted
+    })
+
+    it('lock name length limit with C code', async function () {
+      let passId = 1
+      let classHash = CHash
+      let sig = await admin.signMessage(
+        ethers.utils.arrayify(
+          ethers.utils.keccak256(
+            ethers.utils.solidityPack(
+              ['uint256', 'bytes32'],
+              [passId, classHash],
+            ),
+          ),
+        ),
+      )
+      await expect(proxy.lockPass(sig, '', classHash, passId)).not.to.be
+        .reverted
+      await expect(proxy.lockName(passId, 'a')).to.be.revertedWith('IN')
+      await expect(proxy.lockName(passId, 'ab')).to.be.revertedWith('IN')
+      await expect(proxy.lockName(passId, 'abc')).to.be.revertedWith('IN')
+      await expect(proxy.lockName(passId, 'abcd')).to.be.revertedWith('IN')
+      await expect(proxy.lockName(passId, 'abcde')).to.be.revertedWith('IN')
+      await expect(proxy.lockName(passId, '😄')).to.be.revertedWith('IN')
+      await expect(proxy.lockName(passId, '😄😄')).to.be.revertedWith('IN')
+      await expect(proxy.lockName(passId, 'abcdef')).not.to.be.reverted
+
+      passId++
+      sig = await admin.signMessage(
+        ethers.utils.arrayify(
+          ethers.utils.keccak256(
+            ethers.utils.solidityPack(
+              ['uint256', 'bytes32'],
+              [passId, classHash],
+            ),
+          ),
+        ),
+      )
+      await expect(proxy.connect(bob).lockPass(sig, '', classHash, passId)).not
+        .to.be.reverted
+      await expect(proxy.connect(bob).lockName(passId, '😄😄😄')).not.to.be
+        .reverted
+    })
+
     describe('Name available', function () {
       it('invalid name length', async function () {
         expect(await proxy.lenValid(2, 'c')).to.equals(false)
