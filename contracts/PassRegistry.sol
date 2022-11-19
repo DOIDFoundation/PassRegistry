@@ -30,7 +30,7 @@ contract PassRegistryStorage {
      * contract always adds up to the same number (in this case 50 storage slots).
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
-    uint256[43] private __gap;
+    uint256[42] private __gap;
 }
 
 contract PassRegistry is
