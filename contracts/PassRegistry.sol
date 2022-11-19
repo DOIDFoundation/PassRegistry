@@ -337,10 +337,7 @@ contract PassRegistry is
         PassInfo memory _passInfo = passInfo[tokenId];
         if (_passInfo.passHash != 0) {
             nameInfo = string(
-                abi.encodePacked(
-                    bytes(getNameByHash(_passInfo.passHash)),
-                    bytes("%22doid%20locked")
-                )
+                abi.encodePacked(bytes(getNameByHash(_passInfo.passHash)), bytes(".doid%20locked"))
             );
         } else nameInfo = "no%20name%20locked%20yet";
 
