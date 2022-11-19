@@ -501,9 +501,11 @@ describe('PassRegistry', function () {
         expect(await proxy.lenValid(2, 'c')).to.equals(false)
         expect(await proxy.lenValid(2, '1')).to.equals(false)
         expect(await proxy.lenValid(2, '.')).to.equals(false)
-        expect(await proxy.lenValid(2, '测')).to.equals(false)
+        expect(await proxy.lenValid(3, '😊')).to.equals(false)
+        expect(await proxy.lenValid(3, '测')).to.equals(false)
         expect(await proxy.lenValid(3, 'ab')).to.equals(false)
         expect(await proxy.lenValid(4, 'abc')).to.equals(false)
+        expect(await proxy.lenValid(6, '测试1')).to.equals(false)
       })
 
       it('valid name length', async function () {
@@ -511,10 +513,12 @@ describe('PassRegistry', function () {
         expect(await proxy.lenValid(2, '123')).to.equals(true)
         expect(await proxy.lenValid(2, 'ab')).to.equals(true)
         expect(await proxy.lenValid(2, 'abc')).to.equals(true)
-        expect(await proxy.lenValid(2, '测试')).to.equals(true)
-        expect(await proxy.lenValid(2, '测试1')).to.equals(true)
-        expect(await proxy.lenValid(3, '测试1')).to.equals(true)
-        expect(await proxy.lenValid(4, '测试12')).to.equals(true)
+        expect(await proxy.lenValid(2, '测')).to.equals(true)
+        expect(await proxy.lenValid(1, '😊')).to.equals(true)
+        expect(await proxy.lenValid(2, '😊')).to.equals(true)
+        expect(await proxy.lenValid(4, '测试')).to.equals(true)
+        expect(await proxy.lenValid(5, '测试1')).to.equals(true)
+        expect(await proxy.lenValid(6, '测试12')).to.equals(true)
       })
 
       it('reserve name', async function () {
