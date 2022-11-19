@@ -7,8 +7,7 @@ const pathToHashName = 'scripts/reserveNamesHash.txt'
 const pathToValidName = 'scripts/reserveNamesValid.txt'
 
 async function generateNames() {
-  let names = [],
-    hashnames = []
+  let names = {}
 
   const readStream = fs.createReadStream('scripts/reserveNames.txt')
   const writeStream = fs.createWriteStream(pathToValidName)
@@ -31,9 +30,17 @@ async function generateNames() {
       continue
     }
 
-    names.push(name)
+    if (names[name]) continue
+
+    names[name] = true
+    // console.log(
+    //   name,
+    //   ethers.utils.toUtf8Bytes(name).length,
+    //   ethers.utils.hexlify(ethers.utils.toUtf8Bytes(name)),
+    //   parseInt(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(name))),
+    // )
+    // continue
     let hashname = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(name))
-    hashnames.push(hashname)
     writeStream.write(name)
     writeStream.write('\n')
     writeHashStream.write(hashname)
@@ -45,8 +52,8 @@ async function generateNames() {
 
 // upgrade contract
 async function main() {
-  // generateNames()
-  // return
+  generateNames()
+  return
 
   let names = [],
     hashnames = []
