@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: None
 pragma solidity >=0.8.4;
 
+import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
@@ -37,6 +38,7 @@ contract PassRegistry is
     AccessControlEnumerableUpgradeable
 {
     using CountersUpgradeable for CountersUpgradeable.Counter;
+    using StringsUpgradeable for uint256;
 
     uint8 constant ClassAInvitationNum = 5;
     uint8 constant ClassBInvitationNum = 5;
@@ -325,10 +327,13 @@ contract PassRegistry is
         _requireMinted(tokenId);
 
         string memory nameInfo;
-        PassInfo memory passInfo = passInfo[tokenId];
-        if (passInfo.passHash != 0) {
+        PassInfo memory _passInfo = passInfo[tokenId];
+        if (_passInfo.passHash != 0) {
             nameInfo = string(
-                abi.encodePacked(bytes(getNameByHash(passInfo.passHash)), bytes("%20locked"))
+                abi.encodePacked(
+                    bytes(getNameByHash(_passInfo.passHash)),
+                    bytes("%22doid%20locked")
+                )
             );
         } else nameInfo = "no%20name%20locked%20yet";
 
@@ -336,7 +341,7 @@ contract PassRegistry is
             string(
                 abi.encodePacked(
                     bytes("data:application/json;utf8,%7B%22name%22%3A%22DOID%20Lock%20Pass%20%23"),
-                    tokenId,
+                    tokenId.toString(),
                     bytes("%22%2C%22description%22%3A%22A%20DOID%20lock%20pass%2C%20with%20"),
                     bytes(nameInfo),
                     bytes(
