@@ -104,7 +104,7 @@ contract PassRegistry is
         uint _passId
     ) external {
         require(!isUserActivated(msg.sender), "IU");
-        userActivated[msg.sender] = true;
+        //userActivated[msg.sender] = true;
         if (_passId == 0) {
             address codeFrom = verifyInvitationCode(_classHash, _invitationCode);
             require(userInvitesMax[codeFrom] > userInvitedNum[codeFrom], "IC");
