@@ -77,7 +77,7 @@ contract PassRegistry is
             class = ClassA;
         } else if (_hash == ClassB) {
             invNum = ClassBInvitationNum;
-            nameLen = ClassANameLen;
+            nameLen = ClassBNameLen;
             class = ClassB;
         }
     }
