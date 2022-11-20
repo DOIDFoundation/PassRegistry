@@ -5,6 +5,10 @@ var uts46 = require('idna-uts46-hx')
 
 const pathToHashName = 'scripts/reserveNamesHash.txt'
 const pathToValidName = 'scripts/reserveNamesValid.txt'
+const CONTRACT_ADDRESS =
+  // '0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE' //Sepolia
+  // '0xF32950cf48C10431b27EFf888D23cB31615dFCb4' //Goerli
+  '0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F' // Mainnet
 
 async function generateNames() {
   let names = {}
@@ -52,8 +56,38 @@ async function generateNames() {
 
 // upgrade contract
 async function main() {
-  generateNames()
-  return
+  // let chars = []
+  // for (var i = 48; i <= 57; ++i) chars.push(i)
+  // for (var i = 97; i <= 122; ++i) chars.push(i)
+  // for (let i of chars) {
+  //   let c = String.fromCharCode(i)
+  //   console.log(c + c)
+  //   console.log(c + c + c)
+  //   console.log(c + c + c + c)
+  //   console.log(c + c + c + c + c)
+  //   console.log(c + c + c + c + c + c)
+  // }
+  // for (let i of chars) {
+  //   let c = String.fromCharCode(i)
+  //   let d = String.fromCharCode(i + 1)
+  //   let e = String.fromCharCode(i + 2)
+  //   let f = String.fromCharCode(i + 3)
+  //   if ((i >= 48 && i < 57) | (i >= 97 && i < 122)) console.log(c + d)
+  //   if ((i >= 48 && i < 56) | (i >= 97 && i < 121)) console.log(c + d + e)
+  //   if ((i >= 48 && i < 55) | (i >= 97 && i < 120)) console.log(c + d + e + f)
+  // }
+  // for (let i of chars) {
+  //   let c = String.fromCharCode(i)
+  //   let d = String.fromCharCode(i - 1)
+  //   let e = String.fromCharCode(i - 2)
+  //   let f = String.fromCharCode(i - 3)
+  //   if ((i > 48 && i <= 57) | (i > 97 && i <= 122)) console.log(c + d)
+  //   if ((i > 49 && i <= 57) | (i > 98 && i <= 122)) console.log(c + d + e)
+  //   if ((i > 50 && i <= 57) | (i > 99 && i <= 122)) console.log(c + d + e + f)
+  // }
+  // return
+  // generateNames()
+  // return
 
   let names = [],
     hashnames = []
@@ -80,18 +114,14 @@ async function main() {
 
   console.log('lines:', names.length, hashnames.length)
 
-  const Registry = await hre.ethers.getContractFactory('PassRegistry')
-  const proxy = await upgrades.upgradeProxy(
-    '0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE',
-    Registry,
-  )
+  const proxy = await hre.ethers.getContractAt('PassRegistry', CONTRACT_ADDRESS)
 
-  const chunkSize = 1000
+  const chunkSize = 1300
   const start = 0
   for (let i = start; i < hashnames.length; i += chunkSize) {
     console.log('starting', i)
     const chunk = hashnames.slice(i, i + chunkSize)
-    console.log(await proxy.estimateGas.reserveName(chunk))
+    console.log(await proxy.reserveName(chunk))
   }
 }
 

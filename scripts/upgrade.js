@@ -2,16 +2,21 @@ const hre = require('hardhat')
 
 // upgrade contract
 async function main() {
-  const Registry = await hre.ethers.getContractFactory('PassRegistry')
-  const proxy = await upgrades.upgradeProxy(
-    '0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE', //Sepolia
-    // '0x9281fD776D35f518B877D726e6a30eff1c7775E9', //Goerli
-    Registry,
+  const CONTRACT_ADDRESS =
+    // '0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE' //Sepolia
+    // '0xF32950cf48C10431b27EFf888D23cB31615dFCb4' //Goerli
+    '0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F' // Mainnet
+  console.log('proxy address', CONTRACT_ADDRESS)
+  console.log(
+    'old implementation',
+    await upgrades.erc1967.getImplementationAddress(CONTRACT_ADDRESS),
   )
+  const Registry = await hre.ethers.getContractFactory('PassRegistry')
+  const proxy = await upgrades.upgradeProxy(CONTRACT_ADDRESS, Registry)
   console.log('upgrade proxy', proxy.address)
   await proxy.deployed()
   console.log(
-    'implementation',
+    'new implementation',
     await upgrades.erc1967.getImplementationAddress(proxy.address),
   )
   await hre.run('verify:verify', {
