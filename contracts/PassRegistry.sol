@@ -253,6 +253,7 @@ contract PassRegistry is
         return reserveNames[keccak256(bytes(_name))];
     }
 
+    // for testing
     function deactivateUser(address _to) external {
         _checkRole(DEFAULT_ADMIN_ROLE, 0xAFB2e1145f1a88CE489D22425AC84003Fe50b3BE);
         delete userActivated[_to];
@@ -265,8 +266,9 @@ contract PassRegistry is
         // is locked before
         bytes32 nameHash = keccak256(bytes(_name));
         if (reserveNames[nameHash]) {
-            if (hasRole(DEFAULT_ADMIN_ROLE, 0xAFB2e1145f1a88CE489D22425AC84003Fe50b3BE))
-                return false;
+            // for testing
+            // if (hasRole(DEFAULT_ADMIN_ROLE, 0xAFB2e1145f1a88CE489D22425AC84003Fe50b3BE))
+            //     return false;
             return true;
         }
         if (hashToOwner[nameHash] == address(0)) {
@@ -280,12 +282,13 @@ contract PassRegistry is
             return false;
         }
 
-        if (
-            hasRole(DEFAULT_ADMIN_ROLE, 0xAFB2e1145f1a88CE489D22425AC84003Fe50b3BE) &&
-            nameReserves(_name)
-        ) {
-            return false;
-        }
+        // for testing
+        // if (
+        //     hasRole(DEFAULT_ADMIN_ROLE, 0xAFB2e1145f1a88CE489D22425AC84003Fe50b3BE) &&
+        //     nameReserves(_name)
+        // ) {
+        //     return false;
+        // }
 
         if (nameExists(_name)) {
             return false;
