@@ -136,7 +136,7 @@ contract PassRegistry is
 
         _lockName(_passId, _name, hashedName, nameLen);
 
-        emit LockPass(msg.sender, passNum);
+        emit LockPass(msg.sender, passNum + 1);
     }
 
     /**
