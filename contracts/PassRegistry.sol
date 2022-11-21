@@ -260,6 +260,9 @@ contract PassRegistry is
         if (hashToOwner[nameHash] == address(0)) {
             return false;
         }
+        if (reserveNames[nameHash]) {
+            return false;
+        }
         return true;
     }
 
@@ -272,9 +275,6 @@ contract PassRegistry is
             return false;
         }
 
-        if (nameReserves(_name)) {
-            return false;
-        }
         return true;
     }
 
