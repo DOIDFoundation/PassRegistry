@@ -177,6 +177,17 @@ contract PassRegistry is
         return true;
     }
 
+    function lockAndMint(string memory _name, address _to) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        passId.increment();
+        uint _passId = passId.current();
+        passInfo[_passId] = PassInfo({passId: _passId, passClass: ClassC, passHash: 0});
+        _mint(msg.sender, _passId);
+        bytes32 hashedName = keccak256(abi.encodePacked(_name));
+        delete reserveNames[hashedName];
+        require(_lockName(_passId, _name, hashedName, 2), "IN");
+        _transfer(msg.sender, _to, _passId);
+    }
+
     /**
      * @notice request user's pass list
      */
