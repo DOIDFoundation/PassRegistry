@@ -57,6 +57,7 @@ contract PassRegistry is
     // EVENTs
     event LockPass(address user, uint passNumber);
     event LockName(address user, uint passId, string name);
+    event Failure(string error);
 
     function initialize(
         address _admin,
@@ -160,6 +161,7 @@ contract PassRegistry is
         require(ownerOf(_passId) == msg.sender, "IP");
         require(passInfo[_passId].passHash == 0, "AL");
         if (!nameAvaliable(_minLen, _name)) {
+            emit Failure("IN");
             return false;
         }
 
@@ -258,7 +260,7 @@ contract PassRegistry is
         // is locked before
         bytes32 nameHash = keccak256(bytes(_name));
         if (reserveNames[nameHash]) {
-            return true;
+            return false;
         }
         if (hashToOwner[nameHash] == address(0)) {
             return false;
@@ -268,6 +270,10 @@ contract PassRegistry is
 
     function nameAvaliable(uint _minLen, string memory _name) public view returns (bool) {
         if (!lenValid(_minLen, _name)) {
+            return false;
+        }
+
+        if (nameReserves(_name)) {
             return false;
         }
 
