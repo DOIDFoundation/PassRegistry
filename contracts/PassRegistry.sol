@@ -257,10 +257,10 @@ contract PassRegistry is
     function nameExists(string memory _name) public view returns (bool) {
         // is locked before
         bytes32 nameHash = keccak256(bytes(_name));
-        if (hashToOwner[nameHash] == address(0)) {
-            return false;
-        }
         if (reserveNames[nameHash]) {
+            return true;
+        }
+        if (hashToOwner[nameHash] == address(0)) {
             return false;
         }
         return true;
