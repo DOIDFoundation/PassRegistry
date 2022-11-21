@@ -254,10 +254,10 @@ contract PassRegistry is
     }
 
     // for testing
-    function deactivateUser(address _to) external {
-        _checkRole(DEFAULT_ADMIN_ROLE, 0xAFB2e1145f1a88CE489D22425AC84003Fe50b3BE);
-        delete userActivated[_to];
-    }
+    // function deactivateUser(address _to) external {
+    //     _checkRole(DEFAULT_ADMIN_ROLE, 0xAFB2e1145f1a88CE489D22425AC84003Fe50b3BE);
+    //     delete userActivated[_to];
+    // }
 
     /**
      * @notice check if name has already been registered
