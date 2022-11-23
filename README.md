@@ -1,14 +1,10 @@
-# Sample Hardhat Project
-
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
-
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.js
-```
 # PassRegistry
+
+Contract to mint your lock pass and lock your desired DOID name.
+
+# How to
+
+1. Copy `.env.template` to `.env`
+2. Edit `.env` and input your keys
+3. DO NOT EXPLODE YOUR PRIVATE KEY!
+4. Run hardhat tasks.
