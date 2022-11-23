@@ -1,10 +1,11 @@
 const hre = require('hardhat')
 const http = require('http')
 
+const AHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('A'))
+const BHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('B'))
+const CHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('C'))
+
 function getClassName(classHash) {
-  const AHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('A'))
-  const BHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('B'))
-  const CHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('C'))
   switch (classHash) {
     case AHash:
       return 'A'
@@ -33,7 +34,7 @@ async function main() {
   var options_LockName = {
     host: 'api.etherscan.io',
     path:
-      '/api?module=account&action=txlist&sort=desc' +
+      '/api?module=account&action=txlist&sort=asc' +
       `&startblock=${fromBlock}&toBlock=latest&address=${contractAddr}` +
       `&topic0=${lockNameTopic}&page=1&offset=1000&apikey=${apikey}`,
   }
@@ -67,6 +68,12 @@ async function main() {
               log.args[3].toString().padEnd(6),
               'and lock',
               log.args[1],
+              log.args[3] == 0
+                ? 'from ' +
+                    ethers.utils
+                      .verifyMessage(ethers.utils.arrayify(CHash), log.args[0])
+                      .toLowerCase()
+                : '',
               parseInt(item.isError) ? '❌' : '',
             )
             break
