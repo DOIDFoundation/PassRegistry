@@ -34,7 +34,7 @@ async function main() {
         resultVec.forEach(item => {
             let log = iface.parseLog(item);
             const {user, passId, name} = log.args;
-            console.log(`sender:${user}, passId:${passId}, passName:${name}`)
+            console.log('sender', user, 'passId', passId.toString().padEnd(6), 'passName', name)
         });
       });
     }
