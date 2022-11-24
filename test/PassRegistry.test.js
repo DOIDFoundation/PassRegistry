@@ -313,6 +313,39 @@ describe('PassRegistry', function () {
       ).to.greaterThanOrEqual(100000)
     })
 
+    it('using a C type invitation code from user', async function () {
+      const passId = 1
+      const classHash = AHash
+      const hashedMsg = ethers.utils.keccak256(
+        ethers.utils.solidityPack(['uint256', 'bytes32'], [passId, classHash]),
+      )
+      const sig = await admin.signMessage(ethers.utils.arrayify(hashedMsg))
+      // bob lock A pass
+      await expect(proxy.connect(bob).lockPass(sig, '', classHash, passId)).not
+        .to.be.reverted
+      expect(await proxy.balanceOf(bob.address)).to.equals(6)
+      // bob sign a C invitation code
+
+      const bobsCode = ethers.utils.arrayify(
+        ethers.utils.hexValue(BigInt(bob.address) ^ BigInt(CHash)),
+        {hexPad:"left"})
+
+      // cannot use if name is not locked
+      await expect(
+        proxy.connect(carl).lockPass(bobsCode, '', CHash, 0),
+      ).to.be.revertedWith('IC')
+      // bob should lockName first
+      await expect(proxy.connect(bob).lockName(passId, 'bob')).not.to.be
+        .reverted
+      await expect(proxy.connect(carl).lockPass(bobsCode, '', CHash, 0)).not.to
+        .be.reverted
+
+      expect(await proxy.balanceOf(carl.address)).to.equals(1)
+      expect(
+          await proxy.tokenOfOwnerByIndex(carl.address, 0),
+        ).to.greaterThanOrEqual(100000)
+    })
+
     it('invitation code from user can only be class C', async function () {
       let sig = await admin.signMessage(
         ethers.utils.arrayify(
