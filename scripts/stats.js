@@ -1,4 +1,4 @@
-const hre = require("hardhat");
+const ethers = require('ethers')
 const http = require('http');
 
 async function main() {

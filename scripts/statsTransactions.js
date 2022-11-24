@@ -1,4 +1,4 @@
-const hre = require('hardhat')
+const ethers = require('ethers')
 const http = require('http')
 
 const AHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('A'))
