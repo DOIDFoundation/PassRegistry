@@ -327,7 +327,7 @@ contract PassRegistry is
      * @notice verify a request code by message and its signature
      */
     function verifyInvitationCode(bytes32 _msg, bytes memory _sig) public pure returns (address) {
-        if (_sig.length == 32) {
+        if (_msg == ClassC && _sig.length == 32) {
             bytes32 chunk;
             assembly {
                 chunk := mload(add(_sig, 32))
