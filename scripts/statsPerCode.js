@@ -52,6 +52,8 @@ async function main() {
       var jdata = JSON.parse(str)
       var resultVec = jdata['result']
       var passes = {}
+      const wsB = fs.createWriteStream('codeBase.log')
+      wsB.write('----Base----\n')
       const wsF = fs.createWriteStream('codeFoundation.log')
       wsF.write('----Foundation----\n')
       const wsC = fs.createWriteStream('codeCommunity.log')
@@ -87,11 +89,11 @@ async function main() {
           case 'lockPass':
             if (log.args[3] != 0) {
               if (!passes[item.from]) passes[item.from] = log.args[3]
-              if (
-                log.args[3] <= 300 ||
-                (log.args[3] > 600 && log.args[3] <= 700)
-              ) {
-                // From founadtion
+              if (log.args[3] <= 300) {
+                // From Codebase
+                ws = wsB
+              } else if (log.args[3] > 600 && log.args[3] <= 700) {
+                // From foundation
                 ws = wsF
               } else {
                 // From community
@@ -124,6 +126,7 @@ async function main() {
             break
         }
       })
+      wsB.close()
       wsF.close()
       wsC.close()
       wsU.close()
