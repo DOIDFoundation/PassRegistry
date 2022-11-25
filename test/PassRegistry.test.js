@@ -362,6 +362,23 @@ describe('PassRegistry', function () {
       await expect(
         proxy.connect(accounts[3]).lockPass(bobsCode, '', AHash, ++passId),
       ).to.be.revertedWith('IR')
+      bobsCode = ethers.utils.arrayify(
+        ethers.utils.hexValue(
+          BigInt(admin.address) ^
+            BigInt(
+              ethers.utils.keccak256(
+                ethers.utils.solidityPack(
+                  ['uint256', 'bytes32'],
+                  [++passId, AHash],
+                ),
+              ),
+            ),
+        ),
+        { hexPad: 'left' },
+      )
+      await expect(
+        proxy.connect(accounts[3]).lockPass(bobsCode, '', AHash, passId),
+      ).to.be.revertedWith('IR')
 
       // bob sign a B invitation code
       bobsCode = ethers.utils.arrayify(
@@ -373,6 +390,42 @@ describe('PassRegistry', function () {
       ).to.be.revertedWith('IC')
       await expect(
         proxy.connect(accounts[4]).lockPass(bobsCode, '', BHash, ++passId),
+      ).to.be.revertedWith('IR')
+      bobsCode = ethers.utils.arrayify(
+        ethers.utils.hexValue(
+          BigInt(admin.address) ^
+            BigInt(
+              ethers.utils.keccak256(
+                ethers.utils.solidityPack(
+                  ['uint256', 'bytes32'],
+                  [++passId, BHash],
+                ),
+              ),
+            ),
+        ),
+        { hexPad: 'left' },
+      )
+      await expect(
+        proxy.connect(accounts[4]).lockPass(bobsCode, '', BHash, passId),
+      ).to.be.revertedWith('IR')
+
+      // bob sign a C invitation code with passId
+      bobsCode = ethers.utils.arrayify(
+        ethers.utils.hexValue(
+          BigInt(admin.address) ^
+            BigInt(
+              ethers.utils.keccak256(
+                ethers.utils.solidityPack(
+                  ['uint256', 'bytes32'],
+                  [++passId, CHash],
+                ),
+              ),
+            ),
+        ),
+        { hexPad: 'left' },
+      )
+      await expect(
+        proxy.connect(accounts[5]).lockPass(bobsCode, '', CHash, passId),
       ).to.be.revertedWith('IR')
     })
 
