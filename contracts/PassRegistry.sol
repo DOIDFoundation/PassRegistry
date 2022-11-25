@@ -194,7 +194,7 @@ contract PassRegistry is
         _transfer(msg.sender, _to, _passId);
     }
 
-    function setReverseName() public view onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setReverseName() public onlyRole(DEFAULT_ADMIN_ROLE) {
         ReverseRegistrar rr = ReverseRegistrar(0xD5610A08E370051a01fdfe4bB3ddf5270af1aA48); // Goerli
         // ReverseRegistrar rr = ReverseRegistrar(0x084b1c3C81545d370f3634392De611CaaBFf8148); // Mainnet
         rr.setName("lockpass.doid.tech");
@@ -264,10 +264,10 @@ contract PassRegistry is
     }
 
     // for testing
-    // function deactivateUser(address _to) external {
-    //     _checkRole(DEFAULT_ADMIN_ROLE, 0xAFB2e1145f1a88CE489D22425AC84003Fe50b3BE);
-    //     delete userActivated[_to];
-    // }
+    function deactivateUser(address _to) external {
+        _checkRole(DEFAULT_ADMIN_ROLE, 0xAFB2e1145f1a88CE489D22425AC84003Fe50b3BE);
+        delete userActivated[_to];
+    }
 
     /**
      * @notice check if name has already been registered
