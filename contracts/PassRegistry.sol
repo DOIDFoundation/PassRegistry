@@ -33,6 +33,10 @@ contract PassRegistryStorage {
     uint256[42] private __gap;
 }
 
+abstract contract ReverseRegistrar {
+    function setName(string memory name) public view virtual returns (bytes32);
+}
+
 contract PassRegistry is
     PassRegistryStorage,
     ERC721EnumerableUpgradeable,
@@ -190,6 +194,12 @@ contract PassRegistry is
         _transfer(msg.sender, _to, _passId);
     }
 
+    function setReverseName() public view onlyRole(DEFAULT_ADMIN_ROLE) {
+        ReverseRegistrar rr = ReverseRegistrar(0xD5610A08E370051a01fdfe4bB3ddf5270af1aA48); // Goerli
+        // ReverseRegistrar rr = ReverseRegistrar(0x084b1c3C81545d370f3634392De611CaaBFf8148); // Mainnet
+        rr.setName("lockpass.doid.tech");
+    }
+
     /**
      * @notice request user's pass list
      */
@@ -327,13 +337,13 @@ contract PassRegistry is
      * @notice verify a request code by message and its signature
      */
     function verifyInvitationCode(bytes32 _msg, bytes memory _sig) public pure returns (address) {
-        if(_sig.length == 32){
-           bytes32 chunk;
-           assembly {
-               chunk := mload(add(_sig, 32))
-               chunk := xor(chunk, _msg)
-           }
-           return address(uint160(uint256(chunk)));
+        if (_sig.length == 32) {
+            bytes32 chunk;
+            assembly {
+                chunk := mload(add(_sig, 32))
+                chunk := xor(chunk, _msg)
+            }
+            return address(uint160(uint256(chunk)));
         }
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
         bytes32 _hashMessage = keccak256(abi.encodePacked(prefix, _msg));
