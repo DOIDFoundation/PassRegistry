@@ -314,7 +314,7 @@ describe('PassRegistry', function () {
     })
 
     it('using a C type invitation code from user', async function () {
-      const passId = 1
+      let passId = 1
       const classHash = AHash
       const hashedMsg = ethers.utils.keccak256(
         ethers.utils.solidityPack(['uint256', 'bytes32'], [passId, classHash]),
@@ -324,11 +324,12 @@ describe('PassRegistry', function () {
       await expect(proxy.connect(bob).lockPass(sig, '', classHash, passId)).not
         .to.be.reverted
       expect(await proxy.balanceOf(bob.address)).to.equals(6)
-      // bob sign a C invitation code
 
-      const bobsCode = ethers.utils.arrayify(
+      // bob sign a C invitation code
+      let bobsCode = ethers.utils.arrayify(
         ethers.utils.hexValue(BigInt(bob.address) ^ BigInt(CHash)),
-        {hexPad:"left"})
+        { hexPad: 'left' },
+      )
 
       // cannot use if name is not locked
       await expect(
@@ -337,13 +338,95 @@ describe('PassRegistry', function () {
       // bob should lockName first
       await expect(proxy.connect(bob).lockName(passId, 'bob')).not.to.be
         .reverted
+
+      await expect(
+        proxy.connect(carl).lockPass(bobsCode, '', CHash, ++passId),
+      ).to.be.revertedWith('IR')
+
       await expect(proxy.connect(carl).lockPass(bobsCode, '', CHash, 0)).not.to
         .be.reverted
-
       expect(await proxy.balanceOf(carl.address)).to.equals(1)
       expect(
-          await proxy.tokenOfOwnerByIndex(carl.address, 0),
-        ).to.greaterThanOrEqual(100000)
+        await proxy.tokenOfOwnerByIndex(carl.address, 0),
+      ).to.greaterThanOrEqual(100000)
+
+      const accounts = await hre.ethers.getSigners()
+      // bob sign a A invitation code
+      bobsCode = ethers.utils.arrayify(
+        ethers.utils.hexValue(BigInt(bob.address) ^ BigInt(AHash)),
+        { hexPad: 'left' },
+      )
+      await expect(
+        proxy.connect(accounts[3]).lockPass(bobsCode, '', AHash, 0),
+      ).to.be.revertedWith('IC')
+      await expect(
+        proxy.connect(accounts[3]).lockPass(bobsCode, '', AHash, ++passId),
+      ).to.be.revertedWith('IR')
+      bobsCode = ethers.utils.arrayify(
+        ethers.utils.hexValue(
+          BigInt(admin.address) ^
+            BigInt(
+              ethers.utils.keccak256(
+                ethers.utils.solidityPack(
+                  ['uint256', 'bytes32'],
+                  [++passId, AHash],
+                ),
+              ),
+            ),
+        ),
+        { hexPad: 'left' },
+      )
+      await expect(
+        proxy.connect(accounts[3]).lockPass(bobsCode, '', AHash, passId),
+      ).to.be.revertedWith('IR')
+
+      // bob sign a B invitation code
+      bobsCode = ethers.utils.arrayify(
+        ethers.utils.hexValue(BigInt(bob.address) ^ BigInt(BHash)),
+        { hexPad: 'left' },
+      )
+      await expect(
+        proxy.connect(accounts[4]).lockPass(bobsCode, '', BHash, 0),
+      ).to.be.revertedWith('IC')
+      await expect(
+        proxy.connect(accounts[4]).lockPass(bobsCode, '', BHash, ++passId),
+      ).to.be.revertedWith('IR')
+      bobsCode = ethers.utils.arrayify(
+        ethers.utils.hexValue(
+          BigInt(admin.address) ^
+            BigInt(
+              ethers.utils.keccak256(
+                ethers.utils.solidityPack(
+                  ['uint256', 'bytes32'],
+                  [++passId, BHash],
+                ),
+              ),
+            ),
+        ),
+        { hexPad: 'left' },
+      )
+      await expect(
+        proxy.connect(accounts[4]).lockPass(bobsCode, '', BHash, passId),
+      ).to.be.revertedWith('IR')
+
+      // bob sign a C invitation code with passId
+      bobsCode = ethers.utils.arrayify(
+        ethers.utils.hexValue(
+          BigInt(admin.address) ^
+            BigInt(
+              ethers.utils.keccak256(
+                ethers.utils.solidityPack(
+                  ['uint256', 'bytes32'],
+                  [++passId, CHash],
+                ),
+              ),
+            ),
+        ),
+        { hexPad: 'left' },
+      )
+      await expect(
+        proxy.connect(accounts[5]).lockPass(bobsCode, '', CHash, passId),
+      ).to.be.revertedWith('IR')
     })
 
     it('invitation code from user can only be class C', async function () {

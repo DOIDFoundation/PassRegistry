@@ -254,10 +254,10 @@ contract PassRegistry is
     }
 
     // for testing
-    // function deactivateUser(address _to) external {
-    //     _checkRole(DEFAULT_ADMIN_ROLE, 0xAFB2e1145f1a88CE489D22425AC84003Fe50b3BE);
-    //     delete userActivated[_to];
-    // }
+    function deactivateUser(address _to) external {
+        _checkRole(DEFAULT_ADMIN_ROLE, 0xAFB2e1145f1a88CE489D22425AC84003Fe50b3BE);
+        delete userActivated[_to];
+    }
 
     /**
      * @notice check if name has already been registered
@@ -327,13 +327,13 @@ contract PassRegistry is
      * @notice verify a request code by message and its signature
      */
     function verifyInvitationCode(bytes32 _msg, bytes memory _sig) public pure returns (address) {
-        if(_sig.length == 32){
-           bytes32 chunk;
-           assembly {
-               chunk := mload(add(_sig, 32))
-               chunk := xor(chunk, _msg)
-           }
-           return address(uint160(uint256(chunk)));
+        if (_msg == ClassC && _sig.length == 32) {
+            bytes32 chunk;
+            assembly {
+                chunk := mload(add(_sig, 32))
+                chunk := xor(chunk, _msg)
+            }
+            return address(uint160(uint256(chunk)));
         }
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
         bytes32 _hashMessage = keccak256(abi.encodePacked(prefix, _msg));

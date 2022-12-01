@@ -17,6 +17,20 @@ function getClassName(classHash) {
   }
 }
 
+function getInviter(sig) {
+  try {
+    if (sig.length < 100) {
+      return ethers.utils.hexValue(BigInt(sig) ^ BigInt(CHash)).toLowerCase()
+    } else
+      return ethers.utils
+        .verifyMessage(ethers.utils.arrayify(CHash), sig)
+        .toLowerCase()
+  } catch (e) {
+    console.error('Error retrieving inviter from sig:', sig, 'with exception:')
+    console.error(e)
+  }
+}
+
 async function main() {
   let abi = [
     'event LockPass(address user, uint passNumber)',
@@ -52,6 +66,8 @@ async function main() {
       var jdata = JSON.parse(str)
       var resultVec = jdata['result']
       var passes = {}
+      const wsB = fs.createWriteStream('codeBase.log')
+      wsB.write('----Base----\n')
       const wsF = fs.createWriteStream('codeFoundation.log')
       wsF.write('----Foundation----\n')
       const wsC = fs.createWriteStream('codeCommunity.log')
@@ -87,11 +103,11 @@ async function main() {
           case 'lockPass':
             if (log.args[3] != 0) {
               if (!passes[item.from]) passes[item.from] = log.args[3]
-              if (
-                log.args[3] <= 300 ||
-                (log.args[3] > 600 && log.args[3] <= 700)
-              ) {
-                // From founadtion
+              if (log.args[3] <= 300) {
+                // From Codebase
+                ws = wsB
+              } else if (log.args[3] > 600 && log.args[3] <= 700) {
+                // From foundation
                 ws = wsF
               } else {
                 // From community
@@ -101,9 +117,7 @@ async function main() {
             } else {
               // From User
               ws = wsU
-              let inviteUser = ethers.utils
-                .verifyMessage(ethers.utils.arrayify(CHash), log.args[0])
-                .toLowerCase()
+              let inviteUser = getInviter(log.args[0])
               from = '\tfrom\t' + inviteUser + '\t#' + passes[inviteUser]
             }
             if (ws) {
@@ -124,6 +138,7 @@ async function main() {
             break
         }
       })
+      wsB.close()
       wsF.close()
       wsC.close()
       wsU.close()
