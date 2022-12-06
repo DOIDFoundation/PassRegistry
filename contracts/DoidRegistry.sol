@@ -3,27 +3,25 @@
 pragma solidity >=0.8.4;
 
 import '@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol';
 
-import "./DoidRegistryStorage.sol";
-import "./interfaces/IDoidRegistry.sol";
-import "./Resolver.sol";
+import './interfaces/IDoidRegistry.sol';
+import './Resolver.sol';
 
 contract DoidRegistry is 
     ERC721Upgradeable,
-    DoidRegisterStorage,
     Resolver,
     IDoidRegistry
 {
     string internal _prefix;
     address internal _mintingManager;
+    IERC721Upgradeable internal _passRegistry;
 
     mapping(address => uint256) internal _reverses;
 
     mapping(address => bool) internal _proxyReaders;
 
     mapping(uint256 => bool) internal _upgradedTokens;
-
-
 
     modifier protectTokenOperation(uint256 tokenId) {
         //if (isTrustedForwarder(msg.sender)) {
@@ -50,6 +48,21 @@ contract DoidRegistry is
         _;
     }
 
+    function initialize(
+        address mintingManager,
+        address passRegistry
+        //address rootChainManager,
+        //address childChainManager
+    ) public initializer {
+        _mintingManager = mintingManager;
+        _passRegistry = IERC721Upgradeable(passRegistry);
+
+        __ERC721_init_unchained('Doid Domains', 'DoiD');
+        //__RootRegistry_init(rootChainManager);
+        //__ChildRegistry_init(childChainManager);
+    }
+
+
 
 
     function namehash(string[] calldata labels) external pure override returns (uint256) {
@@ -70,7 +83,7 @@ contract DoidRegistry is
         address to,
         uint passId
     ) external override{
-
+        require(_passRegistry.ownerOf(passId) == msg.sender, "IO");
     }
 
     function mintWithPassIds(
