@@ -2,10 +2,13 @@
 // SPDX-License-Identifier: None
 pragma solidity >=0.8.4;
 
+import '@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721MetadataUpgradeable.sol';
+
 import "./IReverseRegistry.sol";
 import "./IResolver.sol";
 
 interface IDoidRegistry is 
+    IERC721Upgradeable,
     IReverseRegistry,
     IResolver
 {

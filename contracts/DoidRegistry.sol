@@ -113,7 +113,7 @@ contract DoidRegistry is
         address from,
         address to,
         uint256 tokenId
-    ) public override(ERC721Upgradeable) onlyApprovedOrOwner(tokenId) protectTokenOperation(tokenId) {
+    ) public override(IERC721Upgradeable, ERC721Upgradeable) onlyApprovedOrOwner(tokenId) protectTokenOperation(tokenId) {
         _reset(tokenId);
         _transfer(from, to, tokenId);
     }
@@ -123,7 +123,7 @@ contract DoidRegistry is
         address to,
         uint256 tokenId,
         bytes memory data
-    ) public override(ERC721Upgradeable) onlyApprovedOrOwner(tokenId) protectTokenOperation(tokenId) {
+    ) public override(IERC721Upgradeable, ERC721Upgradeable) onlyApprovedOrOwner(tokenId) protectTokenOperation(tokenId) {
         _reset(tokenId);
         _safeTransfer(from, to, tokenId, data);
     }
@@ -206,7 +206,7 @@ contract DoidRegistry is
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view override(ERC721Upgradeable) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view override(IERC165Upgradeable, ERC721Upgradeable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 

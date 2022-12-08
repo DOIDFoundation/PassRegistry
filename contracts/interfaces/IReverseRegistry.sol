@@ -1,5 +1,3 @@
-// @author Unstoppable Domains, Inc.
-// @date March 29th, 2022
 
 pragma solidity ^0.8.0;
 
