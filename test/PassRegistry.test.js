@@ -6,6 +6,10 @@ require('@nomicfoundation/hardhat-chai-matchers')
 const { expect } = require('chai')
 const hre = require('hardhat')
 
+function getNameHash(name) {
+  return ethers.utils.keccak256(ethers.utils.toUtf8Bytes(name))
+}
+
 describe('PassRegistry', function () {
   let proxy
   let admin, bob, carl
@@ -14,11 +18,14 @@ describe('PassRegistry', function () {
   const BHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('B'))
   const CHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('C'))
 
-  beforeEach(async function () {
+  before(async () => {
     const accounts = await hre.ethers.getSigners()
     admin = accounts[0]
     bob = accounts[1]
     carl = accounts[2]
+  })
+
+  beforeEach(async function () {
     const PassRegistry = await hre.ethers.getContractFactory('PassRegistry')
     proxy = await upgrades.deployProxy(PassRegistry, [
       admin.address,
@@ -26,6 +33,15 @@ describe('PassRegistry', function () {
       'pass',
     ])
     await proxy.grantRole(INVITER_ROLE, admin.address)
+  })
+
+  describe('NameHash', () => {
+    it('getHashByName', async () => {
+      expect(getNameHash('abc')).to.equal(
+        '0x4e03657aea45a94fc7d47ba826c8d667c0d1e6e33a64a036ec44f58fa12d6c45',
+      )
+      expect(await proxy.getHashByName('abc')).to.equals(getNameHash('abc'))
+    })
   })
 
   describe('LockPass', function () {
@@ -569,27 +585,27 @@ describe('PassRegistry', function () {
         'class ' + limit[0] + ' at ' + (limit[1] + 1),
       ).to.be.reverted
     })
-  })
 
-  it('every user can use invitation code only once', async function () {
-    let sig = await admin.signMessage(
-      ethers.utils.arrayify(
-        ethers.utils.keccak256(
-          ethers.utils.solidityPack(['uint256', 'bytes32'], [1, AHash]),
+    it('every user can use invitation code only once', async function () {
+      let sig = await admin.signMessage(
+        ethers.utils.arrayify(
+          ethers.utils.keccak256(
+            ethers.utils.solidityPack(['uint256', 'bytes32'], [1, AHash]),
+          ),
         ),
-      ),
-    )
-    //first time
-    await expect(proxy.lockPass(sig, '', AHash, 1)).not.to.be.reverted
-    //seconde time
-    let sig2 = await admin.signMessage(
-      ethers.utils.arrayify(
-        ethers.utils.keccak256(
-          ethers.utils.solidityPack(['uint256', 'bytes32'], [2, AHash]),
+      )
+      //first time
+      await expect(proxy.lockPass(sig, '', AHash, 1)).not.to.be.reverted
+      //seconde time
+      let sig2 = await admin.signMessage(
+        ethers.utils.arrayify(
+          ethers.utils.keccak256(
+            ethers.utils.solidityPack(['uint256', 'bytes32'], [2, AHash]),
+          ),
         ),
-      ),
-    )
-    await expect(proxy.lockPass(sig, '', AHash, 2)).to.be.revertedWith('IU')
+      )
+      await expect(proxy.lockPass(sig, '', AHash, 2)).to.be.revertedWith('IU')
+    })
   })
 
   describe('LockName', function () {
@@ -751,77 +767,162 @@ describe('PassRegistry', function () {
       await expect(proxy.connect(bob).lockName(passId, '😄😄😄')).not.to.be
         .reverted
     })
+  })
 
-    describe('Name available', function () {
-      it('invalid name length', async function () {
-        expect(await proxy.lenValid(2, 'c')).to.equals(false)
-        expect(await proxy.lenValid(2, '1')).to.equals(false)
-        expect(await proxy.lenValid(2, '.')).to.equals(false)
-        expect(await proxy.lenValid(3, '😊')).to.equals(false)
-        expect(await proxy.lenValid(3, '测')).to.equals(false)
-        expect(await proxy.lenValid(3, 'ab')).to.equals(false)
-        expect(await proxy.lenValid(4, 'abc')).to.equals(false)
-        expect(await proxy.lenValid(6, '测试1')).to.equals(false)
-      })
-
-      it('valid name length', async function () {
-        expect(await proxy.lenValid(2, '12')).to.equals(true)
-        expect(await proxy.lenValid(2, '123')).to.equals(true)
-        expect(await proxy.lenValid(2, 'ab')).to.equals(true)
-        expect(await proxy.lenValid(2, 'abc')).to.equals(true)
-        expect(await proxy.lenValid(2, '测')).to.equals(true)
-        expect(await proxy.lenValid(1, '😊')).to.equals(true)
-        expect(await proxy.lenValid(2, '😊')).to.equals(true)
-        expect(await proxy.lenValid(4, '测试')).to.equals(true)
-        expect(await proxy.lenValid(5, '测试1')).to.equals(true)
-        expect(await proxy.lenValid(6, '测试12')).to.equals(true)
-      })
-
-      it('reserve name', async function () {
-        let testname = [ethers.utils.keccak256(ethers.utils.toUtf8Bytes('aa'))]
-        await proxy.reserveName(testname)
-        expect(await proxy.nameReserves('aa')).to.equals(true)
-
-        let testnames = [
-          ethers.utils.keccak256(ethers.utils.toUtf8Bytes('aa')),
-          ethers.utils.keccak256(ethers.utils.toUtf8Bytes('bb')),
-          ethers.utils.keccak256(ethers.utils.toUtf8Bytes('111122')),
-          ethers.utils.keccak256(ethers.utils.toUtf8Bytes('测试名字')),
-        ]
-        await proxy.reserveName(testnames)
-        expect(await proxy.nameReserves('111122')).to.equals(true)
-        expect(await proxy.nameReserves('ab')).to.equals(false)
-        expect(await proxy.nameReserves('测试名字')).to.equals(true)
-        expect(await proxy.nameReserves('测试x名字')).to.equals(false)
-      })
-
-      it('reserve name can be locked by admin', async function () {
-        let testname = [ethers.utils.keccak256(ethers.utils.toUtf8Bytes('aa'))]
-        await proxy.reserveName(testname)
-        expect(await proxy.nameReserves('aa')).to.equals(true)
-        await expect(proxy.connect(bob).lockAndMint('aa', bob.address)).to.be
-          .reverted
-        await proxy.lockAndMint('aa', bob.address)
-        expect(await proxy.nameReserves('aa')).to.equals(false)
-        expect(await proxy.balanceOf(bob.address)).to.equals(1)
-      })
-
-      it('dup name', async function () {})
-
-      it('name max_length=64', async function () {
-        expect(
-          await proxy.lenValid(
-            2,
-            '1111111111111111111111111111111111111111111111111111111111111111',
+  describe('Query passes', () => {
+    beforeEach(async () => {
+      let passId = 1
+      let sig = await admin.signMessage(
+        ethers.utils.arrayify(
+          ethers.utils.keccak256(
+            ethers.utils.solidityPack(['uint256', 'bytes32'], [passId, AHash]),
           ),
-        ).to.equals(true)
-        expect(
-          await proxy.lenValid(
-            2,
-            '11111111111111111111111111111111111111111111111111111111111111111',
-          ),
-        ).to.equals(false)
-      })
+        ),
+      )
+      await expect(proxy.lockPass(sig, 'ab', AHash, passId)).not.to.be.reverted
+      passId = 100001
+      await expect(proxy.lockName(passId++, 'abcdef')).not.to.be.reverted
+      await expect(proxy.lockName(passId++, 'abcdef1')).not.to.be.reverted
+      await expect(proxy.lockName(passId++, 'abcdef2')).not.to.be.reverted
+      expect(await proxy.balanceOf(admin.address)).to.equals(6)
+    })
+
+    it('getUserPassList', async () => {
+      expect(await proxy.getUserPassList(admin.address)).to.deep.equals([
+        1, 100001, 100002, 100003, 100004, 100005,
+      ])
+    })
+
+    it('getUserPassesInfo', async () => {
+      expect(await proxy.getUserPassesInfo(admin.address)).to.deep.equals([
+        [
+          1,
+          '0x03783fac2efed8fbc9ad443e592ee30e61d65f471140c10ca155e937b435b760',
+          getNameHash('ab'),
+        ],
+        [
+          100001,
+          '0x017e667f4b8c174291d1543c466717566e206df1bfd6f30271055ddafdb18f72',
+          getNameHash('abcdef'),
+        ],
+        [
+          100002,
+          '0x017e667f4b8c174291d1543c466717566e206df1bfd6f30271055ddafdb18f72',
+          getNameHash('abcdef1'),
+        ],
+        [
+          100003,
+          '0x017e667f4b8c174291d1543c466717566e206df1bfd6f30271055ddafdb18f72',
+          getNameHash('abcdef2'),
+        ],
+        [
+          100004,
+          '0x017e667f4b8c174291d1543c466717566e206df1bfd6f30271055ddafdb18f72',
+          '0x0000000000000000000000000000000000000000000000000000000000000000',
+        ],
+        [
+          100005,
+          '0x017e667f4b8c174291d1543c466717566e206df1bfd6f30271055ddafdb18f72',
+          '0x0000000000000000000000000000000000000000000000000000000000000000',
+        ],
+      ])
+    })
+
+    it('getUserPassInfo', async () => {
+      expect(await proxy.getUserPassInfo(1)).to.deep.equals([
+        1,
+        '0x03783fac2efed8fbc9ad443e592ee30e61d65f471140c10ca155e937b435b760',
+        getNameHash('ab'),
+      ])
+    })
+
+    it('getNameByHash', async () => {
+      expect(await proxy.getNameByHash(getNameHash('ab'))).to.equals('ab')
+      await expect(proxy.getNameByHash(getNameHash('abc'))).to.be.rejected
+    })
+
+    it('getUserByHash', async () => {
+      expect(await proxy.getUserByHash(getNameHash('ab'))).to.equals(
+        admin.address,
+      )
+      await expect(proxy.getUserByHash(getNameHash('abc'))).to.be.rejected
+    })
+
+    it('getPassByHash', async () => {
+      expect(await proxy.getPassByHash(getNameHash('ab'))).to.equals(1)
+      await expect(proxy.getPassByHash(getNameHash('abc'))).to.be.rejected
+    })
+  })
+
+  describe('Name available', function () {
+    it('invalid name length', async function () {
+      expect(await proxy.lenValid(2, 'c')).to.equals(false)
+      expect(await proxy.lenValid(2, '1')).to.equals(false)
+      expect(await proxy.lenValid(2, '.')).to.equals(false)
+      expect(await proxy.lenValid(3, '😊')).to.equals(false)
+      expect(await proxy.lenValid(3, '测')).to.equals(false)
+      expect(await proxy.lenValid(3, 'ab')).to.equals(false)
+      expect(await proxy.lenValid(4, 'abc')).to.equals(false)
+      expect(await proxy.lenValid(6, '测试1')).to.equals(false)
+    })
+
+    it('valid name length', async function () {
+      expect(await proxy.lenValid(2, '12')).to.equals(true)
+      expect(await proxy.lenValid(2, '123')).to.equals(true)
+      expect(await proxy.lenValid(2, 'ab')).to.equals(true)
+      expect(await proxy.lenValid(2, 'abc')).to.equals(true)
+      expect(await proxy.lenValid(2, '测')).to.equals(true)
+      expect(await proxy.lenValid(1, '😊')).to.equals(true)
+      expect(await proxy.lenValid(2, '😊')).to.equals(true)
+      expect(await proxy.lenValid(4, '测试')).to.equals(true)
+      expect(await proxy.lenValid(5, '测试1')).to.equals(true)
+      expect(await proxy.lenValid(6, '测试12')).to.equals(true)
+    })
+
+    it('reserve name', async function () {
+      let testname = [ethers.utils.keccak256(ethers.utils.toUtf8Bytes('aa'))]
+      await proxy.reserveName(testname)
+      expect(await proxy.nameReserves('aa')).to.equals(true)
+
+      let testnames = [
+        ethers.utils.keccak256(ethers.utils.toUtf8Bytes('aa')),
+        ethers.utils.keccak256(ethers.utils.toUtf8Bytes('bb')),
+        ethers.utils.keccak256(ethers.utils.toUtf8Bytes('111122')),
+        ethers.utils.keccak256(ethers.utils.toUtf8Bytes('测试名字')),
+      ]
+      await proxy.reserveName(testnames)
+      expect(await proxy.nameReserves('111122')).to.equals(true)
+      expect(await proxy.nameReserves('ab')).to.equals(false)
+      expect(await proxy.nameReserves('测试名字')).to.equals(true)
+      expect(await proxy.nameReserves('测试x名字')).to.equals(false)
+    })
+
+    it('reserve name can be locked by admin', async function () {
+      let testname = [ethers.utils.keccak256(ethers.utils.toUtf8Bytes('aa'))]
+      await proxy.reserveName(testname)
+      expect(await proxy.nameReserves('aa')).to.equals(true)
+      await expect(proxy.connect(bob).lockAndMint('aa', bob.address)).to.be
+        .reverted
+      await proxy.lockAndMint('aa', bob.address)
+      expect(await proxy.nameReserves('aa')).to.equals(false)
+      expect(await proxy.balanceOf(bob.address)).to.equals(1)
+    })
+
+    it('dup name', async function () {})
+
+    it('name max_length=64', async function () {
+      expect(
+        await proxy.lenValid(
+          2,
+          '1111111111111111111111111111111111111111111111111111111111111111',
+        ),
+      ).to.equals(true)
+      expect(
+        await proxy.lenValid(
+          2,
+          '11111111111111111111111111111111111111111111111111111111111111111',
+        ),
+      ).to.equals(false)
     })
   })
 })
