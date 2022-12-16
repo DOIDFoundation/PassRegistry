@@ -79,7 +79,7 @@ contract PassRegistry is
     }
 
     function fixPassId() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        for (uint256 index = 1; index <= totalSupply(); index++) {
+        for (uint256 index = 0; index < totalSupply(); index++) {
             uint256 tokenId = tokenByIndex(index);
             PassInfo memory info = passInfo[tokenId];
             if (info.passHash != 0) hashToPass[info.passHash] = info.passId;
