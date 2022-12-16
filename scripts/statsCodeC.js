@@ -16,6 +16,20 @@ function getClassName(classHash) {
   }
 }
 
+function getInviter(sig) {
+  try {
+    if (sig.length < 100) {
+      return ethers.utils.hexValue(BigInt(sig) ^ BigInt(CHash)).toLowerCase()
+    } else
+      return ethers.utils
+        .verifyMessage(ethers.utils.arrayify(CHash), sig)
+        .toLowerCase()
+  } catch (e) {
+    console.error('Error retrieving inviter from sig:', sig, 'with exception:')
+    console.error(e)
+  }
+}
+
 async function main() {
   let abi = [
     'event LockPass(address user, uint passNumber)',
@@ -71,15 +85,9 @@ async function main() {
               getClassName(log.args[2]),
               (
                 'from ' +
-                ethers.utils
-                  .verifyMessage(ethers.utils.arrayify(CHash), log.args[0])
-                  .toLowerCase() +
+                getInviter(log.args[0]) +
                 '(#' +
-                passes[
-                  ethers.utils
-                    .verifyMessage(ethers.utils.arrayify(CHash), log.args[0])
-                    .toLowerCase()
-                ] +
+                passes[getInviter(log.args[0])] +
                 ')'
               ).padEnd(55),
               'with pass',
