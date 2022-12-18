@@ -38,11 +38,11 @@ async function main() {
         let log = iface.parseLog(item)
         const { user, passId, name } = log.args
         console.log(
-          'sender',
+          'sender\t',
           user,
-          'passId',
+          '\tpassId\t',
           passId.toString().padEnd(6),
-          'passName',
+          '\tpassName\t',
           name,
         )
       })
