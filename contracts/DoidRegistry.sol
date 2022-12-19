@@ -62,10 +62,17 @@ contract DoidRegistry is
 
     function available(string memory name) public view override returns (bool) {
         bytes32 label = keccak256(bytes(name));
-        return valid(name) && base.available(uint256(label));
+        return valid(name);
     }
 
 
+    function passReserved(uint256 id) public view returns (bool) {
+        address owner = passReg.getUserByHash(bytes(id));
+        if(owner == msg.sender || owner == address(0)){
+            return true;
+        }
+        return false;
+    }
 
     // Returns the expiration timestamp of the specified id.
     function nameExpires(uint256 id) external view override returns (uint256) {
@@ -106,6 +113,7 @@ contract DoidRegistry is
         bool updateRegistry
     ) internal returns (uint256) {
         require(available(id));
+        require(passReserved(id));
         require(
             block.timestamp + duration + GRACE_PERIOD >
                 block.timestamp + GRACE_PERIOD

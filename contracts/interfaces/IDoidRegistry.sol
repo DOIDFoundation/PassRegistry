@@ -15,4 +15,5 @@ interface IDoidRegistry {
     );
     event NameRenewed(uint256 indexed id, uint256 expires);
 
+
 }
