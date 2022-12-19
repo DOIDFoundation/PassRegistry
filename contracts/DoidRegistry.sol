@@ -7,12 +7,9 @@ import '@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol'
 
 import './interfaces/IDoidRegistry.sol';
 import './Resolver.sol';
+import './resolvers/AddressResolver.sol';
 
-contract DoidRegistry is 
-    ERC721Upgradeable,
-    Resolver,
-    IDoidRegistry
-{
+contract DoidRegistryStorage {
     string internal _prefix;
     address internal _mintingManager;
     IERC721Upgradeable internal _passRegistry;
@@ -23,6 +20,23 @@ contract DoidRegistry is
 
     mapping(uint256 => bool) internal _upgradedTokens;
 
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * The size of the __gap array is calculated so that the amount of storage used by a
+     * contract always adds up to the same number (in this case 50 storage slots).
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[44] private __gap;
+}
+
+contract DoidRegistry is 
+    DoidRegistryStorage,
+    ERC721Upgradeable,
+    Resolver,
+    AddressResolver,
+    IDoidRegistry
+{
     modifier protectTokenOperation(uint256 tokenId) {
         //if (isTrustedForwarder(msg.sender)) {
         //    require(tokenId == _msgToken(), 'Registry: TOKEN_INVALID');
@@ -57,13 +71,19 @@ contract DoidRegistry is
         _mintingManager = mintingManager;
         _passRegistry = IERC721Upgradeable(passRegistry);
 
-        __ERC721_init_unchained('Doid Domains', 'DoiD');
+        __ERC721_init_unchained('DOID Names', 'DOID');
         //__RootRegistry_init(rootChainManager);
         //__ChildRegistry_init(childChainManager);
     }
 
-
-
+    function isAuthorised(bytes32 node) internal view override returns (bool) {
+        // @TODO: fix this
+        address owner = address(0);//owner(node);
+        // if (owner == address(nameWrapper)) {
+        //     owner = nameWrapper.ownerOf(uint256(node));
+        // }
+        return owner == msg.sender || isApprovedForAll(owner, msg.sender);
+    }
 
     function namehash(string[] calldata labels) external pure override returns (uint256) {
         return _namehash(labels);
@@ -206,7 +226,7 @@ contract DoidRegistry is
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view override(IERC165Upgradeable, ERC721Upgradeable) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view override(AddressResolver, IERC165Upgradeable, ERC721Upgradeable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
