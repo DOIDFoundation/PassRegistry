@@ -80,6 +80,8 @@ contract DoidRegistry is
 
     /**
      * @dev Register a name.
+     * @param name The address of the tokenId.
+     * @param coinType The address crypto type .
      * @param id The token ID (keccak256 of the label).
      * @param owner The address that should own the registration.
      * @param duration Duration in seconds for the registration.
@@ -91,9 +93,10 @@ contract DoidRegistry is
         address owner,
         uint256 duration
     ) external override returns (uint256) {
-        setAddr(keccak256(bytes(name)), coinType, abi.encodePacked(name));
+        uint256 expires = _register(id, owner, duration, true);
 
-        return _register(id, owner, duration, true);
+        setAddr(keccak256(bytes(name)), coinType, abi.encodePacked(name));
+        return expires;
     }
 
     function _register(
