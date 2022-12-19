@@ -6,6 +6,7 @@ import '@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol';
 
 import './interfaces/IDoidRegistry.sol';
+import './interfaces/IPassRegistry.sol';
 import './Resolver.sol';
 
 contract DoidRegistry is 
@@ -15,7 +16,7 @@ contract DoidRegistry is
 {
     string internal _prefix;
     address internal _mintingManager;
-    IERC721Upgradeable internal _passRegistry;
+    IPassRegistry internal _passRegistry;
 
     mapping(address => uint256) internal _reverses;
 
@@ -34,7 +35,7 @@ contract DoidRegistry is
 
 
     modifier onlyMintingManager() {
-        require(_msgSender() == _mintingManager, 'Registry: SENDER_IS_NOT_MINTING_MANAGER');
+        //require(_msgSender() == _mintingManager, 'Registry: SENDER_IS_NOT_MINTING_MANAGER');
         _;
     }
 
@@ -51,18 +52,12 @@ contract DoidRegistry is
     function initialize(
         address mintingManager,
         address passRegistry
-        //address rootChainManager,
-        //address childChainManager
     ) public initializer {
         _mintingManager = mintingManager;
-        _passRegistry = IERC721Upgradeable(passRegistry);
+        _passRegistry = IPassRegistry(passRegistry);
 
         __ERC721_init_unchained('Doid Domains', 'DoiD');
-        //__RootRegistry_init(rootChainManager);
-        //__ChildRegistry_init(childChainManager);
     }
-
-
 
 
     function namehash(string[] calldata labels) external pure override returns (uint256) {
@@ -81,9 +76,22 @@ contract DoidRegistry is
 
     function mintWithPassId(
         address to,
-        uint passId
+        uint passId,
+        string[] calldata keys,
+        string[] calldata values,
+        bool withReverse
     ) external override{
         require(_passRegistry.ownerOf(passId) == msg.sender, "IO");
+        IPassRegistry.PassInfo memory pass = _passRegistry.getUserPassInfo(passId);
+        string[] memory labels = new string[](2);
+        labels[0] = _passRegistry.getNameByHash(pass.passHash);
+        labels[1] = "doid";
+
+        uint256 tokenId = _namehash(labels);
+        require(!_exists(tokenId), "IT");
+
+        _mint(to, tokenId, _uri(labels), withReverse);
+        _setMany(keys, values, tokenId);
     }
 
     function mintWithPassIds(

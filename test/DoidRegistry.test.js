@@ -74,14 +74,6 @@ describe('DoidRegistry', function () {
         labels.unshift('subdomain');
         const tokenId = await proxy.namehash(labels);
 
-        await unsRegistry.functions['mintWithRecords(address,string[],string[],string[])'](
-          coinbase.address,
-          labels,
-          ['key_1'],
-          ['value_1'],
-        );
-
-        expect(await unsRegistry.ownerOf(tokenId)).to.be.equal(coinbase.address);
       });
 
 

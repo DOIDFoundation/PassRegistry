@@ -63,10 +63,16 @@ interface IDoidRegistry is
     * @dev mint token with a pass
     * @param to mint to
     * @param passId used passid
+    * @param keys with keys
+    * @param values with values
+    * @param withReverse with name reversered
      */
     function mintWithPassId(
         address to,
-        uint passId
+        uint passId,
+        string[] calldata keys,
+        string[] calldata values,
+        bool withReverse
     ) external;
 
     /**
