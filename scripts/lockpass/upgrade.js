@@ -2,10 +2,9 @@ const hre = require('hardhat')
 
 // upgrade contract
 async function main() {
-  const CONTRACT_ADDRESS =
-    // '0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE' //Sepolia
-    // '0xF32950cf48C10431b27EFf888D23cB31615dFCb4' //Goerli
-    '0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F' // Mainnet
+  // const CONTRACT_ADDRESS = '0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE' //Sepolia
+  // const CONTRACT_ADDRESS = '0xF32950cf48C10431b27EFf888D23cB31615dFCb4' //Goerli
+  const CONTRACT_ADDRESS = '0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F' // Mainnet
   console.log('proxy address', CONTRACT_ADDRESS)
   console.log(
     'old implementation',

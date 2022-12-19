@@ -7,364 +7,136 @@ import '@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol'
 
 import './interfaces/IDoidRegistry.sol';
 import './interfaces/IPassRegistry.sol';
-import './Resolver.sol';
+import './resolvers/AddressResolver.sol';
+
+contract DoidRegistryStorage {
+
+    uint256 public constant GRACE_PERIOD = 90 days;
+    IPassRegistry passReg;
+
+    // A map of expiry times
+    mapping(uint256 => uint256) expiries;
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * The size of the __gap array is calculated so that the amount of storage used by a
+     * contract always adds up to the same number (in this case 50 storage slots).
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[44] private __gap;
+}
+
 
 contract DoidRegistry is 
+    DoidRegistryStorage,
     ERC721Upgradeable,
-    Resolver,
+    AddressResolver,
     IDoidRegistry
 {
-    string internal _prefix;
-    address internal _mintingManager;
-    IPassRegistry internal _passRegistry;
-
-    mapping(address => uint256) internal _reverses;
-
-    mapping(address => bool) internal _proxyReaders;
-
-    mapping(uint256 => bool) internal _upgradedTokens;
-
-    modifier protectTokenOperation(uint256 tokenId) {
-        //if (isTrustedForwarder(msg.sender)) {
-        //    require(tokenId == _msgToken(), 'Registry: TOKEN_INVALID');
-        //} else {
-        //    _invalidateNonce(tokenId);
-        //}
-        _;
+    function initialize (address passRegistry) public initializer {
+        passReg = IPassRegistry(passRegistry);
     }
 
-
-    modifier onlyMintingManager() {
-        //require(_msgSender() == _mintingManager, 'Registry: SENDER_IS_NOT_MINTING_MANAGER');
-        _;
+    function isAuthorised(bytes32 node) internal view override returns (bool) {
+        // @TODO: fix this
+        address owner = address(0);//owner(node);
+        // if (owner == address(nameWrapper)) {
+        //     owner = nameWrapper.ownerOf(uint256(node));
+        // }
+        return owner == msg.sender || isApprovedForAll(owner, msg.sender);
     }
 
-    modifier onlyOwner(uint256 tokenId) {
-        require(ownerOf(tokenId) == _msgSender(), 'Registry: SENDER_IS_NOT_OWNER');
-        _;
-    }
-
-    modifier onlyApprovedOrOwner(uint256 tokenId) {
-        require(_isApprovedOrOwner(_msgSender(), tokenId), 'Registry: SENDER_IS_NOT_APPROVED_OR_OWNER');
-        _;
-    }
-
-    function initialize(
-        address mintingManager,
-        address passRegistry
-    ) public initializer {
-        _mintingManager = mintingManager;
-        _passRegistry = IPassRegistry(passRegistry);
-
-        __ERC721_init_unchained('Doid Domains', 'DoiD');
-    }
-
-
-    function namehash(string[] calldata labels) external pure override returns (uint256) {
-        return _namehash(labels);
-    }
-
-    function exists(uint256 tokenId) external view override returns (bool) {
-        return _exists(tokenId);
-    }
-
-    /// Minting
-    function mintTLD(uint256 tokenId, string calldata uri) external override onlyMintingManager {
-        _mint(_mintingManager, tokenId);
-        emit NewURI(tokenId, uri);
-    }
-
-    function mintWithPassId(
-        address to,
-        uint passId,
-        string[] calldata keys,
-        string[] calldata values,
-        bool withReverse
-    ) external override{
-        require(_passRegistry.ownerOf(passId) == msg.sender, "IO");
-        IPassRegistry.PassInfo memory pass = _passRegistry.getUserPassInfo(passId);
-        string[] memory labels = new string[](2);
-        labels[0] = _passRegistry.getNameByHash(pass.passHash);
-        labels[1] = "doid";
-
-        uint256 tokenId = _namehash(labels);
-        require(!_exists(tokenId), "IT");
-
-        _mint(to, tokenId, _uri(labels), withReverse);
-        _setMany(keys, values, tokenId);
-    }
-
-    function mintWithPassIds(
-        address to,
-        uint[] calldata passIds
-    ) external override {
-
-    }
-
-    function mintWithRecords(
-        address to,
-        string[] calldata labels,
-        string[] calldata keys,
-        string[] calldata values,
-        bool withReverse
-    ) external override onlyMintingManager {
-        _mintWithRecords(to, labels, keys, values, withReverse);
-    }
-
-    /// Transfering
-
-    function setOwner(address to, uint256 tokenId) external override onlyApprovedOrOwner(tokenId) protectTokenOperation(tokenId) {
-        _transfer(ownerOf(tokenId), to, tokenId);
-    }
-
-    function transferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public override(IERC721Upgradeable, ERC721Upgradeable) onlyApprovedOrOwner(tokenId) protectTokenOperation(tokenId) {
-        _reset(tokenId);
-        _transfer(from, to, tokenId);
-    }
-
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) public override(IERC721Upgradeable, ERC721Upgradeable) onlyApprovedOrOwner(tokenId) protectTokenOperation(tokenId) {
-        _reset(tokenId);
-        _safeTransfer(from, to, tokenId, data);
-    }
-
-    /// Burning
-
-    function burn(uint256 tokenId) external override onlyApprovedOrOwner(tokenId) protectTokenOperation(tokenId) {
-        _reset(tokenId);
-        _burn(tokenId);
-    }
-
-    /// Resolution
-
-    function resolverOf(uint256 tokenId) external view override returns (address) {
-        return _exists(tokenId) ? address(this) : address(0x0);
-    }
-
-    function set(
-        string calldata key,
-        string calldata value,
-        uint256 tokenId
-    ) external override onlyApprovedOrOwner(tokenId) protectTokenOperation(tokenId) {
-        _set(key, value, tokenId);
-    }
-
-    function setMany(
-        string[] calldata keys,
-        string[] calldata values,
-        uint256 tokenId
-    ) external override onlyApprovedOrOwner(tokenId) protectTokenOperation(tokenId) {
-        _setMany(keys, values, tokenId);
-    }
-
-    function setByHash(
-        uint256 keyHash,
-        string calldata value,
-        uint256 tokenId
-    ) external override onlyApprovedOrOwner(tokenId) protectTokenOperation(tokenId) {
-        _setByHash(keyHash, value, tokenId);
-    }
-
-    function setManyByHash(
-        uint256[] calldata keyHashes,
-        string[] calldata values,
-        uint256 tokenId
-    ) external override onlyApprovedOrOwner(tokenId) protectTokenOperation(tokenId) {
-        _setManyByHash(keyHashes, values, tokenId);
-    }
-
-    function reconfigure(
-        string[] calldata keys,
-        string[] calldata values,
-        uint256 tokenId
-    ) external override onlyApprovedOrOwner(tokenId) protectTokenOperation(tokenId) {
-        _reconfigure(keys, values, tokenId);
-    }
-
-    function reset(uint256 tokenId) external override onlyApprovedOrOwner(tokenId) protectTokenOperation(tokenId) {
-        _reset(tokenId);
-    }
-
-    /**
-     * @dev 
-     */
-    function mint(address user, uint256 tokenId) external {
-        _mint(user, tokenId);
-    }
-
-    /**
-     * @dev 
-     */
-    function mint(
-        address user,
-        uint256 tokenId,
-        bytes calldata
-    ) external {
-        _mint(user, tokenId);
-    }
-
-    /**
-     * @dev See {IERC165-supportsInterface}.
-     */
-    function supportsInterface(bytes4 interfaceId) public view override(IERC165Upgradeable, ERC721Upgradeable) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view override(AddressResolver, ERC721Upgradeable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
-    /**
-     * @dev See {IReverseRegistry-setReverse}.
-     */
-    function setReverse(uint256 tokenId) external override onlyOwner(tokenId) protectTokenOperation(tokenId) {
-        _setReverse(_msgSender(), tokenId);
+    function ownerOf(uint tokenId) public view override(ERC721Upgradeable) returns (address owner) {
+        require(expiries[tokenId] > block.timestamp);
+        return super.ownerOf(tokenId);
+    }
+
+    function valid(string memory name) public pure returns (bool) {
+        return name.strlen() >= 3;
+    }
+
+    function available(string memory name) public view override returns (bool) {
+        bytes32 label = keccak256(bytes(name));
+        return valid(name) && base.available(uint256(label));
+    }
+
+
+
+    // Returns the expiration timestamp of the specified id.
+    function nameExpires(uint256 id) external view override returns (uint256) {
+        return expiries[id];
+    }
+
+    // Returns true iff the specified name is available for registration.
+    function available(uint256 id) public view override returns (bool) {
+        // Not available if it's registered here or in its grace period.
+        return expiries[id] + GRACE_PERIOD < block.timestamp;
     }
 
     /**
-     * @dev See {IReverseRegistry-removeReverse}.
+     * @dev Register a name.
+     * @param id The token ID (keccak256 of the label).
+     * @param owner The address that should own the registration.
+     * @param duration Duration in seconds for the registration.
      */
-    function removeReverse() external override {
-        address sender = _msgSender();
-        require(_reverses[sender] != 0, 'Registry: REVERSE_RECORD_IS_EMPTY');
-        _removeReverse(sender);
+    function register(
+        string calldata name,
+        uint256 coinType,
+        uint256 id,
+        address owner,
+        uint256 duration
+    ) external override returns (uint256) {
+        setAddr(keccak256(bytes(name)), coinType, abi.encodePacked(name));
+
+        return _register(id, owner, duration, true);
     }
 
-    /**
-     * @dev See {IReverseRegistry-reverseOf}.
-     */
-    function reverseOf(address addr) external view override returns (uint256 reverse) {
-        uint256 tokenId = _reverses[addr];
+    function _register(
+        uint256 id,
+        address owner,
+        uint256 duration,
+        bool updateRegistry
+    ) internal returns (uint256) {
+        require(available(id));
+        require(
+            block.timestamp + duration + GRACE_PERIOD >
+                block.timestamp + GRACE_PERIOD
+        ); // Prevent future overflow
 
-        if (!_isReadRestricted(tokenId)) {
-            reverse = tokenId;
+        expiries[id] = block.timestamp + duration;
+        if (_exists(id)) {
+            // Name was previously owned, and expired
+            _burn(id);
         }
+        _mint(owner, id);
+//        if (updateRegistry) {
+//            ens.setSubnodeOwner(baseNode, bytes32(id), owner);
+//        }
+
+        emit NameRegistered(id, owner, block.timestamp + duration);
+
+        return block.timestamp + duration;
     }
 
-    /**
-     * @dev See {IUNSRegistry-addProxyReader(address)}.
-     */
-    function addProxyReader(address addr) external override onlyMintingManager {
-        _proxyReaders[addr] = true;
+    function renew(uint256 id, uint256 duration)
+        external
+        override
+        returns (uint256)
+    {
+        require(expiries[id] + GRACE_PERIOD >= block.timestamp); // Name must be registered here or in grace period
+        require(
+            expiries[id] + duration + GRACE_PERIOD > duration + GRACE_PERIOD
+        ); // Prevent future overflow
+
+        expiries[id] += duration;
+        emit NameRenewed(id, expiries[id]);
+        return expiries[id];
     }
 
-    /// Internal
-
-    function _mintWithRecords(
-        address to,
-        string[] calldata labels,
-        string[] calldata keys,
-        string[] calldata values,
-        bool withReverse
-    ) internal {
-        uint256 tokenId = _namehash(labels);
-
-        _mint(to, tokenId, _uri(labels), withReverse);
-        _setMany(keys, values, tokenId);
-    }
-
-    function _unlockWithRecords(
-        address to,
-        uint256 tokenId,
-        string[] calldata keys,
-        string[] calldata values,
-        bool withReverse
-    ) internal {
-        _reset(tokenId);
-        _transfer(ownerOf(tokenId), to, tokenId);
-        _setMany(keys, values, tokenId);
-
-        if (withReverse) {
-            _safeSetReverse(to, tokenId);
-        }
-    }
-
-    function _uri(string[] memory labels) private pure returns (string memory) {
-        bytes memory uri = bytes(labels[0]);
-        for (uint256 i = 1; i < labels.length; i++) {
-            uri = abi.encodePacked(uri, '.', labels[i]);
-        }
-        return string(uri);
-    }
-
-    function _namehash(string[] memory labels) internal pure returns (uint256) {
-        uint256 node = 0x0;
-        for (uint256 i = labels.length; i > 0; i--) {
-            node = _namehash(node, labels[i - 1]);
-        }
-        return node;
-    }
-
-    function _namehash(uint256 tokenId, string memory label) internal pure returns (uint256) {
-        require(bytes(label).length != 0, 'Registry: LABEL_EMPTY');
-        return uint256(keccak256(abi.encodePacked(tokenId, keccak256(abi.encodePacked(label)))));
-    }
-
-    function _mint(
-        address to,
-        uint256 tokenId,
-        string memory uri,
-        bool withReverse
-    ) internal {
-        _mint(to, tokenId);
-        emit NewURI(tokenId, uri);
-
-        if (withReverse) {
-            // set reverse must be after emission of New URL event in order to keep events' order
-            _safeSetReverse(to, tokenId);
-        }
-    }
-
-    function _baseURI() internal view override(ERC721Upgradeable) returns (string memory) {
-        return _prefix;
-    }
-
-    function _msgSender() internal view override returns (address) {
-        return super._msgSender();
-    }
-
-    function _msgData() internal view override returns (bytes calldata) {
-        return super._msgData();
-    }
-
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal override {
-        super._beforeTokenTransfer(from, to, tokenId);
-
-        if (_reverses[from] == tokenId) {
-            _removeReverse(from);
-        }
-    }
-
-    function _setReverse(address addr, uint256 tokenId) internal {
-        _reverses[addr] = tokenId;
-        emit SetReverse(addr, tokenId);
-    }
-
-    function _safeSetReverse(address addr, uint256 tokenId) internal {
-        if (address(0xdead) != addr && _reverses[addr] == 0) {
-            _setReverse(addr, tokenId);
-        }
-    }
-
-    function _removeReverse(address addr) internal {
-        delete _reverses[addr];
-        emit RemoveReverse(addr);
-    }
-
-    function _isReadRestricted(uint256 tokenId) internal view override returns (bool) {
-        return _upgradedTokens[tokenId] && _proxyReaders[_msgSender()];
-    }
-
-
-    // Reserved storage space to allow for layout changes in the future.
-    uint256[47] private __gap;
 
 }

@@ -1,5 +1,9 @@
 {
   "name": "hardhat-project",
+  "scripts": {
+    "coverage": "npx hardhat coverage",
+    "test": "npx hardhat test"
+  },
   "devDependencies": {
     "@ensdomains/eth-ens-namehash": "^2.0.15",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.4",
@@ -11,6 +15,7 @@
     "dotenv": "^16.0.1",
     "hardhat-gas-reporter": "^1.0.9",
     "idna-uts46-hx": "^4.0.4",
-    "prettier-plugin-solidity": "^1.0.0-rc.1"
+    "prettier-plugin-solidity": "^1.0.0-rc.1",
+    "solidity-coverage": "^0.8.2"
   }
 }
