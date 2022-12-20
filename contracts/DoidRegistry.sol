@@ -9,6 +9,7 @@ import './interfaces/IDoidRegistry.sol';
 import './interfaces/IPassRegistry.sol';
 import './resolvers/AddressResolver.sol';
 import './StringUtils.sol';
+import "hardhat/console.sol";
 
 contract DoidRegistryStorage {
 
@@ -45,18 +46,18 @@ contract DoidRegistry is
     using StringUtils for string;
 
     function initialize (
-        address passRegistry, 
-        uint256 minCommitmentAge,
-        uint256 maxCommitmentAge
+        address passRegistry_, 
+        uint256 minCommitmentAge_,
+        uint256 maxCommitmentAge_
     ) public initializer {
-        minCommitmentAge = minCommitmentAge;
-        maxCommitmentAge = maxCommitmentAge;
-        passReg = IPassRegistry(passRegistry);
+        minCommitmentAge = minCommitmentAge_;
+        maxCommitmentAge = maxCommitmentAge_;
+        passReg = IPassRegistry(passRegistry_);
     }
 
     function isAuthorised(bytes32 node) internal view override returns (bool) {
         // @TODO: fix this
-        address owner = address(0);//owner(node);
+        address owner = ownerOf(uint(node));
         // if (owner == address(nameWrapper)) {
         //     owner = nameWrapper.ownerOf(uint256(node));
         // }
@@ -72,6 +73,10 @@ contract DoidRegistry is
         return super.ownerOf(tokenId);
     }
 
+    function nameHash(string memory name) public view override returns(bytes32) {
+        return keccak256(bytes(name));
+    }
+
     function valid(string memory name) public pure override returns (bool) {
         return name.strlen() >= 3;
     }
@@ -80,7 +85,14 @@ contract DoidRegistry is
     * @dev Returns true iff the specified name is available for registration. 
      */
     function available(string memory name) public view override returns (bool) {
-        return available(uint(keccak256(bytes(name))));
+        // Not available if it's registered here or in its grace period.
+        if (expiries[uint(keccak256(bytes(name)))] + GRACE_PERIOD >= block.timestamp) {
+            return false;
+        }
+        if (passReserved(name)){
+            return false;
+        }
+        return true;
     }
 
     // Returns true iff the specified name is available for registration.
@@ -100,8 +112,18 @@ contract DoidRegistry is
      */
     function passReserved(uint256 id) public view returns (bool) {
         address owner = passReg.getUserByHash(bytes32(id));
-        if(owner == msg.sender || owner == address(0)){
+        if(owner != msg.sender){
             return true;
+        }
+        return false;
+    }
+
+    function passReserved(string memory name) public view returns (bool) {
+        if(passReg.nameExists(name)){
+            address owner = passReg.getUserByName(name);
+            if(owner != msg.sender){
+                return true;
+            }
         }
         return false;
     }
@@ -118,11 +140,10 @@ contract DoidRegistry is
         bytes32 secret,
         bytes[] calldata data
     ) public pure override returns (bytes32) {
-        bytes32 label = keccak256(bytes(name));
         return
             keccak256(
                 abi.encode(
-                    label,
+                    keccak256(bytes(name)),
                     owner,
                     duration,
                     data,
@@ -133,7 +154,7 @@ contract DoidRegistry is
 
 
     function commit(bytes32 commitment) public override {
-        require(commitments[commitment] + maxCommitmentAge >= block.timestamp, "IC");
+        require(commitments[commitment] + maxCommitmentAge < block.timestamp, "IC");
         commitments[commitment] = block.timestamp;
     }
 
@@ -144,12 +165,12 @@ contract DoidRegistry is
         bytes32 commitment
     ) internal {
         // Require an old enough commitment.
-        require(commitments[commitment] + minCommitmentAge > block.timestamp, "CN");
+        require(commitments[commitment] + minCommitmentAge <= block.timestamp, "CN");
 
         // If the commitment is too old, or the name is registered, stop
-        require (commitments[commitment] + maxCommitmentAge <= block.timestamp, "CO");
+        require (commitments[commitment] + maxCommitmentAge > block.timestamp, "CO");
 
-        require(!available(name), "IN");
+        require(available(name), "IN");
 
         delete (commitments[commitment]);
 

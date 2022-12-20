@@ -5,7 +5,7 @@ const hre = require('hardhat')
 const { ZERO_ADDRESS } = require('./helpers')
 
 describe('DoidRegistry', function () {
-  let proxy, passRegistry
+  let proxy, passReg
   let admin, bob, carl
 
   beforeEach(async function () {
@@ -13,12 +13,14 @@ describe('DoidRegistry', function () {
     admin = accounts[0]
     bob = accounts[1]
     carl = accounts[2]
-    passRegistry = admin.address
+    const PassReg = await hre.ethers.getContractFactory("PassRegistry")
+    passReg = await upgrades.deployProxy(PassReg, [admin.address, "pass", "pas"])
+
     const DoidRegistry = await hre.ethers.getContractFactory('DoidRegistry')
     proxy = await upgrades.deployProxy(DoidRegistry, [
-        passRegistry,
+        passReg.address,
         0,
-        7200
+        86400
     ])
   })
 
@@ -37,7 +39,18 @@ describe('DoidRegistry', function () {
             data
         )
 
-        //await proxy.registry(name, 0, )
+        //commit
+        const tx = await proxy.commit(commit)
+
+        // register
+        await proxy.register(name, 0, admin.address, 3600, secret, data)
+
+        const nameHash = await proxy.nameHash(name)
+        expect(await proxy.ownerOf(nameHash)).to.be.equals(admin.address)
+    })
+
+    it('commitment usage', async () => {
+
     })
   })
 
