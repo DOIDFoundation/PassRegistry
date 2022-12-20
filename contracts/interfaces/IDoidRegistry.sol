@@ -37,7 +37,6 @@ interface IDoidRegistry {
     function register(
         string calldata name,
         uint256 coinType,
-        uint256 id,
         address owner,
         uint256 duration,
         bytes32 secret,

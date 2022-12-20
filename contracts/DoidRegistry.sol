@@ -160,20 +160,18 @@ contract DoidRegistry is
      * @dev Register a name.
      * @param name The address of the tokenId.
      * @param coinType The address crypto type .
-     * @param id The token ID (keccak256 of the label).
      * @param owner The address that should own the registration.
      * @param duration Duration in seconds for the registration.
      */
     function register(
         string calldata name,
         uint256 coinType,
-        uint256 id,
         address owner,
         uint256 duration,
         bytes32 secret,
         bytes[] calldata data
     ) external override returns (uint256) {
-        uint256 expires = _register(name, id, owner, duration, true, secret, data);
+        uint256 expires = _register(name, owner, duration, secret, data);
 
         setAddr(keccak256(bytes(name)), coinType, abi.encodePacked(name));
         return expires;
@@ -181,14 +179,12 @@ contract DoidRegistry is
 
     function _register(
         string calldata name,
-        uint256 id,
         address owner,
         uint256 duration,
-        bool updateRegistry,
         bytes32 secret,
         bytes[] calldata data
     ) internal returns (uint256) {
-        require(available(id));
+        require(available(name));
         require(
             block.timestamp + duration + GRACE_PERIOD >
                 block.timestamp + GRACE_PERIOD
@@ -206,15 +202,13 @@ contract DoidRegistry is
             )
         );
 
+        uint id = uint(keccak256(bytes(name)));
         expiries[id] = block.timestamp + duration;
         if (_exists(id)) {
             // Name was previously owned, and expired
             _burn(id);
         }
         _mint(owner, id);
-//        if (updateRegistry) {
-//            ens.setSubnodeOwner(baseNode, bytes32(id), owner);
-//        }
 
         emit NameRegistered(id, owner, block.timestamp + duration);
 
