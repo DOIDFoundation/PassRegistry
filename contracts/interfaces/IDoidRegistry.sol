@@ -32,6 +32,8 @@ interface IDoidRegistry {
         string memory name
     ) external view returns (string memory status, address owner);
 
+    function nameHash(string memory name) external view returns(bytes32);
+
     function valid(string memory name) external pure returns (bool);
 
     function available(string memory name) external view returns (bool);

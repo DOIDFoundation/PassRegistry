@@ -9,9 +9,13 @@ interface IPassRegistry {
 
     function getUserInvitedNumber(address _user) external view returns (uint, uint);
 
+    function getUserByName(string memory _name) external view returns (address);
+
     function getNameByHash(bytes32 _hash) external view returns (string memory);
 
     function getUserByHash(bytes32 _hash) external view returns (address);
 
     function getUserPassInfo(uint _passId) external view returns (PassInfo memory);
+
+    function nameExists(string memory _name) external view returns (bool);
 }

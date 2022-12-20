@@ -3,10 +3,12 @@ pragma solidity >=0.8.4;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 
-import "./interfaces/IDoidRegistry.sol";
-import "./interfaces/IPassRegistry.sol";
-import "./resolvers/AddressResolver.sol";
-import "./StringUtils.sol";
+import './interfaces/IDoidRegistry.sol';
+import './interfaces/IPassRegistry.sol';
+import './resolvers/AddressResolver.sol';
+import './StringUtils.sol';
+
+//import "hardhat/console.sol";
 
 contract DoidRegistryStorage {
     uint256 public constant COIN_TYPE_ETH = 60;
@@ -81,6 +83,10 @@ contract DoidRegistry is
         return tokenIds;
     }
 
+    function nameHash(string memory name) public pure override returns(bytes32) {
+        return keccak256(bytes(name));
+    }
+
     function valid(string memory name) public pure override returns (bool) {
         return name.doidlen() >= 6;
     }
@@ -89,7 +95,10 @@ contract DoidRegistry is
      * @dev Returns true iff the specified name is available for registration.
      */
     function available(string memory name) public view override returns (bool) {
-        return available(uint(keccak256(bytes(name))));
+        if (passReserved(name)){
+            return false;
+        }
+        return true;
     }
 
     // Returns true iff the specified name is available for registration.
@@ -123,8 +132,18 @@ contract DoidRegistry is
      */
     function passReserved(uint256 id) public view returns (bool) {
         address owner = passReg.getUserByHash(bytes32(id));
-        if (owner == msg.sender || owner == address(0)) {
+        if(owner != msg.sender){
             return true;
+        }
+        return false;
+    }
+
+    function passReserved(string memory name) public view returns (bool) {
+        if(passReg.nameExists(name)){
+            address owner = passReg.getUserByName(name);
+            if(owner != msg.sender){
+                return true;
+            }
         }
         return false;
     }
@@ -140,18 +159,18 @@ contract DoidRegistry is
     }
 
     function commit(bytes32 commitment) public override {
-        require(commitments[commitment] + maxCommitmentAge >= block.timestamp, "IC");
+        require(commitments[commitment] + maxCommitmentAge < block.timestamp, "IC");
         commitments[commitment] = block.timestamp;
     }
 
     function _consumeCommitment(string memory name, bytes32 commitment) internal {
         // Require an old enough commitment.
-        require(commitments[commitment] + minCommitmentAge > block.timestamp, "CN");
+        require(commitments[commitment] + minCommitmentAge <= block.timestamp, "CN");
 
         // If the commitment is too old, or the name is registered, stop
-        require(commitments[commitment] + maxCommitmentAge <= block.timestamp, "CO");
+        require (commitments[commitment] + maxCommitmentAge > block.timestamp, "CO");
 
-        require(!available(name), "IN");
+        require(available(name), "IN");
 
         delete (commitments[commitment]);
     }
