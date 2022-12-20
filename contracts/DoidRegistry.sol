@@ -13,11 +13,18 @@ import './StringUtils.sol';
 contract DoidRegistryStorage {
 
     uint256 public constant GRACE_PERIOD = 90 days;
+    uint256 public constant MIN_REGISTRATION_DURATION = 28 days;
+
+    // address of passRegistry
     IPassRegistry passReg;
 
     // A map of expiry times
     mapping(uint256 => uint256) expiries;
-
+    // A map stores all commitments
+    mapping(bytes32 => uint256) public commitments;
+    uint256 public minCommitmentAge;
+    uint256 public maxCommitmentAge;
+ 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
      * variables without shifting down storage in the inheritance chain.
@@ -37,7 +44,13 @@ contract DoidRegistry is
 {
     using StringUtils for string;
 
-    function initialize (address passRegistry) public initializer {
+    function initialize (
+        address passRegistry, 
+        uint256 minCommitmentAge,
+        uint256 maxCommitmentAge
+    ) public initializer {
+        minCommitmentAge = minCommitmentAge;
+        maxCommitmentAge = maxCommitmentAge;
         passReg = IPassRegistry(passRegistry);
     }
 
@@ -98,6 +111,50 @@ contract DoidRegistry is
         return expiries[id];
     }
 
+    function makeCommitment(
+        string memory name,
+        address owner,
+        uint256 duration,
+        bytes32 secret,
+        bytes[] calldata data
+    ) public pure override returns (bytes32) {
+        bytes32 label = keccak256(bytes(name));
+        return
+            keccak256(
+                abi.encode(
+                    label,
+                    owner,
+                    duration,
+                    data,
+                    secret
+                )
+            );
+    }
+
+
+    function commit(bytes32 commitment) public override {
+        require(commitments[commitment] + maxCommitmentAge >= block.timestamp, "IC");
+        commitments[commitment] = block.timestamp;
+    }
+
+
+    function _consumeCommitment(
+        string memory name,
+        uint256 duration,
+        bytes32 commitment
+    ) internal {
+        // Require an old enough commitment.
+        require(commitments[commitment] + minCommitmentAge > block.timestamp, "CN");
+
+        // If the commitment is too old, or the name is registered, stop
+        require (commitments[commitment] + maxCommitmentAge <= block.timestamp, "CO");
+
+        require(!available(name), "IN");
+
+        delete (commitments[commitment]);
+
+        require(duration < MIN_REGISTRATION_DURATION, "DS");
+    }
 
     /**
      * @dev Register a name.
@@ -112,25 +169,42 @@ contract DoidRegistry is
         uint256 coinType,
         uint256 id,
         address owner,
-        uint256 duration
+        uint256 duration,
+        bytes32 secret,
+        bytes[] calldata data
     ) external override returns (uint256) {
-        uint256 expires = _register(id, owner, duration, true);
+        uint256 expires = _register(name, id, owner, duration, true, secret, data);
 
         setAddr(keccak256(bytes(name)), coinType, abi.encodePacked(name));
         return expires;
     }
 
     function _register(
+        string calldata name,
         uint256 id,
         address owner,
         uint256 duration,
-        bool updateRegistry
+        bool updateRegistry,
+        bytes32 secret,
+        bytes[] calldata data
     ) internal returns (uint256) {
         require(available(id));
         require(
             block.timestamp + duration + GRACE_PERIOD >
                 block.timestamp + GRACE_PERIOD
         ); // Prevent future overflow
+
+        _consumeCommitment(
+            name,
+            duration,
+            makeCommitment(
+                name,
+                owner,
+                duration,
+                secret,
+                data
+            )
+        );
 
         expiries[id] = block.timestamp + duration;
         if (_exists(id)) {
