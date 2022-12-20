@@ -94,10 +94,28 @@ contract DoidRegistry is
 
     // Returns true iff the specified name is available for registration.
     function available(uint256 id) public view override returns (bool) {
+        if (_exists(id)) return false;
         if (passReserved(id)) {
             return false;
         }
         return true;
+    }
+
+    function statusOfName(
+        string memory _name
+    ) public view override returns (string memory status, address owner) {
+        bytes32 node = keccak256(bytes(_name));
+        uint256 id = uint256(node);
+        if (_exists(id)) {
+            status = "registered";
+            owner = ownerOf(id);
+        }
+        address lockedOwner = passReg.getUserByHash(bytes32(id));
+        if (lockedOwner != address(0)) {
+            status = "locked";
+            owner = lockedOwner;
+        }
+        status = "available";
     }
 
     /**

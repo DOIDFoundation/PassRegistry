@@ -23,6 +23,15 @@ interface IDoidRegistry {
      */
     function namesOfOwner(address _user) external view returns (DoidInfo[] memory);
 
+    /**
+     * @dev Request status of a name
+     * @return status 'available' or 'registered' or 'locked'.
+     * @return owner address that owns or locks this name
+     */
+    function statusOfName(
+        string memory name
+    ) external view returns (string memory status, address owner);
+
     function valid(string memory name) external pure returns (bool);
 
     function available(string memory name) external view returns (bool);
