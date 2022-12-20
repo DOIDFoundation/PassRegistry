@@ -166,11 +166,10 @@ contract DoidRegistry is
         address owner,
         bytes32 secret,
         bytes[] calldata data
-    ) external override returns (uint256) {
-        uint256 expires = _register(name, owner, secret, data);
+    ) external override {
+        _register(name, owner, secret, data);
 
         setAddr(keccak256(bytes(name)), COIN_TYPE_ETH, abi.encodePacked(name));
-        return expires;
     }
 
     function _register(
@@ -178,10 +177,14 @@ contract DoidRegistry is
         address owner,
         bytes32 secret,
         bytes[] calldata data
-    ) internal returns (uint256) {
-        require(available(name));
-
+    ) internal {
         _consumeCommitment(name, makeCommitment(name, owner, secret, data));
+
+        _register(name, owner);
+    }
+
+    function _register(string calldata name, address owner) internal {
+        require(available(name));
 
         bytes32 node = keccak256(bytes(name));
         uint id = uint(node);
@@ -189,7 +192,13 @@ contract DoidRegistry is
         _mint(owner, id);
 
         emit NameRegistered(id, owner, block.timestamp);
+    }
 
-        return block.timestamp;
+    function claimLockedName(uint256 passId, string calldata name, address owner) public override {
+        require(_msgSender() == address(passReg), "Excuted by PassRegistry only");
+        require(IERC721Upgradeable(address(passReg)).ownerOf(passId) == owner, "IP");
+        bytes32 node = keccak256(bytes(name));
+        require(passReg.getUserPassInfo(passId).passHash == node, "IN");
+        _register(name, owner);
     }
 }

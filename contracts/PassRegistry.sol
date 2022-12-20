@@ -6,6 +6,8 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721Enumer
 import "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
+import "./interfaces/IDoidRegistry.sol";
+
 //import "hardhat/console.sol";
 
 contract PassRegistryStorage {
@@ -27,6 +29,7 @@ contract PassRegistryStorage {
     mapping(bytes32 => bool) reserveNames;
     mapping(address => bool) userActivated;
     mapping(bytes32 => uint) hashToPass;
+    IDoidRegistry doidRegistry;
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
@@ -35,7 +38,7 @@ contract PassRegistryStorage {
      * contract always adds up to the same number (in this case 50 storage slots).
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
-    uint256[41] private __gap;
+    uint256[40] private __gap;
 }
 
 contract PassRegistry is
@@ -78,12 +81,19 @@ contract PassRegistry is
         passId._value = _start;
     }
 
-    function fixPassId() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        for (uint256 index = 0; index < totalSupply(); index++) {
-            uint256 tokenId = tokenByIndex(index);
-            PassInfo memory info = passInfo[tokenId];
-            if (info.passHash != 0) hashToPass[info.passHash] = info.passId;
-        }
+    function setDoidRegistry(address addr) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        doidRegistry = IDoidRegistry(addr);
+    }
+
+    function claimDoid(uint256 _passId) external {
+        require(ownerOf(_passId) == _msgSender(), "IP");
+        require(passInfo[_passId].passHash != 0, "IN");
+        doidRegistry.claimLockedName(
+            _passId,
+            getNameByHash(passInfo[_passId].passHash),
+            _msgSender()
+        );
+        _burn(_passId);
     }
 
     function getClassInfo(
