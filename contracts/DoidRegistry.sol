@@ -9,14 +9,11 @@ import "./resolvers/AddressResolver.sol";
 import "./StringUtils.sol";
 
 contract DoidRegistryStorage {
-    uint256 public constant GRACE_PERIOD = 90 days;
-    uint256 public constant MIN_REGISTRATION_DURATION = 28 days;
+    uint256 public constant COIN_TYPE_ETH = 60;
 
     // address of passRegistry
     IPassRegistry passReg;
 
-    // A map of expiry times
-    mapping(uint256 => uint256) expiries;
     // A map stores all commitments
     mapping(bytes32 => uint256) public commitments;
     uint256 public minCommitmentAge;
@@ -44,11 +41,11 @@ contract DoidRegistry is
 
     function initialize(
         address passRegistry,
-        uint256 minCommitmentAge,
-        uint256 maxCommitmentAge
+        uint256 _minCommitmentAge,
+        uint256 _maxCommitmentAge
     ) public initializer {
-        minCommitmentAge = minCommitmentAge;
-        maxCommitmentAge = maxCommitmentAge;
+        minCommitmentAge = _minCommitmentAge;
+        maxCommitmentAge = _maxCommitmentAge;
         passReg = IPassRegistry(passRegistry);
     }
 
@@ -62,11 +59,6 @@ contract DoidRegistry is
     ) public view override(AddressResolver, ERC721EnumerableUpgradeable) returns (bool) {
         return
             interfaceId == type(IDoidRegistry).interfaceId || super.supportsInterface(interfaceId);
-    }
-
-    function ownerOf(uint tokenId) public view override(ERC721Upgradeable) returns (address owner) {
-        require(expiries[tokenId] > block.timestamp);
-        return super.ownerOf(tokenId);
     }
 
     function tokensOfOwner(address _user) public view override returns (uint256[] memory) {
@@ -90,7 +82,7 @@ contract DoidRegistry is
     }
 
     function valid(string memory name) public pure override returns (bool) {
-        return name.strlen() >= 3;
+        return name.doidlen() >= 6;
     }
 
     /**
@@ -102,10 +94,6 @@ contract DoidRegistry is
 
     // Returns true iff the specified name is available for registration.
     function available(uint256 id) public view override returns (bool) {
-        // Not available if it's registered here or in its grace period.
-        if (expiries[id] + GRACE_PERIOD >= block.timestamp) {
-            return false;
-        }
         if (passReserved(id)) {
             return false;
         }
@@ -123,20 +111,14 @@ contract DoidRegistry is
         return false;
     }
 
-    // Returns the expiration timestamp of the specified id.
-    function nameExpires(uint256 id) external view override returns (uint256) {
-        return expiries[id];
-    }
-
     function makeCommitment(
         string memory name,
         address owner,
-        uint256 duration,
         bytes32 secret,
         bytes[] calldata data
     ) public pure override returns (bytes32) {
         bytes32 label = keccak256(bytes(name));
-        return keccak256(abi.encode(label, owner, duration, data, secret));
+        return keccak256(abi.encode(label, owner, data, secret));
     }
 
     function commit(bytes32 commitment) public override {
@@ -144,7 +126,7 @@ contract DoidRegistry is
         commitments[commitment] = block.timestamp;
     }
 
-    function _consumeCommitment(string memory name, uint256 duration, bytes32 commitment) internal {
+    function _consumeCommitment(string memory name, bytes32 commitment) internal {
         // Require an old enough commitment.
         require(commitments[commitment] + minCommitmentAge > block.timestamp, "CN");
 
@@ -154,64 +136,42 @@ contract DoidRegistry is
         require(!available(name), "IN");
 
         delete (commitments[commitment]);
-
-        require(duration < MIN_REGISTRATION_DURATION, "DS");
     }
 
     /**
      * @dev Register a name.
      * @param name The address of the tokenId.
-     * @param coinType The address crypto type .
      * @param owner The address that should own the registration.
-     * @param duration Duration in seconds for the registration.
      */
     function register(
         string calldata name,
-        uint256 coinType,
         address owner,
-        uint256 duration,
         bytes32 secret,
         bytes[] calldata data
     ) external override returns (uint256) {
-        uint256 expires = _register(name, owner, duration, secret, data);
+        uint256 expires = _register(name, owner, secret, data);
 
-        setAddr(keccak256(bytes(name)), coinType, abi.encodePacked(name));
+        setAddr(keccak256(bytes(name)), COIN_TYPE_ETH, abi.encodePacked(name));
         return expires;
     }
 
     function _register(
         string calldata name,
         address owner,
-        uint256 duration,
         bytes32 secret,
         bytes[] calldata data
     ) internal returns (uint256) {
         require(available(name));
-        require(block.timestamp + duration + GRACE_PERIOD > block.timestamp + GRACE_PERIOD); // Prevent future overflow
 
-        _consumeCommitment(name, duration, makeCommitment(name, owner, duration, secret, data));
+        _consumeCommitment(name, makeCommitment(name, owner, secret, data));
 
         bytes32 node = keccak256(bytes(name));
         uint id = uint(node);
         names[node] = bytes(name);
-        expiries[id] = block.timestamp + duration;
-        if (_exists(id)) {
-            // Name was previously owned, and expired
-            _burn(id);
-        }
         _mint(owner, id);
 
-        emit NameRegistered(id, owner, block.timestamp + duration);
+        emit NameRegistered(id, owner, block.timestamp);
 
-        return block.timestamp + duration;
-    }
-
-    function renew(uint256 id, uint256 duration) external override returns (uint256) {
-        require(expiries[id] + GRACE_PERIOD >= block.timestamp); // Name must be registered here or in grace period
-        require(expiries[id] + duration + GRACE_PERIOD > duration + GRACE_PERIOD); // Prevent future overflow
-
-        expiries[id] += duration;
-        emit NameRenewed(id, expiries[id]);
-        return expiries[id];
+        return block.timestamp;
     }
 }

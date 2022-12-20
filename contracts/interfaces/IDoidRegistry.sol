@@ -29,12 +29,9 @@ interface IDoidRegistry {
 
     function available(uint256 id) external view returns (bool);
 
-    function nameExpires(uint256 id) external view returns (uint256);
-
     function makeCommitment(
         string memory name,
         address owner,
-        uint256 duration,
         bytes32 secret,
         bytes[] calldata data
     ) external pure returns (bytes32);
@@ -43,12 +40,8 @@ interface IDoidRegistry {
 
     function register(
         string calldata name,
-        uint256 coinType,
         address owner,
-        uint256 duration,
         bytes32 secret,
         bytes[] calldata data
     ) external returns (uint256);
-
-    function renew(uint256 id, uint256 duration) external returns (uint256);
 }
