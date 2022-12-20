@@ -8,6 +8,7 @@ import '@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol'
 import './interfaces/IDoidRegistry.sol';
 import './interfaces/IPassRegistry.sol';
 import './resolvers/AddressResolver.sol';
+import './StringUtils.sol';
 
 contract DoidRegistryStorage {
 
@@ -34,6 +35,8 @@ contract DoidRegistry is
     AddressResolver,
     IDoidRegistry
 {
+    using StringUtils for string;
+
     function initialize (address passRegistry) public initializer {
         passReg = IPassRegistry(passRegistry);
     }
@@ -56,18 +59,34 @@ contract DoidRegistry is
         return super.ownerOf(tokenId);
     }
 
-    function valid(string memory name) public pure returns (bool) {
+    function valid(string memory name) public pure override returns (bool) {
         return name.strlen() >= 3;
     }
 
+    /**
+    * @dev Returns true iff the specified name is available for registration. 
+     */
     function available(string memory name) public view override returns (bool) {
-        bytes32 label = keccak256(bytes(name));
-        return valid(name);
+        return available(uint(keccak256(bytes(name))));
     }
 
+    // Returns true iff the specified name is available for registration.
+    function available(uint256 id) public view override returns (bool) {
+        // Not available if it's registered here or in its grace period.
+        if (expiries[id] + GRACE_PERIOD >= block.timestamp) {
+            return false;
+        }
+        if (passReserved(id)){
+            return false;
+        }
+        return true;
+    }
 
+    /**
+    * @dev Returns true if the specified name is reserved by pass. 
+     */
     function passReserved(uint256 id) public view returns (bool) {
-        address owner = passReg.getUserByHash(bytes(id));
+        address owner = passReg.getUserByHash(bytes32(id));
         if(owner == msg.sender || owner == address(0)){
             return true;
         }
@@ -79,11 +98,6 @@ contract DoidRegistry is
         return expiries[id];
     }
 
-    // Returns true iff the specified name is available for registration.
-    function available(uint256 id) public view override returns (bool) {
-        // Not available if it's registered here or in its grace period.
-        return expiries[id] + GRACE_PERIOD < block.timestamp;
-    }
 
     /**
      * @dev Register a name.
@@ -113,7 +127,6 @@ contract DoidRegistry is
         bool updateRegistry
     ) internal returns (uint256) {
         require(available(id));
-        require(passReserved(id));
         require(
             block.timestamp + duration + GRACE_PERIOD >
                 block.timestamp + GRACE_PERIOD

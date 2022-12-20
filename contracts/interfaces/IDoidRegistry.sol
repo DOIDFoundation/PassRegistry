@@ -15,5 +15,23 @@ interface IDoidRegistry {
     );
     event NameRenewed(uint256 indexed id, uint256 expires);
 
+    function valid(string memory name) external pure returns (bool);
 
+    function available(string memory name) external view returns (bool);
+
+    function available(uint256 id) external view returns (bool);
+
+    function nameExpires(uint256 id) external view returns (uint256);
+
+    function register(
+        string calldata name,
+        uint256 coinType,
+        uint256 id,
+        address owner,
+        uint256 duration
+    ) external returns (uint256);
+
+    function renew(uint256 id, uint256 duration)
+        external returns (uint256);
+ 
 }
