@@ -20,13 +20,13 @@ async function main() {
   admin = accounts[0]
   console.log("admin:", admin.address)
 
-  const DDNSRegistry = await hre.ethers.getContractFactory('DoidRegistry')
-  const ddns = await upgrades.deployProxy(DDNSRegistry, [admin.address, TEST_PASS_REGISTRY])
-  await ddns.deployed()
-  //const ddns = await hre.ethers.getContractAt('DoidRegistry', "0x43Eb9Fa1D47d17c94285C3D859A14060dc9a2c47")
+  const DoidRegistry = await hre.ethers.getContractFactory('DoidRegistry')
+  const proxy = await upgrades.deployProxy(DoidRegistry, [TEST_PASS_REGISTRY, 60, 86400])
+  await proxy.deployed()
+  //const proxy = await hre.ethers.getContractAt('DoidRegistry', "0x43Eb9Fa1D47d17c94285C3D859A14060dc9a2c47")
 
   console.log(
-    `✅deploy DDNS Registry ${ddns.address}`
+    `✅deploy DoidRegistry ${proxy.address}`
   );
 }
 

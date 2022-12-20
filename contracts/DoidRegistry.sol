@@ -7,7 +7,8 @@ import './interfaces/IDoidRegistry.sol';
 import './interfaces/IPassRegistry.sol';
 import './resolvers/AddressResolver.sol';
 import './StringUtils.sol';
-import "hardhat/console.sol";
+
+//import "hardhat/console.sol";
 
 contract DoidRegistryStorage {
     uint256 public constant COIN_TYPE_ETH = 60;

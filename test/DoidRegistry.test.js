@@ -24,6 +24,25 @@ describe('DoidRegistry', function () {
     ])
   })
 
+  async function mintDomain(){
+        const name = "test"
+        const owner = admin.address
+        const secret = ethers.utils.formatBytes32String("secret")
+        const data = []
+        const commit = await proxy.makeCommitment(
+            name,
+            owner,
+            secret,
+            data
+        )
+
+        //commit
+        const tx = await proxy.commit(commit)
+
+        // register
+        await proxy.register(name, admin.address, secret, data)
+  }
+
   describe('Registry', () => {
     it('registry by commit', async () => {
         const name = "test"
@@ -47,14 +66,83 @@ describe('DoidRegistry', function () {
         expect(await proxy.ownerOf(nameHash)).to.be.equals(admin.address)
     })
 
-    it('commitment usage', async () => {
+    it('register a name twice', async () => {
+        const name = "test"
+        const owner = admin.address
+        const secret = ethers.utils.formatBytes32String("secret")
+        const data = []
+        const commit = await proxy.makeCommitment(
+            name,
+            owner,
+            secret,
+            data
+        )
 
+        //commit
+        const tx = await proxy.commit(commit)
+
+        // register
+        await proxy.register(name, admin.address, secret, data)
+
+        const nameHash = await proxy.nameHash(name)
+        expect(await proxy.ownerOf(nameHash)).to.be.equals(admin.address)
+
+        // dup name
+        await proxy.commit(commit)
+        await expect(proxy.register(name, admin.address, secret, data)).to.be.revertedWith("ERC721: token already minted")
+    })
+
+    it('wrong commitment secret', async () => {
+        const name = "test"
+        const owner = admin.address
+        const secret = ethers.utils.formatBytes32String("secret")
+        const secretwrong = ethers.utils.formatBytes32String("secretwrong")
+        const data = []
+        const commit = await proxy.makeCommitment(
+            name,
+            owner,
+            secret,
+            data
+        )
+        
+        //commit
+        const tx = await proxy.commit(commit)
+        // register
+        await expect(proxy.register(name, admin.address, secretwrong, data)).to.be.revertedWith("CO")
+        await expect(proxy.register(name, admin.address, secret, data)).to.ok
+
+        const nameHash = await proxy.nameHash(name)
+        expect(await proxy.ownerOf(nameHash)).to.be.equals(admin.address)
+    })
+  })
+
+
+  describe("PassReserved()", () => {
+    it('pass is reserved in passRegistry', async () => {
+        //await passReg.
     })
   })
 
   describe("AddressResolver", () => {
-    it('', async () => {
+    it('addr()', async () => {
+        const name = "test"
+        await mintDomain(name)
+        const nameHash = await proxy.nameHash(name)
+        console.log(await proxy.addr(nameHash, 60))
+        // hex to ascii ???
+    })
 
+    it('setAddr()', async () => {
+        const name = "test"
+        await mintDomain(name)
+
+        const nameHash = await proxy.nameHash(name)
+        console.log(await proxy.addr(nameHash, 60))
+
+        const name2 = "test222"
+        const nameHash2 = await proxy.nameHash(name2)
+
+        await expect(proxy.setAddr(nameHash2, 60, ethers.utils.toUtf8Bytes(name2))).to.be.revertedWith("ERC721: invalid token ID")
     })
   })
 })
