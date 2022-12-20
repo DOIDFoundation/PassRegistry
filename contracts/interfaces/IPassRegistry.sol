@@ -1,15 +1,12 @@
-
-import '@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol';
-
 pragma solidity ^0.8.0;
 
-interface IPassRegistry is IERC721Upgradeable{
+interface IPassRegistry {
     struct PassInfo {
         uint passId;
         bytes32 passClass;
         bytes32 passHash;
     }
- 
+
     function getUserInvitedNumber(address _user) external view returns (uint, uint);
 
     function getUserByName(string memory _name) external view returns (address);

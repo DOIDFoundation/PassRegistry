@@ -28,13 +28,11 @@ describe('DoidRegistry', function () {
     it('registry by commit', async () => {
         const name = "test"
         const owner = admin.address
-        const duration = 3600
         const secret = ethers.utils.formatBytes32String("secret")
         const data = []
         const commit = await proxy.makeCommitment(
             name,
             owner,
-            duration,
             secret,
             data
         )
@@ -43,7 +41,7 @@ describe('DoidRegistry', function () {
         const tx = await proxy.commit(commit)
 
         // register
-        await proxy.register(name, 0, admin.address, 3600, secret, data)
+        await proxy.register(name, admin.address, secret, data)
 
         const nameHash = await proxy.nameHash(name)
         expect(await proxy.ownerOf(nameHash)).to.be.equals(admin.address)
