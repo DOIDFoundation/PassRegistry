@@ -17,34 +17,30 @@ contract AddressResolverStorage {
      * contract always adds up to the same number (in this case 50 storage slots).
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
-    uint256[49] private __gap;
+    uint256[48] private __gap;
 }
 
 abstract contract AddressResolver is AddressResolverStorage, IAddressResolver, ResolverBase {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
+
     function setAddr(
         bytes32 node,
         uint256 coinType,
         bytes memory a
-    ) public virtual authorised(node) {
+    ) public virtual override authorised(node) {
         emit AddressChanged(node, coinType, a);
         _addresses[node][coinType] = a;
         _nameTypes[node].add(coinType);
     }
 
-    /**
-    * @dev returns all address bytes for all cointypes for a node
-    * @param node request node
-    * @return ret bytes array of all addresses
-     */
-    function nameAddresses(
-        bytes32 node
-    ) public virtual returns (bytes[] memory){
-        bytes[] memory ret = new bytes[](_nameTypes[node].length());
+    function addrs(bytes32 node) public view virtual override returns (TypedAddress[] memory) {
+        EnumerableSetUpgradeable.UintSet storage types = _nameTypes[node];
+        TypedAddress[] memory ret = new TypedAddress[](types.length());
 
-        for (uint256 index = 0; index < _nameTypes[node].length(); index++) {
-            uint coinType = _nameTypes[node].at(index);
-            ret[index] = _addresses[node][coinType];
+        for (uint256 index = 0; index < types.length(); index++) {
+            uint coinType = types.at(index);
+            ret[index].coinType = coinType;
+            ret[index].addr = _addresses[node][coinType];
         }
         return ret;
     }
