@@ -54,5 +54,7 @@ interface IDoidRegistry {
         address owner,
         bytes32 secret,
         bytes[] calldata data
-    ) external returns (uint256);
+    ) external;
+
+    function claimLockedName(uint256 passId, string memory node, address owner) external;
 }
