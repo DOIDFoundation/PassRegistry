@@ -121,6 +121,19 @@ describe('DoidRegistry', function () {
     it('pass is reserved in passRegistry', async () => {
         //await passReg.
     })
+
+    it("register a name which is reserved in pass, already used", async () => {
+
+    })
+
+    it("register a name which is reserved in pass, not used", async () => {
+
+    })
+
+  })
+
+  describe("nameOfOwner()", () => {
+
   })
 
   describe("AddressResolver", () => {

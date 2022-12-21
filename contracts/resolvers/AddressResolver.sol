@@ -52,9 +52,46 @@ abstract contract AddressResolver is AddressResolverStorage, IAddressResolver, R
         return _addresses[node][coinType];
     }
 
+    /**
+     * Returns the address associated with the node.
+     * @param node The node to query.
+     * @return The associated address.
+     */
+    function addr(bytes32 node)
+        public
+        view
+        virtual
+        override
+        returns (address payable)
+    {
+        bytes memory a = addr(node, COIN_TYPE_ETH);
+        if (a.length == 0) {
+            return payable(0);
+        }
+        return bytesToAddress(a);
+    }
+
     function supportsInterface(bytes4 interfaceID) public view virtual override returns (bool) {
         return
             interfaceID == type(IAddressResolver).interfaceId ||
             super.supportsInterface(interfaceID);
+    }
+
+    function bytesToAddress(bytes memory b)
+        internal
+        pure
+        returns (address payable a)
+    {
+        require(b.length == 20);
+        assembly {
+            a := div(mload(add(b, 32)), exp(256, 12))
+        }
+    }
+
+    function addressToBytes(address a) internal pure returns (bytes memory b) {
+        b = new bytes(20);
+        assembly {
+            mstore(add(b, 32), mul(a, exp(256, 12)))
+        }
     }
 }
