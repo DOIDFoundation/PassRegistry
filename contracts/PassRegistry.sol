@@ -271,12 +271,15 @@ contract PassRegistry is
 
     function getPassByHash(bytes32 _hash) public view returns (uint) {
         uint256 tokenId = hashToPass[_hash];
-        require(tokenId != 0);
         return tokenId;
     }
 
     function getPassByName(string memory _name) public view returns (uint) {
         return getPassByHash(getHashByName(_name));
+    }
+
+    function exists(uint _passId) public view returns (bool) {
+        return _exists(_passId);
     }
 
     /**

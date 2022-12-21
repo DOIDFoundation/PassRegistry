@@ -113,18 +113,18 @@ contract DoidRegistry is
     function statusOfName(
         string memory _name
     ) public view override returns (string memory status, address owner) {
+        status = "available";
         bytes32 node = keccak256(bytes(_name));
         uint256 id = uint256(node);
         if (_exists(id)) {
             status = "registered";
             owner = ownerOf(id);
         }
-        address lockedOwner = passReg.getUserByHash(bytes32(id));
-        if (lockedOwner != address(0)) {
+        uint passId = passReg.getPassByHash(bytes32(id));
+        if (passReg.exists(passId)){
             status = "locked";
-            owner = lockedOwner;
+            owner = passReg.getUserByHash(bytes32(id));
         }
-        status = "available";
     }
 
     /**
