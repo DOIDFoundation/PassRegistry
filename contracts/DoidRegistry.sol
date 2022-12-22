@@ -186,7 +186,6 @@ contract DoidRegistry is
     ) external override {
         _register(name, owner, secret, data);
 
-        setAddr(keccak256(bytes(name)), COIN_TYPE_ETH, addressToBytes(owner));
     }
 
     function _register(
@@ -208,7 +207,9 @@ contract DoidRegistry is
         names[node] = bytes(name);
         _mint(owner, id);
 
-        emit NameRegistered(id, owner, block.timestamp);
+        setAddr(keccak256(bytes(name)), COIN_TYPE_ETH, addressToBytes(owner));
+
+        emit NameRegistered(id, name, owner);
     }
 
     function claimLockedName(uint256 passId, string calldata name, address owner) public override {
