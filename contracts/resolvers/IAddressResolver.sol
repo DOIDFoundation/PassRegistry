@@ -53,10 +53,15 @@ interface IAddressResolver {
      * @param coinType coinType to request.
      * @return address in bytes.
      */
-    function addr(bytes32 node, uint256 coinType) external view returns (bytes memory);
+    function addrOfType(bytes32 node, uint256 coinType) external view returns (bytes memory);
 
-    function addr2(bytes32 node) external view returns (address);
- 
+    /**
+     * Returns the address associated with the node.
+     * @param node The node to query.
+     * @return The associated address.
+     */
+    function addr(bytes32 node) external view returns (address);
+
     /**
      * @dev returns all address bytes for all cointypes for a node
      * @param node request node.
