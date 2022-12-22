@@ -93,6 +93,9 @@ contract DoidRegistry is
      * @dev Returns true iff the specified name is available for registration.
      */
     function available(string memory name) public view override returns (bool) {
+        if (name.doidlen() < 6) {
+            return false;
+        }
         if (passReserved(name)) {
             return false;
         }
