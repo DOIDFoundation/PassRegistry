@@ -3,10 +3,10 @@ pragma solidity >=0.8.4;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 
-import './interfaces/IDoidRegistry.sol';
-import './interfaces/IPassRegistry.sol';
-import './resolvers/AddressResolver.sol';
-import './StringUtils.sol';
+import "./interfaces/IDoidRegistry.sol";
+import "./interfaces/IPassRegistry.sol";
+import "./resolvers/AddressResolver.sol";
+import "./StringUtils.sol";
 
 //import "hardhat/console.sol";
 
@@ -81,7 +81,7 @@ contract DoidRegistry is
         return tokenIds;
     }
 
-    function nameHash(string memory name) public pure override returns(bytes32) {
+    function nameHash(string memory name) public pure override returns (bytes32) {
         return keccak256(bytes(name));
     }
 
@@ -93,7 +93,7 @@ contract DoidRegistry is
      * @dev Returns true iff the specified name is available for registration.
      */
     function available(string memory name) public view override returns (bool) {
-        if (passReserved(name)){
+        if (passReserved(name)) {
             return false;
         }
         return true;
@@ -119,7 +119,7 @@ contract DoidRegistry is
             owner = ownerOf(id);
         }
         uint passId = passReg.getPassByHash(bytes32(id));
-        if (passReg.exists(passId)){
+        if (passReg.exists(passId)) {
             status = "locked";
             owner = passReg.getUserByHash(bytes32(id));
         }
@@ -130,16 +130,16 @@ contract DoidRegistry is
      */
     function passReserved(uint256 id) public view returns (bool) {
         address owner = passReg.getUserByHash(bytes32(id));
-        if(owner != msg.sender){
+        if (owner != msg.sender) {
             return true;
         }
         return false;
     }
 
     function passReserved(string memory name) public view returns (bool) {
-        if(passReg.nameExists(name)){
+        if (passReg.nameExists(name)) {
             address owner = passReg.getUserByName(name);
-            if(owner != msg.sender){
+            if (owner != msg.sender) {
                 return true;
             }
         }
@@ -166,7 +166,7 @@ contract DoidRegistry is
         require(commitments[commitment] + minCommitmentAge <= block.timestamp, "CN");
 
         // If the commitment is too old, or the name is registered, stop
-        require (commitments[commitment] + maxCommitmentAge > block.timestamp, "CO");
+        require(commitments[commitment] + maxCommitmentAge > block.timestamp, "CO");
 
         require(available(name), "IN");
 
@@ -186,7 +186,7 @@ contract DoidRegistry is
     ) external override {
         _register(name, owner, secret, data);
 
-        setAddr(keccak256(bytes(name)), COIN_TYPE_ETH, addressToBytes(msg.sender));
+        setAddr(keccak256(bytes(name)), COIN_TYPE_ETH, addressToBytes(owner));
     }
 
     function _register(
