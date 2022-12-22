@@ -54,14 +54,13 @@ describe('PassRegistry', function () {
       const sig = await admin.signMessage(ethers.utils.arrayify(hashedMsg))
       // console.log(sig)
 
-      await expect(proxy.lockPass(sig, '', classHash, passId)).not.to.be
-        .reverted
+      await expect(
+        proxy.lockPass(sig, '', classHash, passId),
+      ).to.be.revertedWith('IC')
 
-      expect(await proxy.balanceOf(admin.address)).to.equals(6)
-      expect(await proxy.ownerOf(passId)).to.equals(admin.address)
-      expect(
-        await proxy.tokenOfOwnerByIndex(admin.address, 1),
-      ).to.greaterThanOrEqual(100000)
+      expect(await proxy.balanceOf(admin.address)).to.equals(0)
+      await expect(proxy.ownerOf(passId)).to.be.rejected
+      await expect(proxy.tokenOfOwnerByIndex(admin.address, 1)).to.be.rejected
     })
     it('use B invitation code from foundation', async function () {
       const passId = 1
@@ -72,14 +71,13 @@ describe('PassRegistry', function () {
       const sig = await admin.signMessage(ethers.utils.arrayify(hashedMsg))
       // console.log(sig)
 
-      await expect(proxy.lockPass(sig, '', classHash, passId)).not.to.be
-        .reverted
+      await expect(
+        proxy.lockPass(sig, '', classHash, passId),
+      ).to.be.revertedWith('IC')
 
-      expect(await proxy.balanceOf(admin.address)).to.equals(6)
-      expect(await proxy.ownerOf(passId)).to.equals(admin.address)
-      expect(
-        await proxy.tokenOfOwnerByIndex(admin.address, 1),
-      ).to.greaterThanOrEqual(100000)
+      expect(await proxy.balanceOf(admin.address)).to.equals(0)
+      await expect(proxy.ownerOf(passId)).to.be.rejected
+      await expect(proxy.tokenOfOwnerByIndex(admin.address, 1)).to.be.rejected
     })
     it('use C invitation code from foundation', async function () {
       const passId = 1
@@ -90,11 +88,12 @@ describe('PassRegistry', function () {
       const sig = await admin.signMessage(ethers.utils.arrayify(hashedMsg))
       // console.log(sig)
 
-      await expect(proxy.lockPass(sig, '', classHash, passId)).not.to.be
-        .reverted
+      await expect(
+        proxy.lockPass(sig, '', classHash, passId),
+      ).to.be.revertedWith('IC')
 
-      expect(await proxy.balanceOf(admin.address)).to.equals(1)
-      expect(await proxy.ownerOf(passId)).to.equals(admin.address)
+      expect(await proxy.balanceOf(admin.address)).to.equals(0)
+      await expect(proxy.ownerOf(passId)).to.be.rejected
     })
 
     it('invitation code from foundation should match class', async function () {
@@ -106,11 +105,11 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await expect(proxy.lockPass(sig, '', BHash, 1)).to.be.revertedWith('IR')
+      await expect(proxy.lockPass(sig, '', BHash, 1)).to.be.revertedWith('IC')
       await expect(
         proxy.connect(bob).lockPass(sig, '', CHash, 1),
-      ).to.be.revertedWith('IR')
-      await expect(proxy.lockPass(sig, '', AHash, 1)).not.to.be.reverted
+      ).to.be.revertedWith('IC')
+      await expect(proxy.lockPass(sig, '', AHash, 1)).to.be.revertedWith('IC')
 
       // B class
       sig = await admin.signMessage(
@@ -122,12 +121,13 @@ describe('PassRegistry', function () {
       )
       await expect(
         proxy.connect(bob).lockPass(sig, '', AHash, 2),
-      ).to.be.revertedWith('IR')
+      ).to.be.revertedWith('IC')
       await expect(
         proxy.connect(bob).lockPass(sig, '', CHash, 2),
-      ).to.be.revertedWith('IR')
-      await expect(proxy.connect(bob).lockPass(sig, '', BHash, 2)).not.to.be
-        .reverted
+      ).to.be.revertedWith('IC')
+      await expect(
+        proxy.connect(bob).lockPass(sig, '', BHash, 2),
+      ).to.be.revertedWith('IC')
 
       // C class
       sig = await admin.signMessage(
@@ -139,12 +139,13 @@ describe('PassRegistry', function () {
       )
       await expect(
         proxy.connect(carl).lockPass(sig, '', BHash, 3),
-      ).to.be.revertedWith('IR')
+      ).to.be.revertedWith('IC')
       await expect(
         proxy.connect(carl).lockPass(sig, '', AHash, 3),
-      ).to.be.revertedWith('IR')
-      await expect(proxy.connect(carl).lockPass(sig, '', CHash, 3)).not.to.be
-        .reverted
+      ).to.be.revertedWith('IC')
+      await expect(
+        proxy.connect(carl).lockPass(sig, '', CHash, 3),
+      ).to.be.revertedWith('IC')
     })
 
     it('invitation code from foundation should match passId', async function () {
@@ -157,12 +158,11 @@ describe('PassRegistry', function () {
         ),
       )
       await expect(proxy.lockPass(sig, '', AHash, 0)).to.be.revertedWith('IC')
-      await expect(proxy.lockPass(sig, '', AHash, 2)).to.be.revertedWith('IR')
+      await expect(proxy.lockPass(sig, '', AHash, 2)).to.be.revertedWith('IC')
       await expect(
         proxy.connect(bob).lockPass(sig, '', AHash, 200000),
-      ).to.be.revertedWith('IR')
-      await expect(proxy.lockPass(sig, '', AHash, 1)).not.to.be.reverted
-
+      ).to.be.revertedWith('IC')
+      await expect(proxy.lockPass(sig, '', AHash, 1)).to.be.revertedWith('IC')
       // B class
       sig = await admin.signMessage(
         ethers.utils.arrayify(
@@ -176,12 +176,13 @@ describe('PassRegistry', function () {
       ).to.be.revertedWith('IC')
       await expect(
         proxy.connect(carl).lockPass(sig, '', BHash, 1),
-      ).to.be.revertedWith('II')
+      ).to.be.revertedWith('IC')
       await expect(
         proxy.connect(bob).lockPass(sig, '', BHash, 100000),
-      ).to.be.revertedWith('IR')
-      await expect(proxy.connect(bob).lockPass(sig, '', BHash, 2)).not.to.be
-        .reverted
+      ).to.be.revertedWith('IC')
+      await expect(
+        proxy.connect(bob).lockPass(sig, '', BHash, 2),
+      ).to.be.revertedWith('IC')
 
       // C class
       sig = await admin.signMessage(
@@ -196,12 +197,13 @@ describe('PassRegistry', function () {
       ).to.be.revertedWith('IC')
       await expect(
         proxy.connect(carl).lockPass(sig, '', CHash, 4),
-      ).to.be.revertedWith('IR')
+      ).to.be.revertedWith('IC')
       await expect(
         proxy.connect(carl).lockPass(sig, '', CHash, 1000000),
-      ).to.be.revertedWith('IR')
-      await expect(proxy.connect(carl).lockPass(sig, '', CHash, 3)).not.to.be
-        .reverted
+      ).to.be.revertedWith('IC')
+      await expect(
+        proxy.connect(carl).lockPass(sig, '', CHash, 3),
+      ).to.be.revertedWith('IC')
     })
 
     it('invitation code from foundation can be used only once', async function () {
@@ -216,13 +218,13 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await expect(proxy.lockPass(sig, '', AHash, 1)).not.to.be.reverted
+      await expect(proxy.lockPass(sig, '', AHash, 1)).to.be.revertedWith('IC')
       await expect(
         proxy.connect(bob).lockPass(sig, '', AHash, 1),
-      ).to.be.revertedWith('II')
+      ).to.be.revertedWith('IC')
       await expect(
         proxy.connect(bob).lockPass(sig, '', AHash, 1),
-      ).to.be.revertedWith('II')
+      ).to.be.revertedWith('IC')
 
       // B class
       sig = await accounts[3].signMessage(
@@ -232,14 +234,15 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await expect(proxy.connect(bob).lockPass(sig, '', BHash, 2)).not.to.be
-        .reverted
+      await expect(
+        proxy.connect(bob).lockPass(sig, '', BHash, 2),
+      ).to.be.revertedWith('IC')
       await expect(
         proxy.connect(carl).lockPass(sig, '', BHash, 2),
-      ).to.be.revertedWith('II')
+      ).to.be.revertedWith('IC')
       await expect(
         proxy.connect(carl).lockPass(sig, '', BHash, 2),
-      ).to.be.revertedWith('II')
+      ).to.be.revertedWith('IC')
 
       // C class
       sig = await accounts[3].signMessage(
@@ -249,14 +252,15 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await expect(proxy.connect(carl).lockPass(sig, '', CHash, 3)).not.to.be
-        .reverted
+      await expect(
+        proxy.connect(carl).lockPass(sig, '', CHash, 3),
+      ).to.be.revertedWith('IC')
       await expect(
         proxy.connect(accounts[4]).lockPass(sig, '', CHash, 3),
-      ).to.be.revertedWith('II')
+      ).to.be.revertedWith('IC')
       await expect(
         proxy.connect(accounts[4]).lockPass(sig, '', CHash, 3),
-      ).to.be.revertedWith('II')
+      ).to.be.revertedWith('IC')
     })
 
     it('user can not generate invitation code from foundation', async function () {
@@ -269,8 +273,8 @@ describe('PassRegistry', function () {
         ),
       )
       await expect(proxy.lockPass(sig, '', AHash, 0)).to.be.revertedWith('IC')
-      await expect(proxy.lockPass(sig, '', AHash, 1)).to.be.revertedWith('IR')
-      await expect(proxy.lockPass(sig, '', AHash, 2)).to.be.revertedWith('IR')
+      await expect(proxy.lockPass(sig, '', AHash, 1)).to.be.revertedWith('IC')
+      await expect(proxy.lockPass(sig, '', AHash, 2)).to.be.revertedWith('IC')
 
       // B class
       sig = await bob.signMessage(
@@ -281,8 +285,8 @@ describe('PassRegistry', function () {
         ),
       )
       await expect(proxy.lockPass(sig, '', BHash, 0)).to.be.revertedWith('IC')
-      await expect(proxy.lockPass(sig, '', BHash, 1)).to.be.revertedWith('IR')
-      await expect(proxy.lockPass(sig, '', BHash, 2)).to.be.revertedWith('IR')
+      await expect(proxy.lockPass(sig, '', BHash, 1)).to.be.revertedWith('IC')
+      await expect(proxy.lockPass(sig, '', BHash, 2)).to.be.revertedWith('IC')
 
       // C class
       sig = await bob.signMessage(
@@ -293,8 +297,8 @@ describe('PassRegistry', function () {
         ),
       )
       await expect(proxy.lockPass(sig, '', CHash, 0)).to.be.revertedWith('IC')
-      await expect(proxy.lockPass(sig, '', CHash, 1)).to.be.revertedWith('IR')
-      await expect(proxy.lockPass(sig, '', CHash, 2)).to.be.revertedWith('IR')
+      await expect(proxy.lockPass(sig, '', CHash, 1)).to.be.revertedWith('IC')
+      await expect(proxy.lockPass(sig, '', CHash, 2)).to.be.revertedWith('IC')
     })
 
     it('using a C type invitation code from user', async function () {
@@ -305,9 +309,10 @@ describe('PassRegistry', function () {
       )
       const sig = await admin.signMessage(ethers.utils.arrayify(hashedMsg))
       // bob lock A pass
-      await expect(proxy.connect(bob).lockPass(sig, '', classHash, passId)).not
-        .to.be.reverted
-      expect(await proxy.balanceOf(bob.address)).to.equals(6)
+      await expect(
+        proxy.connect(bob).lockPass(sig, '', classHash, passId),
+      ).to.be.revertedWith('IC')
+      expect(await proxy.balanceOf(bob.address)).to.equals(0)
 
       // bob sign a C invitation code
       const bobsCode = await bob.signMessage(ethers.utils.arrayify(CHash))
@@ -318,15 +323,15 @@ describe('PassRegistry', function () {
       ).to.be.revertedWith('IC')
 
       // bob should lockName first
-      await expect(proxy.connect(bob).lockName(passId, 'bob')).not.to.be
-        .reverted
-      await expect(proxy.connect(carl).lockPass(bobsCode, '', CHash, 0)).not.to
-        .be.reverted
+      await expect(
+        proxy.connect(bob).lockName(passId, 'bob'),
+      ).to.be.revertedWith('IC')
+      await expect(
+        proxy.connect(carl).lockPass(bobsCode, '', CHash, 0),
+      ).to.be.revertedWith('IC')
 
-      expect(await proxy.balanceOf(carl.address)).to.equals(1)
-      expect(
-        await proxy.tokenOfOwnerByIndex(carl.address, 0),
-      ).to.greaterThanOrEqual(100000)
+      expect(await proxy.balanceOf(carl.address)).to.equals(0)
+      await expect(proxy.tokenOfOwnerByIndex(carl.address, 0)).to.be.rejected
     })
 
     it('using a C type invitation code from user', async function () {
@@ -337,9 +342,10 @@ describe('PassRegistry', function () {
       )
       const sig = await admin.signMessage(ethers.utils.arrayify(hashedMsg))
       // bob lock A pass
-      await expect(proxy.connect(bob).lockPass(sig, '', classHash, passId)).not
-        .to.be.reverted
-      expect(await proxy.balanceOf(bob.address)).to.equals(6)
+      await expect(
+        proxy.connect(bob).lockPass(sig, '', classHash, passId),
+      ).to.be.revertedWith('IC')
+      expect(await proxy.balanceOf(bob.address)).to.equals(0)
 
       // bob sign a C invitation code
       let bobsCode = ethers.utils.arrayify(
@@ -352,19 +358,19 @@ describe('PassRegistry', function () {
         proxy.connect(carl).lockPass(bobsCode, '', CHash, 0),
       ).to.be.revertedWith('IC')
       // bob should lockName first
-      await expect(proxy.connect(bob).lockName(passId, 'bob')).not.to.be
-        .reverted
+      await expect(
+        proxy.connect(bob).lockName(passId, 'bob'),
+      ).to.be.revertedWith('IC')
 
       await expect(
         proxy.connect(carl).lockPass(bobsCode, '', CHash, ++passId),
-      ).to.be.revertedWith('IR')
+      ).to.be.revertedWith('IC')
 
-      await expect(proxy.connect(carl).lockPass(bobsCode, '', CHash, 0)).not.to
-        .be.reverted
-      expect(await proxy.balanceOf(carl.address)).to.equals(1)
-      expect(
-        await proxy.tokenOfOwnerByIndex(carl.address, 0),
-      ).to.greaterThanOrEqual(100000)
+      await expect(
+        proxy.connect(carl).lockPass(bobsCode, '', CHash, 0),
+      ).to.be.revertedWith('IC')
+      expect(await proxy.balanceOf(carl.address)).to.equals(0)
+      await expect(proxy.tokenOfOwnerByIndex(carl.address, 0)).to.be.rejected
 
       const accounts = await hre.ethers.getSigners()
       // bob sign a A invitation code
@@ -377,7 +383,7 @@ describe('PassRegistry', function () {
       ).to.be.revertedWith('IC')
       await expect(
         proxy.connect(accounts[3]).lockPass(bobsCode, '', AHash, ++passId),
-      ).to.be.revertedWith('IR')
+      ).to.be.revertedWith('IC')
       bobsCode = ethers.utils.arrayify(
         ethers.utils.hexValue(
           BigInt(admin.address) ^
@@ -394,7 +400,7 @@ describe('PassRegistry', function () {
       )
       await expect(
         proxy.connect(accounts[3]).lockPass(bobsCode, '', AHash, passId),
-      ).to.be.revertedWith('IR')
+      ).to.be.revertedWith('IC')
 
       // bob sign a B invitation code
       bobsCode = ethers.utils.arrayify(
@@ -406,7 +412,7 @@ describe('PassRegistry', function () {
       ).to.be.revertedWith('IC')
       await expect(
         proxy.connect(accounts[4]).lockPass(bobsCode, '', BHash, ++passId),
-      ).to.be.revertedWith('IR')
+      ).to.be.revertedWith('IC')
       bobsCode = ethers.utils.arrayify(
         ethers.utils.hexValue(
           BigInt(admin.address) ^
@@ -423,7 +429,7 @@ describe('PassRegistry', function () {
       )
       await expect(
         proxy.connect(accounts[4]).lockPass(bobsCode, '', BHash, passId),
-      ).to.be.revertedWith('IR')
+      ).to.be.revertedWith('IC')
 
       // bob sign a C invitation code with passId
       bobsCode = ethers.utils.arrayify(
@@ -442,7 +448,7 @@ describe('PassRegistry', function () {
       )
       await expect(
         proxy.connect(accounts[5]).lockPass(bobsCode, '', CHash, passId),
-      ).to.be.revertedWith('IR')
+      ).to.be.revertedWith('IC')
     })
 
     it('invitation code from user can only be class C', async function () {
@@ -453,8 +459,9 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await expect(proxy.connect(bob).lockPass(sig, 'test', AHash, 1)).not.to.be
-        .reverted
+      await expect(
+        proxy.connect(bob).lockPass(sig, 'test', AHash, 1),
+      ).to.be.revertedWith('IC')
 
       // A class
       sig = await bob.signMessage(
@@ -466,7 +473,7 @@ describe('PassRegistry', function () {
       )
       await expect(
         proxy.connect(carl).lockPass(sig, '', AHash, 2),
-      ).to.be.revertedWith('IR')
+      ).to.be.revertedWith('IC')
 
       // B class
       sig = await bob.signMessage(
@@ -478,7 +485,7 @@ describe('PassRegistry', function () {
       )
       await expect(
         proxy.connect(carl).lockPass(sig, '', BHash, 2),
-      ).to.be.revertedWith('IR')
+      ).to.be.revertedWith('IC')
 
       // C class with passId
       sig = await bob.signMessage(
@@ -488,18 +495,17 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await expect(
+      expect(
         proxy.connect(carl).lockPass(sig, '', CHash, 2),
-      ).to.be.revertedWith('IR')
+      ).to.be.revertedWith('IC')
 
       // C class without passId
       sig = await bob.signMessage(ethers.utils.arrayify(CHash))
-      await expect(proxy.connect(carl).lockPass(sig, '', CHash, 0)).not.to.be
-        .reverted
-      expect(await proxy.balanceOf(carl.address)).to.equals(1)
       expect(
-        await proxy.tokenOfOwnerByIndex(carl.address, 0),
-      ).to.greaterThanOrEqual(100000)
+        proxy.connect(carl).lockPass(sig, '', CHash, 0),
+      ).to.be.revertedWith('IC')
+      expect(await proxy.balanceOf(carl.address)).to.equals(0)
+      expect(proxy.tokenOfOwnerByIndex(carl.address, 0)).to.be.rejected
     })
 
     it('user can get 18 invitations from class A', async function () {
@@ -512,16 +518,18 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await proxy.connect(accounts[1]).lockPass(sig, 'test', limit[0], 1)
+      expect(
+        proxy.connect(accounts[1]).lockPass(sig, 'test', limit[0], 1),
+      ).to.be.revertedWith('IC')
       expect(
         (await proxy.getUserInvitedNumber(accounts[1].address))[1],
-      ).to.equals(limit[1])
+      ).to.equals(0)
       const sig2 = await accounts[1].signMessage(ethers.utils.arrayify(CHash))
       for (i = 1; i <= limit[1]; i++) {
         await expect(
           proxy.connect(accounts[i + 1]).lockPass(sig2, '', CHash, 0),
           'class ' + limit[0] + ' at ' + i + '/' + limit[1],
-        ).not.to.be.reverted
+        ).to.be.revertedWith('IC')
       }
 
       await expect(
@@ -540,22 +548,24 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await proxy.connect(accounts[1]).lockPass(sig, 'test', limit[0], 1)
+      expect(
+        proxy.connect(accounts[1]).lockPass(sig, 'test', limit[0], 1),
+      ).to.be.revertedWith('IC')
       expect(
         (await proxy.getUserInvitedNumber(accounts[1].address))[1],
-      ).to.equals(limit[1])
+      ).to.equals(0)
       const sig2 = await accounts[1].signMessage(ethers.utils.arrayify(CHash))
       for (i = 1; i <= limit[1]; i++) {
         await expect(
           proxy.connect(accounts[i + 1]).lockPass(sig2, '', CHash, 0),
           'class ' + limit[0] + ' at ' + i + '/' + limit[1],
-        ).not.to.be.reverted
+        ).to.be.revertedWith('IC')
       }
 
       await expect(
         proxy.connect(accounts[limit[1]]).lockPass(sig2, '', CHash, 0),
         'class ' + limit[0] + ' at ' + (limit[1] + 1),
-      ).to.be.reverted
+      ).to.be.revertedWith('IC')
     })
 
     it('user can get 3 invitations from class C', async function () {
@@ -568,22 +578,24 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await proxy.connect(accounts[1]).lockPass(sig, 'testtt', limit[0], 1)
+      expect(
+        proxy.connect(accounts[1]).lockPass(sig, 'testtt', limit[0], 1),
+      ).to.be.revertedWith('IC')
       expect(
         (await proxy.getUserInvitedNumber(accounts[1].address))[1],
-      ).to.equals(limit[1])
+      ).to.equals(0)
       const sig2 = await accounts[1].signMessage(ethers.utils.arrayify(CHash))
       for (i = 1; i <= limit[1]; i++) {
         await expect(
           proxy.connect(accounts[i + 1]).lockPass(sig2, '', CHash, 0),
           'class ' + limit[0] + ' at ' + i + '/' + limit[1],
-        ).not.to.be.reverted
+        ).to.be.revertedWith('IC')
       }
 
       await expect(
         proxy.connect(accounts[limit[1]]).lockPass(sig2, '', CHash, 0),
         'class ' + limit[0] + ' at ' + (limit[1] + 1),
-      ).to.be.reverted
+      ).to.be.revertedWith('IC')
     })
 
     it('every user can use invitation code only once', async function () {
@@ -595,7 +607,7 @@ describe('PassRegistry', function () {
         ),
       )
       //first time
-      await expect(proxy.lockPass(sig, '', AHash, 1)).not.to.be.reverted
+      expect(proxy.lockPass(sig, '', AHash, 1)).to.be.revertedWith('IC')
       //seconde time
       let sig2 = await admin.signMessage(
         ethers.utils.arrayify(
@@ -604,7 +616,7 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await expect(proxy.lockPass(sig, '', AHash, 2)).to.be.revertedWith('IU')
+      await expect(proxy.lockPass(sig, '', AHash, 2)).to.be.revertedWith('IC')
     })
   })
 
@@ -618,31 +630,11 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await expect(proxy.lockPass(sig, '', AHash, passId)).not.to.be.reverted
+      expect(proxy.lockPass(sig, '', AHash, passId)).to.be.revertedWith('IC')
 
       // 1 * A pass
-      await expect(proxy.lockName(passId, 'a')).to.be.revertedWith('IN')
-      await expect(proxy.lockName(passId, 'ab'))
-        .to.emit(proxy, 'LockName')
-        .withArgs(admin.address, passId, 'ab')
-
-      // other C pass
-      passId = await proxy.tokenOfOwnerByIndex(admin.address, 1)
-      await expect(proxy.lockName(passId, 'ab')).to.be.revertedWith('IN')
-      await expect(proxy.lockName(passId, 'abcde')).to.be.revertedWith('IN')
-      await expect(proxy.lockName(passId, 'abcdef'))
-        .to.emit(proxy, 'LockName')
-        .withArgs(admin.address, passId, 'abcdef')
-
-      // not owned passid
-      passId = await proxy.tokenOfOwnerByIndex(admin.address, 2)
-      await proxy.transferFrom(admin.address, bob.address, passId)
-      await expect(proxy.lockName(passId, 'abcde')).to.be.revertedWith('IP')
-
-      // non-exist passid
-      await expect(proxy.lockName(3, 'abcde')).to.be.revertedWith(
-        'ERC721: invalid token ID',
-      )
+      await expect(proxy.lockName(passId, 'a')).to.be.revertedWith('IC')
+      await expect(proxy.lockName(passId, 'ab')).to.be.revertedWith('IC')
     })
 
     it('lock name should success only once', async function () {
@@ -654,13 +646,8 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await expect(proxy.lockPass(sig, 'ab', AHash, passId)).not.to.be.reverted
-      await expect(proxy.lockName(passId, 'abc')).to.be.revertedWith('AL')
-
-      // 1 * A pass
-      passId = await proxy.tokenOfOwnerByIndex(admin.address, 1)
-      await expect(proxy.lockName(passId, 'abcdef')).not.to.be.reverted
-      await expect(proxy.lockName(passId, 'abcdefg')).to.be.revertedWith('AL')
+      expect(proxy.lockPass(sig, 'ab', AHash, passId)).to.be.revertedWith('IC')
+      await expect(proxy.lockName(passId, 'abc')).to.be.revertedWith('IC')
     })
 
     it('lock name length limit with A code', async function () {
@@ -672,9 +659,9 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await expect(proxy.lockPass(sig, '', AHash, passId)).not.to.be.reverted
-      await expect(proxy.lockName(passId, 'a')).to.be.revertedWith('IN')
-      await expect(proxy.lockName(passId, 'ab')).not.to.be.reverted
+      expect(proxy.lockPass(sig, '', AHash, passId)).to.be.revertedWith('IC')
+      expect(proxy.lockName(passId, 'a')).to.be.revertedWith('IC')
+      expect(proxy.lockName(passId, 'ab')).to.be.revertedWith('IC')
 
       passId++
       sig = await admin.signMessage(
@@ -684,9 +671,10 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await expect(proxy.connect(bob).lockPass(sig, '', AHash, passId)).not.to
-        .be.reverted
-      await expect(proxy.connect(bob).lockName(passId, '😄')).not.to.be.reverted
+      expect(
+        proxy.connect(bob).lockPass(sig, '', AHash, passId),
+      ).to.be.revertedWith('IC')
+      expect(proxy.connect(bob).lockName(passId, '😄')).to.be.revertedWith('IC')
     })
 
     it('lock name length limit with B code', async function () {
@@ -702,13 +690,14 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await expect(proxy.lockPass(sig, '', classHash, passId)).not.to.be
-        .reverted
-      await expect(proxy.lockName(passId, 'a')).to.be.revertedWith('IN')
-      await expect(proxy.lockName(passId, 'ab')).to.be.revertedWith('IN')
-      await expect(proxy.lockName(passId, 'abc')).to.be.revertedWith('IN')
-      await expect(proxy.lockName(passId, '😄')).to.be.revertedWith('IN')
-      await expect(proxy.lockName(passId, 'abcd')).not.to.be.reverted
+      await expect(
+        proxy.lockPass(sig, '', classHash, passId),
+      ).to.be.revertedWith('IC')
+      await expect(proxy.lockName(passId, 'a')).to.be.revertedWith('IC')
+      await expect(proxy.lockName(passId, 'ab')).to.be.revertedWith('IC')
+      await expect(proxy.lockName(passId, 'abc')).to.be.revertedWith('IC')
+      await expect(proxy.lockName(passId, '😄')).to.be.revertedWith('IC')
+      await expect(proxy.lockName(passId, 'abcd')).to.be.revertedWith('IC')
 
       passId++
       sig = await admin.signMessage(
@@ -721,10 +710,12 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await expect(proxy.connect(bob).lockPass(sig, '', classHash, passId)).not
-        .to.be.reverted
-      await expect(proxy.connect(bob).lockName(passId, '😄😄')).not.to.be
-        .reverted
+      await expect(
+        proxy.connect(bob).lockPass(sig, '', classHash, passId),
+      ).to.be.revertedWith('IC')
+      await expect(
+        proxy.connect(bob).lockName(passId, '😄😄'),
+      ).to.be.revertedWith('IC')
     })
 
     it('lock name length limit with C code', async function () {
@@ -740,16 +731,17 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await expect(proxy.lockPass(sig, '', classHash, passId)).not.to.be
-        .reverted
-      await expect(proxy.lockName(passId, 'a')).to.be.revertedWith('IN')
-      await expect(proxy.lockName(passId, 'ab')).to.be.revertedWith('IN')
-      await expect(proxy.lockName(passId, 'abc')).to.be.revertedWith('IN')
-      await expect(proxy.lockName(passId, 'abcd')).to.be.revertedWith('IN')
-      await expect(proxy.lockName(passId, 'abcde')).to.be.revertedWith('IN')
-      await expect(proxy.lockName(passId, '😄')).to.be.revertedWith('IN')
-      await expect(proxy.lockName(passId, '😄😄')).to.be.revertedWith('IN')
-      await expect(proxy.lockName(passId, 'abcdef')).not.to.be.reverted
+      await expect(
+        proxy.lockPass(sig, '', classHash, passId),
+      ).to.be.revertedWith('IC')
+      await expect(proxy.lockName(passId, 'a')).to.be.revertedWith('IC')
+      await expect(proxy.lockName(passId, 'ab')).to.be.revertedWith('IC')
+      await expect(proxy.lockName(passId, 'abc')).to.be.revertedWith('IC')
+      await expect(proxy.lockName(passId, 'abcd')).to.be.revertedWith('IC')
+      await expect(proxy.lockName(passId, 'abcde')).to.be.revertedWith('IC')
+      await expect(proxy.lockName(passId, '😄')).to.be.revertedWith('IC')
+      await expect(proxy.lockName(passId, '😄😄')).to.be.revertedWith('IC')
+      await expect(proxy.lockName(passId, 'abcdef')).to.be.revertedWith('IC')
 
       passId++
       sig = await admin.signMessage(
@@ -762,95 +754,12 @@ describe('PassRegistry', function () {
           ),
         ),
       )
-      await expect(proxy.connect(bob).lockPass(sig, '', classHash, passId)).not
-        .to.be.reverted
-      await expect(proxy.connect(bob).lockName(passId, '😄😄😄')).not.to.be
-        .reverted
-    })
-  })
-
-  describe('Query passes', () => {
-    beforeEach(async () => {
-      let passId = 1
-      let sig = await admin.signMessage(
-        ethers.utils.arrayify(
-          ethers.utils.keccak256(
-            ethers.utils.solidityPack(['uint256', 'bytes32'], [passId, AHash]),
-          ),
-        ),
-      )
-      await expect(proxy.lockPass(sig, 'ab', AHash, passId)).not.to.be.reverted
-      passId = 100001
-      await expect(proxy.lockName(passId++, 'abcdef')).not.to.be.reverted
-      await expect(proxy.lockName(passId++, 'abcdef1')).not.to.be.reverted
-      await expect(proxy.lockName(passId++, 'abcdef2')).not.to.be.reverted
-      expect(await proxy.balanceOf(admin.address)).to.equals(6)
-    })
-
-    it('getUserPassList', async () => {
-      expect(await proxy.getUserPassList(admin.address)).to.deep.equals([
-        1, 100001, 100002, 100003, 100004, 100005,
-      ])
-    })
-
-    it('getUserPassesInfo', async () => {
-      expect(await proxy.getUserPassesInfo(admin.address)).to.deep.equals([
-        [
-          1,
-          '0x03783fac2efed8fbc9ad443e592ee30e61d65f471140c10ca155e937b435b760',
-          getNameHash('ab'),
-        ],
-        [
-          100001,
-          '0x017e667f4b8c174291d1543c466717566e206df1bfd6f30271055ddafdb18f72',
-          getNameHash('abcdef'),
-        ],
-        [
-          100002,
-          '0x017e667f4b8c174291d1543c466717566e206df1bfd6f30271055ddafdb18f72',
-          getNameHash('abcdef1'),
-        ],
-        [
-          100003,
-          '0x017e667f4b8c174291d1543c466717566e206df1bfd6f30271055ddafdb18f72',
-          getNameHash('abcdef2'),
-        ],
-        [
-          100004,
-          '0x017e667f4b8c174291d1543c466717566e206df1bfd6f30271055ddafdb18f72',
-          '0x0000000000000000000000000000000000000000000000000000000000000000',
-        ],
-        [
-          100005,
-          '0x017e667f4b8c174291d1543c466717566e206df1bfd6f30271055ddafdb18f72',
-          '0x0000000000000000000000000000000000000000000000000000000000000000',
-        ],
-      ])
-    })
-
-    it('getUserPassInfo', async () => {
-      expect(await proxy.getUserPassInfo(1)).to.deep.equals([
-        1,
-        '0x03783fac2efed8fbc9ad443e592ee30e61d65f471140c10ca155e937b435b760',
-        getNameHash('ab'),
-      ])
-    })
-
-    it('getNameByHash', async () => {
-      expect(await proxy.getNameByHash(getNameHash('ab'))).to.equals('ab')
-      await expect(proxy.getNameByHash(getNameHash('abc'))).to.be.rejected
-    })
-
-    it('getUserByHash', async () => {
-      expect(await proxy.getUserByHash(getNameHash('ab'))).to.equals(
-        admin.address,
-      )
-      await expect(proxy.getUserByHash(getNameHash('abc'))).to.be.rejected
-    })
-
-    it('getPassByHash', async () => {
-      expect(await proxy.getPassByHash(getNameHash('ab'))).to.equals(1)
-      await expect(proxy.getPassByHash(getNameHash('abc'))).to.be.rejected
+      await expect(
+        proxy.connect(bob).lockPass(sig, '', classHash, passId),
+      ).to.be.revertedWith('IC')
+      await expect(
+        proxy.connect(bob).lockName(passId, '😄😄😄'),
+      ).to.be.revertedWith('IC')
     })
   })
 
@@ -895,17 +804,6 @@ describe('PassRegistry', function () {
       expect(await proxy.nameReserves('ab')).to.equals(false)
       expect(await proxy.nameReserves('测试名字')).to.equals(true)
       expect(await proxy.nameReserves('测试x名字')).to.equals(false)
-    })
-
-    it('reserve name can be locked by admin', async function () {
-      let testname = [ethers.utils.keccak256(ethers.utils.toUtf8Bytes('aa'))]
-      await proxy.reserveName(testname)
-      expect(await proxy.nameReserves('aa')).to.equals(true)
-      await expect(proxy.connect(bob).lockAndMint('aa', bob.address)).to.be
-        .reverted
-      await proxy.lockAndMint('aa', bob.address)
-      expect(await proxy.nameReserves('aa')).to.equals(false)
-      expect(await proxy.balanceOf(bob.address)).to.equals(1)
     })
 
     it('dup name', async function () {})

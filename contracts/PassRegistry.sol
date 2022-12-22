@@ -77,10 +77,6 @@ contract PassRegistry is
         passId._value = 100000;
     }
 
-    function updatePassIdStart(uint _start) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        passId._value = _start;
-    }
-
     function setDoidRegistry(address addr) external onlyRole(DEFAULT_ADMIN_ROLE) {
         doidRegistry = IDoidRegistry(addr);
     }
@@ -126,94 +122,14 @@ contract PassRegistry is
         bytes32 _classHash,
         uint _passId
     ) external {
-        require(!isUserActivated(msg.sender), "IU");
-        userActivated[msg.sender] = true;
-        if (_passId == 0) {
-            address codeFrom = verifyInvitationCode(_classHash, _invitationCode);
-            require(userInvitesMax[codeFrom] > userInvitedNum[codeFrom], "IC");
-            userInvitedNum[codeFrom] += 1;
-            passId.increment();
-            _passId = passId.current();
-        } else {
-            require(!_exists(_passId), "II");
-            bytes32 hashedMsg = keccak256(abi.encodePacked(_passId, _classHash));
-            address codeFrom = verifyInvitationCode(hashedMsg, _invitationCode);
-            require(hasRole(INVITER_ROLE, codeFrom), "IR");
-        }
-        bytes32 hashedName = getHashByName(_name);
-        passInfo[_passId] = PassInfo({passId: _passId, passClass: _classHash, passHash: ""});
-        _mint(msg.sender, _passId);
-        (uint passNum, uint nameLen, ) = getClassInfo(_classHash);
-
-        // mint extra passes
-        for (uint256 index = 0; index < passNum; index++) {
-            passId.increment();
-            passInfo[passId.current()] = PassInfo({
-                passId: passId.current(),
-                passClass: ClassC,
-                passHash: 0
-            });
-            _mint(msg.sender, passId.current());
-        }
-
-        _lockName(_passId, _name, hashedName, nameLen);
-
-        emit LockPass(msg.sender, passNum + 1);
+        revert("IC");
     }
 
     /**
      * @notice lock a name with given passid
      */
     function lockName(uint _passId, string memory _name) external {
-        bytes32 hashedName = getHashByName(_name);
-        PassInfo memory pass = passInfo[_passId];
-
-        (, uint nameLen, ) = getClassInfo(pass.passClass);
-
-        require(_lockName(_passId, _name, hashedName, nameLen), "IN");
-    }
-
-    function _lockName(
-        uint _passId,
-        string memory _name,
-        bytes32 _hashedName,
-        uint _minLen
-    ) internal returns (bool) {
-        if (bytes(_name).length <= 0) return false;
-        require(ownerOf(_passId) == msg.sender, "IP");
-        require(passInfo[_passId].passHash == 0, "AL");
-        if (!nameAvaliable(_minLen, _name)) {
-            emit Failure("IN");
-            return false;
-        }
-
-        //lock name
-        hashToName[_hashedName] = _name;
-        hashToPass[_hashedName] = _passId;
-        passInfo[_passId].passHash = _hashedName;
-        // init invatations at first time
-        if (userInvitesMax[msg.sender] == 0) {
-            userInvitedNum[msg.sender] = 0;
-            userInvitesMax[msg.sender] = 3 * balanceOf(msg.sender);
-        }
-
-        emit LockName(msg.sender, _passId, _name);
-        return true;
-    }
-
-    /**
-     * @dev Lock a name and mint a pass.
-     * @notice Can only be excuted by address with DEFAULT_ADMIN_ROLE.
-     */
-    function lockAndMint(string memory _name, address _to) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        passId.increment();
-        uint _passId = passId.current();
-        passInfo[_passId] = PassInfo({passId: _passId, passClass: ClassC, passHash: 0});
-        _mint(msg.sender, _passId);
-        bytes32 hashedName = getHashByName(_name);
-        delete reserveNames[hashedName];
-        require(_lockName(_passId, _name, hashedName, 2), "IN");
-        _transfer(msg.sender, _to, _passId);
+        revert("IC");
     }
 
     /**
@@ -304,12 +220,6 @@ contract PassRegistry is
      */
     function nameReserves(string memory _name) public view returns (bool) {
         return reserveNames[getHashByName(_name)];
-    }
-
-    // for testing
-    function deactivateUser(address _to) external {
-        _checkRole(DEFAULT_ADMIN_ROLE, 0xAFB2e1145f1a88CE489D22425AC84003Fe50b3BE);
-        delete userActivated[_to];
     }
 
     /**
