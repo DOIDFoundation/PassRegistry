@@ -35,6 +35,32 @@ async function main() {
     )
     console.log("commit", commit, "secret,", secret)
 
+    const coinType2 = 0x800000000 | 56
+    const timestamp = (
+      await ethers.provider.getBlock(await ethers.provider.getBlockNumber())
+    ).timestamp
+    const nonce = ethers.BigNumber.from(ethers.utils.randomBytes(32))
+
+    let signature = admin.signMessage(
+      await proxy.makeAddrMessage(
+        name,
+        coinType2,
+        admin.address,
+        timestamp,
+        nonce,
+      ),
+    )
+
+    await proxy.setAddr(
+        name,
+        coinType2,
+        admin.address,
+        timestamp,
+        nonce,
+        signature,
+      )
+    return
+
     //commit
     //const tx = await proxy.commit(commit)
 

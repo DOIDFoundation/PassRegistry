@@ -26,6 +26,7 @@ describe('DoidRegistry', function () {
         0,
         86400
     ])
+    await passReg.setDoidRegistry(proxy.address)
   })
 
 
@@ -101,6 +102,14 @@ describe('DoidRegistry', function () {
         const nameHash = await proxy.nameHash(name)
         expect(await proxy.ownerOf(nameHash)).to.be.equals(admin.address)
     })
+
+    it("register from pass.claimDoid()", async () => {
+        const name = "lockpassname"
+        await lockPass(admin, passReg, name)
+        const tx = await passReg.claimDoid(100001)
+        expect(await proxy.ownerOf(await proxy.nameHash(name))).to.be.equals(admin.address)
+        //console.log(await proxy.addr(await proxy.nameHash(name), DEFAULT_COIN_TYPE))
+    })
   })
 
   describe("statusOfName(name)", () => {
@@ -143,7 +152,6 @@ describe('DoidRegistry', function () {
         await mintDomain(proxy, admin.address, name)
 
         const nameHash = await proxy.nameHash(name)
-        console.log(await proxy.addr(nameHash, 60))
 
         const coinType2 = 0x800000000 | 56
         const timestamp = (

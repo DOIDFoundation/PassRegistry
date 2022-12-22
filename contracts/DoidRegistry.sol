@@ -130,7 +130,7 @@ contract DoidRegistry is
      */
     function passReserved(uint256 id) public view returns (bool) {
         address owner = passReg.getUserByHash(bytes32(id));
-        if (owner != msg.sender) {
+        if (owner != tx.origin) {
             return true;
         }
         return false;
@@ -139,7 +139,7 @@ contract DoidRegistry is
     function passReserved(string memory name) public view returns (bool) {
         if (passReg.nameExists(name)) {
             address owner = passReg.getUserByName(name);
-            if (owner != msg.sender) {
+            if (owner != tx.origin) {
                 return true;
             }
         }
