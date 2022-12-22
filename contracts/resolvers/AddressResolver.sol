@@ -135,26 +135,15 @@ abstract contract AddressResolver is AddressResolverStorage, IAddressResolver, R
         return ret;
     }
 
-    function addr(
+    function addrOfType(
         bytes32 node,
         uint256 coinType
     ) public view virtual override returns (bytes memory) {
         return _addresses[node][coinType];
     }
 
-    /**
-     * Returns the address associated with the node.
-     * @param node The node to query.
-     * @return The associated address.
-     */
-    function addr2(bytes32 node)
-        public
-        view
-        virtual
-        override
-        returns (address)
-    {
-        bytes memory a = addr(node, COIN_TYPE_ETH);
+    function addr(bytes32 node) public view virtual override returns (address) {
+        bytes memory a = addrOfType(node, COIN_TYPE_ETH);
         if (a.length == 0) {
             return address(0);
         }
