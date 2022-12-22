@@ -30,7 +30,7 @@ interface IDoidRegistry {
      */
     function statusOfName(
         string memory name
-    ) external view returns (string memory status, address owner);
+    ) external view returns (string memory status, address owner, uint id);
 
     function nameHash(string memory name) external view returns(bytes32);
 

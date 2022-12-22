@@ -15,13 +15,13 @@ async function main() {
   admin = accounts[0]
   console.log("admin:", admin.address)
 
-  if (false){
+  if (true){
     const DDNSRegistry = await hre.ethers.getContractFactory('DoidRegistry')
     const ddns = await upgrades.upgradeProxy(TEST_DOID_REGISTRY, DDNSRegistry)
     console.log("upgrade proxy", ddns.address)
     return
   }
-  if (true) {
+  if (false) {
     const proxy = await hre.ethers.getContractAt('DoidRegistry', TEST_DOID_REGISTRY)
     const name = "tianqibucuo"
     const owner = admin.address
