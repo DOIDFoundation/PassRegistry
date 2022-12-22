@@ -8,7 +8,7 @@ interface IDoidRegistry {
 
     struct DoidInfo {
         uint256 tokenId;
-        bytes name;
+        string name;
     }
 
     /**
@@ -32,7 +32,7 @@ interface IDoidRegistry {
         string memory name
     ) external view returns (string memory status, address owner, uint id);
 
-    function nameHash(string memory name) external view returns(bytes32);
+    function nameHash(string memory name) external view returns (bytes32);
 
     function valid(string memory name) external pure returns (bool);
 

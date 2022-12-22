@@ -33,7 +33,7 @@ describe('DoidRegistry', function () {
 
   describe('Registry', () => {
     it('registry by commit', async () => {
-        const name = "test"
+        const name = "doidtest"
         const owner = admin.address
         const secret = ethers.utils.formatBytes32String("secret")
         const data = []
@@ -55,7 +55,7 @@ describe('DoidRegistry', function () {
     })
 
     it('register a name twice', async () => {
-        const name = "test"
+        const name = "doidtest"
         const owner = admin.address
         const secret = ethers.utils.formatBytes32String("secret")
         const data = []
@@ -81,7 +81,7 @@ describe('DoidRegistry', function () {
     })
 
     it('wrong commitment secret', async () => {
-        const name = "test"
+        const name = "doidtest"
         const owner = admin.address
         const secret = ethers.utils.formatBytes32String("secret")
         const secretwrong = ethers.utils.formatBytes32String("secretwrong")
@@ -141,14 +141,14 @@ describe('DoidRegistry', function () {
 
   describe("AddressResolver", () => {
     it('addr()', async () => {
-        const name = "test"
+        const name = "doidtest"
         await mintDomain(proxy, admin.address, name)
         const nameHash = await proxy.nameHash(name)
-        expect(await proxy.addr(nameHash, DEFAULT_COIN_TYPE)).to.be.equals(admin.address.toLowerCase())
+        expect(await proxy.addrOfType(nameHash, DEFAULT_COIN_TYPE)).to.be.equals(admin.address.toLowerCase())
     })
 
     it('setAddr()', async () => {
-        const name = "test"
+        const name = "doidtest"
         await mintDomain(proxy, admin.address, name)
 
         const nameHash = await proxy.nameHash(name)
@@ -182,7 +182,7 @@ describe('DoidRegistry', function () {
           .to.emit(proxy, 'AddressChanged')
           .withArgs(nameHash, coinType2, bob.address.toLowerCase())
 
-        expect(await proxy.addr(nameHash, coinType2)).to.be.equal(
+        expect(await proxy.addrOfType(nameHash, coinType2)).to.be.equal(
           bob.address.toLowerCase(),
         )
 

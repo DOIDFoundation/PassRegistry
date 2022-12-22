@@ -76,7 +76,7 @@ contract DoidRegistry is
         for (uint256 index = 0; index < balanceOf(_user); index++) {
             uint256 tokenId = tokenOfOwnerByIndex(_user, index);
             tokenIds[index].tokenId = tokenId;
-            tokenIds[index].name = names[bytes32(tokenId)];
+            tokenIds[index].name = string(names[bytes32(tokenId)]);
         }
         return tokenIds;
     }
@@ -190,7 +190,6 @@ contract DoidRegistry is
         bytes[] calldata data
     ) external override {
         _register(name, owner, secret, data);
-
     }
 
     function _register(
@@ -212,7 +211,7 @@ contract DoidRegistry is
         names[node] = bytes(name);
         _mint(owner, id);
 
-        setAddr(keccak256(bytes(name)), COIN_TYPE_ETH, addressToBytes(owner));
+        setAddr(node, COIN_TYPE_ETH, addressToBytes(owner));
 
         emit NameRegistered(id, name, owner);
     }

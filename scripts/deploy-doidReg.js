@@ -19,6 +19,14 @@ async function main() {
     const DDNSRegistry = await hre.ethers.getContractFactory('DoidRegistry')
     const ddns = await upgrades.upgradeProxy(TEST_DOID_REGISTRY, DDNSRegistry)
     console.log("upgrade proxy", ddns.address)
+    await ddns.deployed()
+    console.log(
+      'new implementation',
+      await upgrades.erc1967.getImplementationAddress(ddns.address),
+    )
+    await hre.run('verify:verify', {
+      address: await upgrades.erc1967.getImplementationAddress(ddns.address),
+    })
     return
   }
   if (false) {
