@@ -8,22 +8,44 @@ const hre = require("hardhat");
 
 const PASS_REGISTRY = ""
 const TEST_PASS_REGISTRY = "0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE"
+const TEST_DOID_REGISTRY = "0x24256dAb379962842691Eb8bcE11f2b5032bf1b6"
 
 async function main() {
-  if (false){
-    const DDNSRegistry = await hre.ethers.getContractFactory('DoidRegistry')
-    const ddns = await upgrades.upgradeProxy("0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE", DDNSRegistry)
-    console.log("upgrade proxy", ddns.address)
-    return
-  }
   const accounts = await hre.ethers.getSigners()
   admin = accounts[0]
   console.log("admin:", admin.address)
 
+  if (false){
+    const DDNSRegistry = await hre.ethers.getContractFactory('DoidRegistry')
+    const ddns = await upgrades.upgradeProxy(TEST_DOID_REGISTRY, DDNSRegistry)
+    console.log("upgrade proxy", ddns.address)
+    return
+  }
+  if (true) {
+    const proxy = await hre.ethers.getContractAt('DoidRegistry', TEST_DOID_REGISTRY)
+    const name = "tianqibucuo"
+    const owner = admin.address
+    const secret = ethers.utils.formatBytes32String("secret1")
+    const data = []
+    const commit = await proxy.makeCommitment(
+        name,
+        owner,
+        secret,
+        data
+    )
+    console.log("commit", commit, "secret,", secret)
+
+    //commit
+    //const tx = await proxy.commit(commit)
+
+    // register
+    await proxy.register(name, admin.address, secret, data)
+    return
+  }
+
   const DoidRegistry = await hre.ethers.getContractFactory('DoidRegistry')
   const proxy = await upgrades.deployProxy(DoidRegistry, [TEST_PASS_REGISTRY, 60, 86400])
   await proxy.deployed()
-  //const proxy = await hre.ethers.getContractAt('DoidRegistry', "0x43Eb9Fa1D47d17c94285C3D859A14060dc9a2c47")
 
   console.log(
     `✅deploy DoidRegistry ${proxy.address}`

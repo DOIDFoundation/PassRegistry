@@ -7,9 +7,10 @@
 const hre = require("hardhat");
 
 async function main() {
-  if (false){
+  if (true){
     const Registry = await hre.ethers.getContractFactory('PassRegistry')
     const proxy = await upgrades.upgradeProxy("0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE", Registry)
+    //const proxy = await upgrades.forceImport("0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE", Registry)
     console.log("upgrade proxy", proxy.address)
     return
   }

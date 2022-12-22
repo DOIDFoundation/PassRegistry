@@ -5,6 +5,7 @@ const hre = require('hardhat')
 const { mintDomain, lockPass, ZERO_ADDRESS } = require('./helpers')
 
 const INVITER_ROLE = web3.utils.soliditySha3('INVITER_ROLE')
+const DEFAULT_COIN_TYPE = 60
 
 describe('DoidRegistry', function () {
   let proxy, passReg
@@ -102,22 +103,6 @@ describe('DoidRegistry', function () {
     })
   })
 
-
-  describe("PassReserved()", () => {
-    it('pass is reserved in passRegistry', async () => {
-        //await passReg.
-    })
-
-    it("register a name which is reserved in pass, already used", async () => {
-
-    })
-
-    it("register a name which is reserved in pass, not used", async () => {
-
-    })
-
-  })
-
   describe("statusOfName(name)", () => {
     it('status of name not in pass and not in doid, should return available', async () => {
         const {0:stt, 1:addr} = await proxy.statusOfName("testname123")
@@ -141,8 +126,6 @@ describe('DoidRegistry', function () {
     })
   })
 
-
-
   describe("nameOfOwner()", () => {
 
   })
@@ -152,21 +135,17 @@ describe('DoidRegistry', function () {
         const name = "test"
         await mintDomain(proxy, admin.address, name)
         const nameHash = await proxy.nameHash(name)
-        console.log(await proxy.addr(nameHash, 60))
-        // hex to ascii ???
+        expect(await proxy.addr(nameHash, DEFAULT_COIN_TYPE)).to.be.equals(admin.address.toLowerCase())
     })
 
     it('setAddr()', async () => {
         const name = "test"
+        const nameHash = await proxy.nameHash(name)
         await mintDomain(proxy, admin.address, name)
 
-        const nameHash = await proxy.nameHash(name)
-        console.log(await proxy.addr(nameHash, 60))
-
-        const name2 = "test222"
-        const nameHash2 = await proxy.nameHash(name2)
-
-        await expect(proxy.setAddr(nameHash2, 60, ethers.utils.toUtf8Bytes(name2))).to.be.revertedWith("ERC721: invalid token ID")
+        const newAddress = bob.address
+        await proxy.setAddr(nameHash, DEFAULT_COIN_TYPE, ethers.utils.arrayify(newAddress))
+        expect(await proxy.addr(nameHash, DEFAULT_COIN_TYPE)).to.be.equals(newAddress.toLowerCase())
     })
   })
 })

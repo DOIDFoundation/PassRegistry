@@ -11,8 +11,6 @@ import './StringUtils.sol';
 //import "hardhat/console.sol";
 
 contract DoidRegistryStorage {
-    uint256 public constant COIN_TYPE_ETH = 60;
-
     // address of passRegistry
     IPassRegistry passReg;
 
@@ -188,7 +186,7 @@ contract DoidRegistry is
     ) external override {
         _register(name, owner, secret, data);
 
-        setAddr(keccak256(bytes(name)), COIN_TYPE_ETH, abi.encodePacked(name));
+        setAddr(keccak256(bytes(name)), COIN_TYPE_ETH, addressToBytes(msg.sender));
     }
 
     function _register(

@@ -9,6 +9,7 @@ import "./IAddressResolver.sol";
 contract AddressResolverStorage {
     mapping(bytes32 => mapping(uint256 => bytes)) _addresses;
     mapping(bytes32 => EnumerableSetUpgradeable.UintSet) _nameTypes;
+    uint256 public constant COIN_TYPE_ETH = 60;
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
@@ -52,24 +53,24 @@ abstract contract AddressResolver is AddressResolverStorage, IAddressResolver, R
         return _addresses[node][coinType];
     }
 
-//    /**
-//     * Returns the address associated with the node.
-//     * @param node The node to query.
-//     * @return The associated address.
-//     */
-//    function addr(bytes32 node)
-//        public
-//        view
-//        virtual
-//        override
-//        returns (address payable)
-//    {
-//        bytes memory a = addr(node, COIN_TYPE_ETH);
-//        if (a.length == 0) {
-//            return payable(0);
-//        }
-//        return bytesToAddress(a);
-//    }
+    /**
+     * Returns the address associated with the node.
+     * @param node The node to query.
+     * @return The associated address.
+     */
+    function addr2(bytes32 node)
+        public
+        view
+        virtual
+        override
+        returns (address)
+    {
+        bytes memory a = addr(node, COIN_TYPE_ETH);
+        if (a.length == 0) {
+            return address(0);
+        }
+        return bytesToAddress(a);
+    }
 
     function supportsInterface(bytes4 interfaceID) public view virtual override returns (bool) {
         return
@@ -80,7 +81,7 @@ abstract contract AddressResolver is AddressResolverStorage, IAddressResolver, R
     function bytesToAddress(bytes memory b)
         internal
         pure
-        returns (address payable a)
+        returns (address a)
     {
         require(b.length == 20);
         assembly {
