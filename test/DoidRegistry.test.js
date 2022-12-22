@@ -163,10 +163,52 @@ describe('DoidRegistry', function () {
         const nameHash = await proxy.nameHash(name)
         console.log(await proxy.addr(nameHash, 60))
 
+        const coinType2 = 0x800000000 | 56
+        const timestamp = (
+          await ethers.provider.getBlock(await ethers.provider.getBlockNumber())
+        ).timestamp
+        const nonce = ethers.BigNumber.from(ethers.utils.randomBytes(32))
+
+        let signature = bob.signMessage(
+          await proxy.makeAddrMessage(
+            name,
+            coinType2,
+            bob.address,
+            timestamp,
+            nonce,
+          ),
+        )
+
+        await expect(
+          proxy.setAddr(
+            name,
+            coinType2,
+            bob.address,
+            timestamp,
+            nonce,
+            signature,
+          ),
+        )
+          .to.emit(proxy, 'AddressChanged')
+          .withArgs(nameHash, coinType2, bob.address.toLowerCase())
+
+        expect(await proxy.addr(nameHash, coinType2)).to.be.equal(
+          bob.address.toLowerCase(),
+        )
+
         const name2 = "test222"
         const nameHash2 = await proxy.nameHash(name2)
 
-        await expect(proxy.setAddr(nameHash2, 60, ethers.utils.toUtf8Bytes(name2))).to.be.revertedWith("ERC721: invalid token ID")
+        await expect(
+          proxy.setAddr(
+            name2,
+            coinType2,
+            bob.address,
+            timestamp,
+            nonce,
+            signature,
+          ),
+        ).to.be.revertedWith('ERC721: invalid token ID')
     })
   })
 })

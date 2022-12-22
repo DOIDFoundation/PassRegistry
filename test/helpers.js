@@ -23,12 +23,7 @@ async function mintDomain(proxy, owner, name){
 
 async function lockPass(signer, proxy, name) {
     const passId = 1
-    const classHash = AHash
-    const hashedMsg = ethers.utils.keccak256(
-      ethers.utils.solidityPack(['uint256', 'bytes32'], [passId, classHash]),
-    )
-    const sig = await signer.signMessage(ethers.utils.arrayify(hashedMsg))
-    await proxy.lockPass(sig, name, classHash, passId)
+    await proxy.lockAndMint(name, signer.address)
 }
 
 module.exports = {
