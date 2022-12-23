@@ -128,7 +128,7 @@ contract DoidRegistry is
             owner = passReg.getUserByHash(node);
             id = passId;
         }
-        if (passReg.nameReserves(_name)) {
+        if (!valid(_name) || passReg.nameReserves(_name)) {
             status = "reserved";
         }
     }
