@@ -119,14 +119,14 @@ contract DoidRegistry is
             status = "registered";
             owner = ownerOf(uint(node));
             id = uint(node);
+            return (status, owner, id);
         }
         uint passId = passReg.getPassByHash(node);
         if (passReg.exists(passId)) {
             status = "locked";
             owner = passReg.getUserByHash(node);
             id = passId;
-        }
-        if (!valid(_name) || passReg.nameReserves(_name)) {
+        } else if (!valid(_name) || passReg.nameReserves(_name)) {
             status = "reserved";
         }
     }
