@@ -2,7 +2,7 @@ require('@nomicfoundation/hardhat-chai-matchers')
 const {BigNumber, utils} = require("ethers")
 const { expect } = require('chai')
 const hre = require('hardhat')
-const { mintDomain, lockPass, ZERO_ADDRESS } = require('./helpers')
+const { mintDomain, lockPass, ZERO_ADDRESS, getNameHash } = require('./helpers')
 
 const INVITER_ROLE = web3.utils.soliditySha3('INVITER_ROLE')
 const DEFAULT_COIN_TYPE = 60
@@ -110,6 +110,36 @@ describe('DoidRegistry', function () {
         expect(await proxy.ownerOf(await proxy.nameHash(name))).to.be.equals(admin.address)
         //console.log(await proxy.addr(await proxy.nameHash(name), DEFAULT_COIN_TYPE))
     })
+
+    it("register a locked name", async() => {
+      const name = "testname123"
+      await lockPass(bob, passReg, name)
+      const secret = ethers.utils.formatBytes32String("secret")
+      const commit = await proxy.makeCommitment(
+          name,
+          admin.address,
+          secret,
+          []
+      )
+
+      await expect(proxy.commit(commit)).not.to.be.reverted
+      await expect(proxy.register(name,admin.address,secret,[])).to.be.revertedWith("IN")
+    })
+
+    it("register a reserved name", async() => {
+      const name = "testname123"
+      await passReg.reserveName([getNameHash(name)])
+      const secret = ethers.utils.formatBytes32String("secret")
+      const commit = await proxy.makeCommitment(
+          name,
+          admin.address,
+          secret,
+          []
+      )
+
+      await expect(proxy.commit(commit)).not.to.be.reverted
+      await expect(proxy.register(name,admin.address,secret,[])).to.be.revertedWith("IN")
+    })
   })
 
   describe("statusOfName(name)", () => {
@@ -122,16 +152,28 @@ describe('DoidRegistry', function () {
     it('status of name in pass and not in doid, should return locked', async () => {
         const name = "testname123"
         await lockPass(admin, passReg, name)
-        const {0:stt, 1:addr} = await proxy.statusOfName(name)
+        const {0:stt, 1:addr, 2:id} = await proxy.statusOfName(name)
         expect(stt).to.be.equals("locked")
         expect(addr).to.be.equals(admin.address)
+        expect(id).to.be.equals(100001)
     })
+
+    it('status of name reserved and not in doid, should return reserved', async () => {
+      const name = 'testname123'
+      await passReg.reserveName([getNameHash(name)])
+      const { 0: stt, 1: addr ,2:id} = await proxy.statusOfName(name)
+      expect(stt).to.be.equals('reserved')
+      expect(addr).to.be.equals(ZERO_ADDRESS)
+      expect(id).to.be.equals(0)
+    })
+    
     it('status of name not in pass but in doid, should return registered', async () => {
         const name = "test123name"
         await mintDomain(proxy, admin.address, name)
-        const {0:stt, 1:addr} = await proxy.statusOfName(name)
+        const {0:stt, 1:addr, 2:id} = await proxy.statusOfName(name)
         expect(stt).to.be.equals("registered")
         expect(addr).to.be.equals(admin.address)
+        expect(id).to.be.equals(getNameHash(name))
     })
   })
 

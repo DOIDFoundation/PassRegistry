@@ -21,5 +21,7 @@ interface IPassRegistry {
 
     function nameExists(string memory _name) external view returns (bool);
 
+    function nameReserves(string memory _name) external view returns (bool);
+
     function exists(uint _passId) external view returns (bool);
 }

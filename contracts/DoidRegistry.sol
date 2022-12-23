@@ -128,6 +128,9 @@ contract DoidRegistry is
             owner = passReg.getUserByHash(node);
             id = passId;
         }
+        if (passReg.nameReserves(_name)) {
+            status = "reserved";
+        }
     }
 
     /**
@@ -143,6 +146,7 @@ contract DoidRegistry is
 
     function passReserved(string memory name) public view returns (bool) {
         if (passReg.nameExists(name)) {
+            if (passReg.nameReserves(name)) return true;
             address owner = passReg.getUserByName(name);
             if (owner != tx.origin) {
                 return true;

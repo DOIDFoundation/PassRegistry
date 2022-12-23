@@ -4,6 +4,10 @@ const AHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('A'))
 const BHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('B'))
 const CHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('C'))
 
+function getNameHash(name) {
+  return ethers.utils.keccak256(ethers.utils.toUtf8Bytes(name))
+}
+  
 async function mintDomain(proxy, owner, name){
       const secret = ethers.utils.formatBytes32String("secret")
       const data = []
@@ -29,5 +33,6 @@ async function lockPass(signer, proxy, name) {
 module.exports = {
     ZERO_ADDRESS,
     mintDomain,
-    lockPass
+    lockPass,
+    getNameHash
 }
