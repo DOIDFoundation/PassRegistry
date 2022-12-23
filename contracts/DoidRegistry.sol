@@ -76,13 +76,21 @@ contract DoidRegistry is
         for (uint256 index = 0; index < balanceOf(_user); index++) {
             uint256 tokenId = tokenOfOwnerByIndex(_user, index);
             tokenIds[index].tokenId = tokenId;
-            tokenIds[index].name = string(names[bytes32(tokenId)]);
+            tokenIds[index].name = _nameOfToken(tokenId);
         }
         return tokenIds;
     }
 
     function nameHash(string memory name) public pure override returns (bytes32) {
         return keccak256(bytes(name));
+    }
+
+    function _nameOfToken(uint256 id) internal view returns (string memory) {
+        return string(names[bytes32(id)]);
+    }
+
+    function _nameOfHash(bytes32 node) internal view returns (string memory) {
+        return string(names[node]);
     }
 
     function valid(string memory name) public pure override returns (bool) {
@@ -225,5 +233,44 @@ contract DoidRegistry is
     function claimLockedName(string calldata name, address owner) public override {
         require(_msgSender() == address(passReg), "Excuted by PassRegistry only");
         _register(name, owner);
+    }
+
+    function name() public pure override returns (string memory) {
+        return "Decentralized OpenID";
+    }
+
+    function symbol() public pure override returns (string memory) {
+        return "DOID";
+    }
+
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        _requireMinted(tokenId);
+
+        string memory passName = _nameOfToken(tokenId);
+
+        return
+            string(
+                abi.encodePacked(
+                    // data:application/json;charset=UTF-8,
+                    // {"name":"
+                    "data:application/json;charset=UTF-8,"
+                    "%7B%22name%22%3A%22",
+                    passName,
+                    // .doid","description":"
+                    ".doid%22%2C%22description%22%3A%22",
+                    passName,
+                    // .doid, a decentralized OpenID.","image":"data:image/svg+xml;charset=UTF-8,
+                    ".doid%2C%20a%20decentralized%20OpenID.%22%2C%22image%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Bcharset=UTF-8%2C",
+                    // <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="#fff"><defs><radialGradient cx="30%" cy="-30%" r="2" id="a"><stop offset="20%" stop-color="#FFEA94"/><stop offset="45%" stop-color="#D39750"/><stop offset="80%" stop-color="#51290F"/></radialGradient></defs><rect width="100%" height="100%" fill="url(#a)"/><path d="m23.706 15.918 2.602 1.38c.337.208.548.548.548.936v5.909c0 .365-.183.677-.47.885l-2.76 1.77a1.045 1.045 0 0 1-1.092.054l-2.212-1.197 3.802-2.29.026-4.426-2.864-1.51 2.422-1.508zm-1.692 7.419.624.311-2.422 1.484-.624-.312 2.422-1.483zm-.416-1.068.624.312-2.422 1.483-.652-.312 2.447-1.483zm-1.562-9.709 2.107 1.119-3.799 2.318-.025 4.4 2.863 1.537-2.422 1.51-2.498-1.355c-.416-.208-.652-.652-.652-1.093V15.32c0-.416.208-.832.573-1.068l2.552-1.638a1.234 1.234 0 0 1 1.3-.054zm2.967 2.498.624.312-2.422 1.484-.624-.312 2.422-1.484zm-.441-1.068.652.338-2.422 1.483-.652-.337 2.422-1.484z"/>
+                    // <text x="15" y="128" font-size="12" font-family="Arial,sans-serif">
+                    "%253Csvg%2520xmlns%253D%2522http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg%2522%2520viewBox%253D%25220%25200%2520128%2520128%2522%2520fill%253D%2522%2523fff%2522%253E%253Cdefs%253E%253CradialGradient%2520cx%253D%252230%2525%2522%2520cy%253D%2522-30%2525%2522%2520r%253D%25222%2522%2520id%253D%2522a%2522%253E%253Cstop%2520offset%253D%252220%2525%2522%2520stop-color%253D%2522%2523FFEA94%2522%252F%253E%253Cstop%2520offset%253D%252245%2525%2522%2520stop-color%253D%2522%2523D39750%2522%252F%253E%253Cstop%2520offset%253D%252280%2525%2522%2520stop-color%253D%2522%252351290F%2522%252F%253E%253C%252FradialGradient%253E%253C%252Fdefs%253E%253Crect%2520width%253D%2522100%2525%2522%2520height%253D%2522100%2525%2522%2520fill%253D%2522url(%2523a)%2522%252F%253E%253Cpath%2520d%253D%2522m23.706%252015.918%25202.602%25201.38c.337.208.548.548.548.936v5.909c0%2520.365-.183.677-.47.885l-2.76%25201.77a1.045%25201.045%25200%25200%25201-1.092.054l-2.212-1.197%25203.802-2.29.026-4.426-2.864-1.51%25202.422-1.508zm-1.692%25207.419.624.311-2.422%25201.484-.624-.312%25202.422-1.483zm-.416-1.068.624.312-2.422%25201.483-.652-.312%25202.447-1.483zm-1.562-9.709%25202.107%25201.119-3.799%25202.318-.025%25204.4%25202.863%25201.537-2.422%25201.51-2.498-1.355c-.416-.208-.652-.652-.652-1.093V15.32c0-.416.208-.832.573-1.068l2.552-1.638a1.234%25201.234%25200%25200%25201%25201.3-.054zm2.967%25202.498.624.312-2.422%25201.484-.624-.312%25202.422-1.484zm-.441-1.068.652.338-2.422%25201.483-.652-.337%25202.422-1.484z%2522%252F%253E"
+                    "%253Ctext%2520x%253D%252215%2522%2520y%253D%2522110%2522%2520font-size%253D%252212%2522%2520font-family%253D%2522Arial%252Csans-serif%2522%253E",
+                    passName,
+                    // .doid</text></svg>
+                    // "}
+                    ".doid%253C%252Ftext%253E%253C%252Fsvg%253E"
+                    "%22%7D"
+                )
+            );
     }
 }

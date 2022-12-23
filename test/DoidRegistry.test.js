@@ -3,6 +3,8 @@ const {BigNumber, utils} = require("ethers")
 const { expect } = require('chai')
 const hre = require('hardhat')
 const { mintDomain, lockPass, ZERO_ADDRESS, getNameHash } = require('./helpers')
+const parseDataUrl = require('parse-data-url')
+const isSvg = require('is-svg');
 
 const INVITER_ROLE = web3.utils.soliditySha3('INVITER_ROLE')
 const DEFAULT_COIN_TYPE = 60
@@ -212,6 +214,32 @@ describe('DoidRegistry', function () {
         expect(stt).to.be.equals("registered")
         expect(addr).to.be.equals(admin.address)
         expect(id).to.be.equals(getNameHash(name))
+    })
+  })
+
+  describe('ERC721 interface', () => {
+    it('name and symbol', async () => {
+      expect(await proxy.name()).to.be.equals('Decentralized OpenID')
+      expect(await proxy.symbol()).to.be.equals('DOID')
+    })
+
+    it('tokenURI', async () => {
+      let name = 'test123name'
+      await mintDomain(proxy, admin.address, name)
+      let tokenURI = await proxy.tokenURI(getNameHash(name))
+      var parsed = parseDataUrl(tokenURI)
+      expect(parsed).to.include({ contentType: 'application/json' })
+      expect(parsed).to.include({ charset: 'utf-8' })
+      var data = JSON.parse(decodeURIComponent(parsed.data))
+      expect(data).to.include({ name: name + '.doid' })
+      expect(data).to.include({
+        description: name + '.doid, a decentralized OpenID.',
+      })
+      expect(data).to.have.property('image')
+      var parsed = parseDataUrl(data.image)
+      expect(parsed).to.include({ contentType: 'image/svg+xml' })
+      expect(parsed).to.include({ charset: 'utf-8' })
+      expect(isSvg(decodeURIComponent(parsed.data))).to.be.true
     })
   })
 
