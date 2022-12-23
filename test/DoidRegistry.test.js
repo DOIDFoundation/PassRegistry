@@ -182,12 +182,18 @@ describe('DoidRegistry', function () {
     })
 
     it('status of name in pass and not in doid, should return locked', async () => {
-        const name = "testname123"
+        let name = "testname123"
         await lockPass(admin, passReg, name)
-        const {0:stt, 1:addr, 2:id} = await proxy.statusOfName(name)
+        var {0:stt, 1:addr, 2:id} = await proxy.statusOfName(name)
         expect(stt).to.be.equals("locked")
         expect(addr).to.be.equals(admin.address)
         expect(id).to.be.equals(100001)
+        name = "aa"
+        await lockPass(admin, passReg, name)
+        var {0:stt, 1:addr, 2:id} = await proxy.statusOfName(name)
+        expect(stt).to.be.equals("locked")
+        expect(addr).to.be.equals(admin.address)
+        expect(id).to.be.equals(100002)
     })
 
     it('status of name reserved and not in doid, should return reserved', async () => {
