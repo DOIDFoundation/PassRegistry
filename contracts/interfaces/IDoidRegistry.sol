@@ -25,8 +25,9 @@ interface IDoidRegistry {
 
     /**
      * @dev Request status of a name
-     * @return status 'available' or 'registered' or 'locked'.
+     * @return status 'available' or 'registered' or 'locked', or 'reserved'.
      * @return owner address that owns or locks this name
+     * @return id token id of name (if registered) or pass (if locked) or 0 (if available or reserved).
      */
     function statusOfName(
         string memory name
@@ -56,5 +57,9 @@ interface IDoidRegistry {
         bytes[] calldata data
     ) external;
 
-    function claimLockedName(uint256 passId, string memory node, address owner) external;
+    /**
+     * @dev Claim a locked name for PassRegistry.
+     * @notice Can only be called by PassRegistry.
+     */
+    function claimLockedName(string memory name, address owner) external;
 }

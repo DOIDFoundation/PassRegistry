@@ -77,7 +77,7 @@ describe('DoidRegistry', function () {
 
         // dup name
         await proxy.commit(commit)
-        await expect(proxy.register(name, admin.address, secret, data)).to.be.revertedWith("ERC721: token already minted")
+        await expect(proxy.register(name, admin.address, secret, data)).to.be.revertedWith("IN")
     })
 
     it('wrong commitment secret', async () => {
@@ -104,11 +104,28 @@ describe('DoidRegistry', function () {
     })
 
     it("register from pass.claimDoid()", async () => {
-        const name = "lockpassname"
+        let name = "aabbcc"
         await lockPass(admin, passReg, name)
-        const tx = await passReg.claimDoid(100001)
+        await expect(proxy.claimLockedName(name,admin.address)).to.be.revertedWith("Excuted by PassRegistry only")
+        await passReg.claimDoid(100001)
+        expect(await proxy.ownerOf(await proxy.nameHash(name))).to.be.equals(admin.address)
+        name = "aabb"
+        await lockPass(admin, passReg, name)
+        await expect(proxy.claimLockedName(name,admin.address)).to.be.revertedWith("Excuted by PassRegistry only")
+        await passReg.claimDoid(100002)
+        expect(await proxy.ownerOf(await proxy.nameHash(name))).to.be.equals(admin.address)
+        name = "aa"
+        await lockPass(admin, passReg, name)
+        await expect(proxy.claimLockedName(name,admin.address)).to.be.revertedWith("Excuted by PassRegistry only")
+        await passReg.claimDoid(100003)
         expect(await proxy.ownerOf(await proxy.nameHash(name))).to.be.equals(admin.address)
         //console.log(await proxy.addr(await proxy.nameHash(name), DEFAULT_COIN_TYPE))
+        name = "bb"
+        await lockPass(admin, passReg, name)
+        await mintDomain(proxy, admin.address, name)
+        await expect(proxy.claimLockedName(name,admin.address)).to.be.revertedWith("Excuted by PassRegistry only")
+        await expect(passReg.claimDoid(100004)).to.be.rejectedWith("IN")
+        expect(await proxy.ownerOf(await proxy.nameHash(name))).to.be.equals(admin.address)
     })
 
     it("register a locked name", async() => {
@@ -128,6 +145,21 @@ describe('DoidRegistry', function () {
 
     it("register a reserved name", async() => {
       const name = "testname123"
+      await passReg.reserveName([getNameHash(name)])
+      const secret = ethers.utils.formatBytes32String("secret")
+      const commit = await proxy.makeCommitment(
+          name,
+          admin.address,
+          secret,
+          []
+      )
+
+      await expect(proxy.commit(commit)).not.to.be.reverted
+      await expect(proxy.register(name,admin.address,secret,[])).to.be.revertedWith("IN")
+    })
+
+    it("register a name length < 6", async() => {
+      const name = "abcde"
       await passReg.reserveName([getNameHash(name)])
       const secret = ethers.utils.formatBytes32String("secret")
       const commit = await proxy.makeCommitment(

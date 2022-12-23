@@ -87,12 +87,9 @@ contract PassRegistry is
 
     function claimDoid(uint256 _passId) external {
         require(ownerOf(_passId) == _msgSender(), "IP");
-        require(passInfo[_passId].passHash != 0, "IN");
-        doidRegistry.claimLockedName(
-            _passId,
-            getNameByHash(passInfo[_passId].passHash),
-            _msgSender()
-        );
+        bytes32 hash = passInfo[_passId].passHash;
+        require(hash != 0, "IN");
+        doidRegistry.claimLockedName(getNameByHash(hash), _msgSender());
         _burn(_passId);
     }
 

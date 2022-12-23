@@ -93,9 +93,7 @@ contract DoidRegistry is
      * @dev Returns true iff the specified name is available for registration.
      */
     function available(string memory name) public view override returns (bool) {
-        if (name.doidlen() < 6) {
-            return false;
-        }
+        if (_exists(uint256(nameHash(name)))) return false;
         if (passReserved(name)) {
             return false;
         }
@@ -148,9 +146,13 @@ contract DoidRegistry is
         if (passReg.nameExists(name)) {
             if (passReg.nameReserves(name)) return true;
             address owner = passReg.getUserByName(name);
-            if (owner != tx.origin) {
-                return true;
+            if (owner == tx.origin) {
+                return false;
             }
+            return true;
+        }
+        if (name.doidlen() < 6) {
+            return true;
         }
         return false;
     }
@@ -208,7 +210,7 @@ contract DoidRegistry is
     }
 
     function _register(string calldata name, address owner) internal {
-        require(available(name));
+        require(available(name), "IN");
 
         bytes32 node = keccak256(bytes(name));
         uint id = uint(node);
@@ -220,11 +222,8 @@ contract DoidRegistry is
         emit NameRegistered(id, name, owner);
     }
 
-    function claimLockedName(uint256 passId, string calldata name, address owner) public override {
+    function claimLockedName(string calldata name, address owner) public override {
         require(_msgSender() == address(passReg), "Excuted by PassRegistry only");
-        require(IERC721Upgradeable(address(passReg)).ownerOf(passId) == owner, "IP");
-        bytes32 node = keccak256(bytes(name));
-        require(passReg.getUserPassInfo(passId).passHash == node, "IN");
         _register(name, owner);
     }
 }
