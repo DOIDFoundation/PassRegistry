@@ -219,7 +219,7 @@ describe('DoidRegistry', function () {
 
   describe('ERC721 interface', () => {
     it('name and symbol', async () => {
-      expect(await proxy.name()).to.be.equals('Decentralized OpenID')
+      expect(await proxy.name()).to.be.equals('DOID: Decentralized OpenID')
       expect(await proxy.symbol()).to.be.equals('DOID')
     })
 

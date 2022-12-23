@@ -236,7 +236,7 @@ contract DoidRegistry is
     }
 
     function name() public pure override returns (string memory) {
-        return "Decentralized OpenID";
+        return "DOID: Decentralized OpenID";
     }
 
     function symbol() public pure override returns (string memory) {
