@@ -31,7 +31,7 @@ async function main() {
     await upgrades.erc1967.getImplementationAddress(proxy.address),
   )
   await hre.run('verify:verify', {
-    address: await upgrades.erc1967.getImplementationAddress(proxy.address),
+    address: proxy.address,
   })
 }
 
