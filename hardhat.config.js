@@ -4,8 +4,16 @@ require('dotenv/config')
 require('@openzeppelin/hardhat-upgrades')
 require('@nomiclabs/hardhat-web3')
 require('@nomiclabs/hardhat-etherscan')
-require('hardhat-gas-reporter')
-require('solidity-coverage')
+//require('hardhat-gas-reporter')
+//require('solidity-coverage')
+
+if (process.env.PROXY) {
+  // set proxy for hardhat-etherscan
+  const { setGlobalDispatcher, request, ProxyAgent } = require('undici')
+
+  const proxyAgent = new ProxyAgent(process.env.PROXY)
+  setGlobalDispatcher(proxyAgent)
+}
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html

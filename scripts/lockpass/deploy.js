@@ -10,8 +10,21 @@ async function main() {
   if (false){
     const Registry = await hre.ethers.getContractFactory('PassRegistry')
     const proxy = await upgrades.upgradeProxy("0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE", Registry)
+    //const proxy = await upgrades.forceImport("0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE", Registry)
     console.log("upgrade proxy", proxy.address)
     return
+  }
+  if(true){
+   const proxy = await hre.ethers.getContractAt('PassRegistry', "0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE")
+   //await proxy.setDoidRegistry("0x24256dab379962842691eb8bce11f2b5032bf1b6")
+   //await proxy.claimDoid(100)
+
+  // await proxy.updatePassIdStart(150)
+//
+//  //await proxy.lockPass(sig, "bob", "A")
+//  const sig1 = ethers.utils.toUtf8Bytes("0x01debac705ebed9d2b48316e65889af05e263bec986b9fc238febcc913f38c3b31549fcfbebead15b496bf777e289f82a113282d4a7334617c40c5bd967a020a1c")
+//  console.log(await proxy.estimateGas.lockPass(ethers.utils.arrayify("0x01debac705ebed9d2b48316e65889af05e263bec986b9fc238febcc913f38c3b31549fcfbebead15b496bf777e289f82a113282d4a7334617c40c5bd967a020a1c"), "bob", "A"))
+  return
   }
   const accounts = await hre.ethers.getSigners()
   admin = accounts[0]
@@ -20,13 +33,6 @@ async function main() {
   const Registry = await hre.ethers.getContractFactory('PassRegistry')
   const reg = await upgrades.deployProxy(Registry, [admin.address, "DOID Lock Pass", "PASS"])
   await reg.deployed()
-  // const proxy = await hre.ethers.getContractAt('PassRegistry', "0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE")
-
-  // await proxy.updatePassIdStart(150)
-//
-//  //await proxy.lockPass(sig, "bob", "A")
-//  const sig1 = ethers.utils.toUtf8Bytes("0x01debac705ebed9d2b48316e65889af05e263bec986b9fc238febcc913f38c3b31549fcfbebead15b496bf777e289f82a113282d4a7334617c40c5bd967a020a1c")
-//  console.log(await proxy.estimateGas.lockPass(ethers.utils.arrayify("0x01debac705ebed9d2b48316e65889af05e263bec986b9fc238febcc913f38c3b31549fcfbebead15b496bf777e289f82a113282d4a7334617c40c5bd967a020a1c"), "bob", "A"))
 
   console.log(
     `✅deploy passRegistry ${reg.address}`

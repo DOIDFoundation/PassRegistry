@@ -8,7 +8,7 @@ async function generate_codes() {
   const CHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('C'))
   console.log('class C Hash', CHash)
 
-  let passId = 701,
+  let passId = 1701,
     passNum = 1000
   const classes = [
     // [AHash, 'A'],
@@ -23,7 +23,12 @@ async function generate_codes() {
         ethers.utils.solidityPack(['uint256', 'bytes32'], [passId, classHash]),
       )
       const sig = await admin.signMessage(ethers.utils.arrayify(hashedMsg))
-      console.log(sig.slice(2, 200) + classes[i][1] + passId.toString(16))
+      console.log(
+        'https://lockpass.doid.tech/?ic=' +
+          sig.slice(2, 200) +
+          classes[i][1] +
+          passId.toString(16),
+      )
     }
   }
 }
