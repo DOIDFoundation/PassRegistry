@@ -93,8 +93,19 @@ contract DoidRegistry is
         return string(names[node]);
     }
 
-    function valid(string memory name) public pure override returns (bool) {
-        return name.doidlen() >= 6;
+    function valid(string memory _name) public pure override returns (bool) {
+        bytes memory bStr = bytes(_name);
+        for (uint i = 0; i < bStr.length; i++) {
+            // Uppercase character...
+            if ((bStr[i] >= 0x41) && (bStr[i] <= 0x5A)) {
+                return false;
+            }
+            // .
+            if (bStr[i] == 0x2E) {
+                return false;
+            }
+        }
+        return _name.doidlen() >= 6;
     }
 
     /**

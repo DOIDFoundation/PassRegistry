@@ -215,6 +215,20 @@ describe('DoidRegistry', function () {
         expect(addr).to.be.equals(admin.address)
         expect(id).to.be.equals(getNameHash(name))
     })
+    
+    it('status of invalid name', async () => {
+      var name = 'Test123name'
+      var { 0: stt, 1: addr, 2: id } = await proxy.statusOfName(name)
+      expect(stt).to.be.equals('reserved')
+      expect(addr).to.be.equals(ZERO_ADDRESS)
+      expect(id).to.be.equals(0)
+
+      var name = 'test123.name'
+      var { 0: stt, 1: addr, 2: id } = await proxy.statusOfName(name)
+      expect(stt).to.be.equals('reserved')
+      expect(addr).to.be.equals(ZERO_ADDRESS)
+      expect(id).to.be.equals(0)
+    })
   })
 
   describe('ERC721 interface', () => {
