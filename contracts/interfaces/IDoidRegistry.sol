@@ -2,9 +2,7 @@
 pragma solidity >=0.8.4;
 
 interface IDoidRegistry {
-    event NameMigrated(uint256 indexed id, address indexed owner, uint256 expires);
-    event NameRegistered(uint256 indexed id, string indexed name, address indexed owner);
-    event NameRenewed(uint256 indexed id, uint256 expires);
+    event NameRegistered(uint256 indexed id, string name, address indexed owner);
 
     struct DoidInfo {
         uint256 tokenId;
