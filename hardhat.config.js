@@ -63,7 +63,7 @@ module.exports = {
       accounts: accounts(),
     },
     goerli: {
-      gasPrice: 3000000000,
+      // gasPrice: 3000000000,
       url: process.env.NETWORK_INFURA_URL_GOERLI,
       accounts: accounts(),
     },

@@ -39,21 +39,7 @@ interface IDoidRegistry {
 
     function available(uint256 id) external view returns (bool);
 
-    function makeCommitment(
-        string memory name,
-        address owner,
-        bytes32 secret,
-        bytes[] calldata data
-    ) external pure returns (bytes32);
-
-    function commit(bytes32 commitment) external;
-
-    function register(
-        string calldata name,
-        address owner,
-        bytes32 secret,
-        bytes[] calldata data
-    ) external;
+    function register(string calldata name, address owner) external;
 
     /**
      * @dev Claim a locked name for PassRegistry.

@@ -181,12 +181,14 @@ contract DoidRegistry is
         address owner,
         bytes32 secret,
         bytes[] calldata data
-    ) public pure override returns (bytes32) {
+    ) public pure returns (bytes32) {
+        // revert("deprecated");
         bytes32 label = keccak256(bytes(name));
         return keccak256(abi.encode(label, owner, data, secret));
     }
 
-    function commit(bytes32 commitment) public override {
+    function commit(bytes32 commitment) public {
+        // revert("deprecated");
         require(commitments[commitment] + maxCommitmentAge < block.timestamp, "IC");
         commitments[commitment] = block.timestamp;
     }
@@ -213,8 +215,18 @@ contract DoidRegistry is
         address owner,
         bytes32 secret,
         bytes[] calldata data
-    ) external override {
+    ) external {
+        // revert("deprecated");
         _register(name, owner, secret, data);
+    }
+
+    /**
+     * @dev Register a name in one step.
+     * @param name The address of the tokenId.
+     * @param owner The address that should own the registration.
+     */
+    function register(string calldata name, address owner) external override {
+        _register(name, owner);
     }
 
     function _register(
