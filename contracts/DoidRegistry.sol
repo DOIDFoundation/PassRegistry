@@ -21,6 +21,8 @@ contract DoidRegistryStorage {
 
     mapping(bytes32 => bytes) public names;
 
+    mapping(bytes32 => bytes) public IPNS;
+
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
      * variables without shifting down storage in the inheritance chain.
@@ -28,7 +30,7 @@ contract DoidRegistryStorage {
      * contract always adds up to the same number (in this case 50 storage slots).
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
-    uint256[44] private __gap;
+    uint256[43] private __gap;
 }
 
 contract DoidRegistry is
@@ -51,7 +53,8 @@ contract DoidRegistry is
 
     function isAuthorised(bytes32 node) internal view override returns (bool) {
         address owner = ownerOf(uint256(node));
-        return owner == msg.sender || isApprovedForAll(owner, msg.sender);
+        return
+            owner == msg.sender || addr(node) == msg.sender || isApprovedForAll(owner, msg.sender);
     }
 
     function supportsInterface(
@@ -226,7 +229,11 @@ contract DoidRegistry is
      * @param owner The address that should own the registration.
      */
     function register(string calldata name, address owner) external override {
-        _register(name, owner);
+        _register(name, owner, "");
+    }
+
+    function register(string calldata name, address owner, bytes memory ipns) external override {
+        _register(name, owner, ipns);
     }
 
     function _register(
@@ -237,10 +244,10 @@ contract DoidRegistry is
     ) internal {
         _consumeCommitment(name, makeCommitment(name, owner, secret, data));
 
-        _register(name, owner);
+        _register(name, owner, "");
     }
 
-    function _register(string calldata name, address owner) internal {
+    function _register(string calldata name, address owner, bytes memory ipns) internal {
         require(available(name), "IN");
 
         bytes32 node = keccak256(bytes(name));
@@ -250,12 +257,26 @@ contract DoidRegistry is
 
         setAddr(node, COIN_TYPE_ETH, addressToBytes(owner));
 
+        if (ipns.length != 0) setIPNS(node, ipns);
+
         emit NameRegistered(id, name, owner);
+    }
+
+    function setIPNS(string calldata _name, bytes memory ipns) public override {
+        bytes32 node = keccak256(bytes(_name));
+        require(isAuthorised(node), "NO");
+        emit IPNSChanged(node, ipns);
+        IPNS[node] = ipns;
+    }
+
+    function setIPNS(bytes32 node, bytes memory ipns) internal {
+        emit IPNSChanged(node, ipns);
+        IPNS[node] = ipns;
     }
 
     function claimLockedName(string calldata name, address owner) public override {
         require(_msgSender() == address(passReg), "Excuted by PassRegistry only");
-        _register(name, owner);
+        _register(name, owner, "");
     }
 
     function name() public pure override returns (string memory) {

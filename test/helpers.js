@@ -8,21 +8,9 @@ function getNameHash(name) {
   return ethers.utils.keccak256(ethers.utils.toUtf8Bytes(name))
 }
   
-async function mintDomain(proxy, owner, name){
-      const secret = ethers.utils.formatBytes32String("secret")
-      const data = []
-      const commit = await proxy.makeCommitment(
-          name,
-          owner,
-          secret,
-          data
-      )
-
-      //commit
-      const tx = await proxy.commit(commit)
-
-      // register
-      await proxy.register(name, owner, secret, data)
+async function mintDomain(proxy, owner, name, ipns = []) {
+  // register
+  await proxy['register(string,address,bytes)'](name, owner, ipns)
 }
 
 async function lockPass(signer, proxy, name) {

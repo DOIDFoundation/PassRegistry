@@ -50,7 +50,7 @@ describe('DoidRegistry', function () {
         const tx = await proxy.commit(commit)
 
         // register
-        await proxy.register(name, admin.address, secret, data)
+        await proxy['register(string,address,bytes32,bytes[])'](name, admin.address, secret, data)
 
         const nameHash = await proxy.nameHash(name)
         expect(await proxy.ownerOf(nameHash)).to.be.equals(admin.address)
@@ -72,14 +72,15 @@ describe('DoidRegistry', function () {
         const tx = await proxy.commit(commit)
 
         // register
-        await proxy.register(name, admin.address, secret, data)
+        await proxy['register(string,address,bytes32,bytes[])'](name, admin.address, secret, data)
 
         const nameHash = await proxy.nameHash(name)
         expect(await proxy.ownerOf(nameHash)).to.be.equals(admin.address)
 
         // dup name
         await proxy.commit(commit)
-        await expect(proxy.register(name, admin.address, secret, data)).to.be.revertedWith("IN")
+        await expect(proxy['register(string,address,bytes32,bytes[])'](name, admin.address, secret, data)).to.be.revertedWith("IN")
+        await expect(proxy['register(string,address,bytes)'](name, admin.address, [])).to.be.revertedWith("IN")
     })
 
     it('wrong commitment secret', async () => {
@@ -98,8 +99,8 @@ describe('DoidRegistry', function () {
         //commit
         const tx = await proxy.commit(commit)
         // register
-        await expect(proxy.register(name, admin.address, secretwrong, data)).to.be.revertedWith("CO")
-        await expect(proxy.register(name, admin.address, secret, data)).to.ok
+        await expect(proxy['register(string,address,bytes32,bytes[])'](name, admin.address, secretwrong, data)).to.be.revertedWith("CO")
+        await expect(proxy['register(string,address,bytes32,bytes[])'](name, admin.address, secret, data)).to.ok
 
         const nameHash = await proxy.nameHash(name)
         expect(await proxy.ownerOf(nameHash)).to.be.equals(admin.address)
@@ -142,7 +143,8 @@ describe('DoidRegistry', function () {
       )
 
       await expect(proxy.commit(commit)).not.to.be.reverted
-      await expect(proxy.register(name,admin.address,secret,[])).to.be.revertedWith("IN")
+      await expect(proxy['register(string,address,bytes32,bytes[])'](name,admin.address,secret,[])).to.be.revertedWith("IN")
+      await expect(proxy['register(string,address,bytes)'](name,admin.address,[])).to.be.revertedWith("IN")
     })
 
     it("register a reserved name", async() => {
@@ -157,7 +159,8 @@ describe('DoidRegistry', function () {
       )
 
       await expect(proxy.commit(commit)).not.to.be.reverted
-      await expect(proxy.register(name,admin.address,secret,[])).to.be.revertedWith("IN")
+      await expect(proxy['register(string,address,bytes32,bytes[])'](name,admin.address,secret,[])).to.be.revertedWith("IN")
+      await expect(proxy['register(string,address,bytes)'](name,admin.address,[])).to.be.revertedWith("IN")
     })
 
     it("register a name length < 6", async() => {
@@ -172,7 +175,8 @@ describe('DoidRegistry', function () {
       )
 
       await expect(proxy.commit(commit)).not.to.be.reverted
-      await expect(proxy.register(name,admin.address,secret,[])).to.be.revertedWith("IN")
+      await expect(proxy['register(string,address,bytes32,bytes[])'](name,admin.address,secret,[])).to.be.revertedWith("IN")
+      await expect(proxy['register(string,address,bytes)'](name,admin.address,[])).to.be.revertedWith("IN")
     })
   })
 
@@ -321,6 +325,46 @@ describe('DoidRegistry', function () {
             signature,
           ),
         ).to.be.revertedWith('ERC721: invalid token ID')
+    })
+  })
+
+  describe("IPNS", () => {
+    it('IPNS()', async () => {
+        const name = "doidtest"
+        await mintDomain(proxy, admin.address, name)
+        const nameHash = await proxy.nameHash(name)
+        expect(await proxy.IPNS(nameHash)).to.be.properHex(0)
+
+        const ipns= "0x12345678"
+        await mintDomain(proxy, admin.address, name + 'ipns', ipns)
+        expect(
+          await proxy.IPNS(await proxy.nameHash(name + 'ipns')),
+        ).to.hexEqual(ipns)
+    })
+
+    it('setIPNS()', async () => {
+        const name = "doidtest"
+        const ipns= "0x12345678"
+        await mintDomain(proxy, admin.address, name)
+
+        const nameHash = await proxy.nameHash(name)
+
+        await expect(proxy.setIPNS(name, ipns))
+          .to.emit(proxy, 'IPNSChanged')
+          .withArgs(nameHash, ipns)
+
+        expect(await proxy.IPNS(nameHash)).to.hexEqual(ipns)
+
+        await expect(proxy.connect(bob).setIPNS(name, ipns)).to.be.revertedWith(
+          'NO',
+        )
+
+        const name2 = "test222"
+        const nameHash2 = await proxy.nameHash(name2)
+
+        await expect(proxy.setIPNS(name2, ipns)).to.be.revertedWith(
+          'ERC721: invalid token ID',
+        )
     })
   })
 })

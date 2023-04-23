@@ -3,6 +3,7 @@ pragma solidity >=0.8.4;
 
 interface IDoidRegistry {
     event NameRegistered(uint256 indexed id, string name, address indexed owner);
+    event IPNSChanged(bytes32 indexed node, bytes newAddress);
 
     struct DoidInfo {
         uint256 tokenId;
@@ -40,6 +41,10 @@ interface IDoidRegistry {
     function available(uint256 id) external view returns (bool);
 
     function register(string calldata name, address owner) external;
+
+    function register(string calldata name, address owner, bytes memory ipns) external;
+
+    function setIPNS(string calldata name, bytes memory ipns) external;
 
     /**
      * @dev Claim a locked name for PassRegistry.
