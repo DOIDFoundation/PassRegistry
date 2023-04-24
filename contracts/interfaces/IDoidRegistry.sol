@@ -3,7 +3,7 @@ pragma solidity >=0.8.4;
 
 interface IDoidRegistry {
     event NameRegistered(uint256 indexed id, string name, address indexed owner);
-    event IPNSChanged(bytes32 indexed node, bytes newAddress);
+    event MainAddrChanged(bytes32 indexed node, address indexed newAddress, bytes newIPNS);
 
     struct DoidInfo {
         uint256 tokenId;
@@ -44,7 +44,29 @@ interface IDoidRegistry {
 
     function register(string calldata name, address owner, bytes memory ipns) external;
 
-    function setIPNS(string calldata name, bytes memory ipns) external;
+    /**
+     * @dev Make a messge to sign for setting main address.
+     * @param name name to set address.
+     * @param a address to set.
+     * @param timestamp signature will expire after 24 hours since timestamp.
+     * @param nonce nonce.
+     * @return message to sign.
+     */
+    function makeMainAddrMessage(
+        string memory name,
+        address a,
+        uint256 timestamp,
+        uint256 nonce
+    ) external returns (string memory);
+
+    function setMainAddrAndIPNS(
+        string memory name,
+        address a,
+        uint256 timestamp,
+        uint256 nonce,
+        bytes memory signature,
+        bytes memory ipns
+    ) external;
 
     /**
      * @dev Claim a locked name for PassRegistry.

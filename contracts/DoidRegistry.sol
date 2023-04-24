@@ -22,6 +22,7 @@ contract DoidRegistryStorage {
     mapping(bytes32 => bytes) public names;
 
     mapping(bytes32 => bytes) public IPNS;
+    mapping(bytes32 => address) public mainAddress;
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
@@ -30,7 +31,7 @@ contract DoidRegistryStorage {
      * contract always adds up to the same number (in this case 50 storage slots).
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
-    uint256[43] private __gap;
+    uint256[42] private __gap;
 }
 
 contract DoidRegistry is
@@ -54,7 +55,9 @@ contract DoidRegistry is
     function isAuthorised(bytes32 node) internal view override returns (bool) {
         address owner = ownerOf(uint256(node));
         return
-            owner == msg.sender || addr(node) == msg.sender || isApprovedForAll(owner, msg.sender);
+            owner == msg.sender ||
+            mainAddress[node] == msg.sender ||
+            isApprovedForAll(owner, msg.sender);
     }
 
     function supportsInterface(
@@ -257,20 +260,72 @@ contract DoidRegistry is
 
         setAddr(node, COIN_TYPE_ETH, addressToBytes(owner));
 
-        if (ipns.length != 0) setIPNS(node, ipns);
+        if (ipns.length != 0) setMainAddrAndIPNS(node, owner, ipns);
 
         emit NameRegistered(id, name, owner);
     }
 
-    function setIPNS(string calldata _name, bytes memory ipns) public override {
-        bytes32 node = keccak256(bytes(_name));
-        require(isAuthorised(node), "NO");
-        emit IPNSChanged(node, ipns);
-        IPNS[node] = ipns;
+    using StringsUpgradeable for uint256;
+
+    function makeMainAddrMessage(
+        string memory _name,
+        address a,
+        uint256 timestamp,
+        uint256 nonce
+    ) public pure override returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    "Click sign to allow setting main address for ",
+                    _name,
+                    " to ",
+                    StringsUpgradeable.toHexString(a),
+                    "\n\n"
+                    "This request will not trigger a blockchain transaction or cost any gas fees."
+                    "\n\n"
+                    "This message will expire after 24 hours."
+                    "\n\nTimestamp: ",
+                    timestamp.toString(),
+                    "\nNonce: ",
+                    nonce.toHexString()
+                )
+            );
     }
 
-    function setIPNS(bytes32 node, bytes memory ipns) internal {
-        emit IPNSChanged(node, ipns);
+    function recoverMainAddr(
+        string memory _name,
+        address a,
+        uint256 timestamp,
+        uint256 nonce,
+        bytes memory signature
+    ) internal returns (address) {
+        bytes memory prefix = "\x19Ethereum Signed Message:\n";
+        string memory message = makeMainAddrMessage(_name, a, timestamp, nonce);
+        bytes32 _hashMessage = keccak256(
+            abi.encodePacked(prefix, bytes(message).length.toString(), message)
+        );
+        return recoverSigner(_hashMessage, signature);
+    }
+
+    function setMainAddrAndIPNS(
+        string memory _name,
+        address a,
+        uint256 timestamp,
+        uint256 nonce,
+        bytes memory signature,
+        bytes memory ipns
+    ) public override {
+        bytes32 node = keccak256(bytes(_name));
+        require(isAuthorised(node), "NO");
+        require(block.timestamp - timestamp < 86400, "EXP");
+        address recoverdAddress = recoverMainAddr(_name, a, timestamp, nonce, signature);
+        require(a == recoverdAddress, "IA");
+        setMainAddrAndIPNS(node, a, ipns);
+    }
+
+    function setMainAddrAndIPNS(bytes32 node, address a, bytes memory ipns) internal {
+        emit MainAddrChanged(node, a, ipns);
+        mainAddress[node] = a;
         IPNS[node] = ipns;
     }
 

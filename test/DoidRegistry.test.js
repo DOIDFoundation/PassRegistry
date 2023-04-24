@@ -328,43 +328,95 @@ describe('DoidRegistry', function () {
     })
   })
 
-  describe("IPNS", () => {
-    it('IPNS()', async () => {
+  describe("MainAddrAndIPNS", () => {
+    it('IPNS() and mainAddress()', async () => {
         const name = "doidtest"
         await mintDomain(proxy, admin.address, name)
         const nameHash = await proxy.nameHash(name)
         expect(await proxy.IPNS(nameHash)).to.be.properHex(0)
+        expect(await proxy.mainAddress(nameHash)).to.hexEqual("0x0")
 
         const ipns= "0x12345678"
         await mintDomain(proxy, admin.address, name + 'ipns', ipns)
         expect(
           await proxy.IPNS(await proxy.nameHash(name + 'ipns')),
         ).to.hexEqual(ipns)
+        expect(
+          await proxy.mainAddress(await proxy.nameHash(name + 'ipns')),
+        ).to.hexEqual(admin.address)
     })
 
-    it('setIPNS()', async () => {
+    it('setMainAddrAndIPNS()', async () => {
         const name = "doidtest"
         const ipns= "0x12345678"
         await mintDomain(proxy, admin.address, name)
 
         const nameHash = await proxy.nameHash(name)
+        
+        const timestamp = (
+          await ethers.provider.getBlock(await ethers.provider.getBlockNumber())
+        ).timestamp
+        const nonce = ethers.BigNumber.from(ethers.utils.randomBytes(32))
 
-        await expect(proxy.setIPNS(name, ipns))
-          .to.emit(proxy, 'IPNSChanged')
-          .withArgs(nameHash, ipns)
+        let signature = await bob.signMessage(
+          await proxy.makeMainAddrMessage(name, bob.address, timestamp, nonce),
+        )
+
+        await expect(
+          proxy.setMainAddrAndIPNS(
+            name,
+            bob.address,
+            timestamp,
+            nonce,
+            signature,
+            ipns,
+          ),
+        )
+          .to.emit(proxy, 'MainAddrChanged')
+          .withArgs(nameHash, bob.address, ipns)
 
         expect(await proxy.IPNS(nameHash)).to.hexEqual(ipns)
+        expect(await proxy.mainAddress(nameHash)).to.hexEqual(bob.address)
 
-        await expect(proxy.connect(bob).setIPNS(name, ipns)).to.be.revertedWith(
-          'NO',
+        signature = await carl.signMessage(
+          await proxy.makeMainAddrMessage(name, carl.address, timestamp, nonce),
         )
+        await expect(
+          proxy
+            .connect(carl)
+            .setMainAddrAndIPNS(
+              name,
+              carl.address,
+              timestamp,
+              nonce,
+              signature,
+              ipns,
+            ),
+        ).to.be.revertedWith('NO')
+
+        await expect(
+          proxy
+            .connect(bob)
+            .setMainAddrAndIPNS(
+              name,
+              carl.address,
+              timestamp,
+              nonce,
+              signature,
+              ipns,
+            ),
+        )
+          .to.emit(proxy, 'MainAddrChanged')
+          .withArgs(nameHash, carl.address, ipns)
+
+        expect(await proxy.IPNS(nameHash)).to.hexEqual(ipns)
+        expect(await proxy.mainAddress(nameHash)).to.hexEqual(carl.address)
 
         const name2 = "test222"
-        const nameHash2 = await proxy.nameHash(name2)
 
-        await expect(proxy.setIPNS(name2, ipns)).to.be.revertedWith(
-          'ERC721: invalid token ID',
-        )
+        await expect(
+          proxy.setMainAddrAndIPNS(name2, carl.address, timestamp, nonce, signature, ipns),
+        ).to.be.revertedWith('ERC721: invalid token ID')
     })
   })
 })
