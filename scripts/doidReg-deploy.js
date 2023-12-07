@@ -7,6 +7,7 @@
 const hre = require('hardhat')
 
 const PASS_REGISTRY_ADDRESS = {
+  ftmtest: '0x9281fD776D35f518B877D726e6a30eff1c7775E9',
   sepolia: '0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE',
   goerli: '0xF32950cf48C10431b27EFf888D23cB31615dFCb4',
   online: '0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F',

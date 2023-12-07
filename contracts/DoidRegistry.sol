@@ -156,6 +156,14 @@ contract DoidRegistry is
         }
     }
 
+    function mainAddrOfName(string memory _name) public view override returns (address main) {
+        return mainAddress[nameHash(_name)];
+    }
+
+    function ipnsOfName(string memory _name) public view override returns (bytes memory ipns) {
+        return IPNS[nameHash(_name)];
+    }
+
     /**
      * @dev Returns true if the specified name is reserved by pass.
      */

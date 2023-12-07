@@ -71,9 +71,23 @@ module.exports = {
       url: process.env.NETWORK_INFURA_URL_SEPOLIA,
       accounts: accounts(),
     },
+    ftmtest: {
+      url: process.env.NETWORK_INFURA_URL_FTMTEST,
+      accounts: accounts(),
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
+    customChains: [
+      {
+        network: 'ftmtest',
+        chainId: 0xfa2,
+        urls: {
+          apiURL: 'https://api-testnet.ftmscan.com/api',
+          browserURL: 'https://testnet.ftmscan.com',
+        },
+      },
+    ],
   },
   solidity: {
     compilers: [
