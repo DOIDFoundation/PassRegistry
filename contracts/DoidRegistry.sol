@@ -235,8 +235,26 @@ contract DoidRegistry is
         _register(name, owner);
     }
 
-    function name() public pure override returns (string memory) {
-        return "DOID: Decentralized OpenID";
+    // function name() public pure override returns (string memory) {
+    //     return "DOID: Decentralized OpenID";
+    // }
+
+    // ENS Api
+    function name(bytes32 _node) external view returns (string memory){
+        return string(names[_node]);
+    }
+
+    // function text(bytes32 _node, string memory _key) external view returns (string memory){
+        // address ret = addr(_node);
+        // return string(ret);
+    // }
+
+    // function contentHash(bytes32 _node) external view returns (string memory){
+    //     return "";
+    // }
+ 
+    function resolver(bytes32 _node) external view returns (address){
+        return address(this);
     }
 
     function symbol() public pure override returns (string memory) {

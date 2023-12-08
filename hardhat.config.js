@@ -71,6 +71,11 @@ module.exports = {
       url: process.env.NETWORK_INFURA_URL_SEPOLIA,
       accounts: accounts(),
     },
+    fantomtestnet: {
+      chainId: 4002,
+      url: process.env.NETWORK_INFURA_URL_FANTOMTESTNET,
+      accounts: accounts(),
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
