@@ -1,6 +1,7 @@
 {
   "manifestVersion": "3.2",
   "admin": {
+<<<<<<< HEAD
     "address": "0xd274C2225149724B7142f5d72F8c0eda48838DA4",
     "txHash": "0xa5246c1769136b853b8ef3f38d7ff7d86537d06719e69c28f718b9afb4df2922"
   },
@@ -13,13 +14,28 @@
     {
       "address": "0x6974201EaAEb277888F6a4028d952E6A59F0baD1",
       "txHash": "0x53979f73186222e5bc2a69f184d6576a7b633bcbf2ebec0cf01a0f83ddf78279",
+=======
+    "address": "0x1C5980bC718073d13596AF3F1603E3935ce47AF9",
+    "txHash": "0x234f1755b62226b6e0b360a0f154a9c504d0edc58b7f4628582525ff9b61e486"
+  },
+  "proxies": [
+    {
+      "address": "0xDA182b24dE5D8f36b453325Fdd8c2C1cA7C04A12",
+      "txHash": "0x3149f999143f6f4effc478437cbd55029183594271fb81f419e74281cc9aea97",
+>>>>>>> doidNameService
       "kind": "transparent"
     }
   ],
   "impls": {
+<<<<<<< HEAD
     "ee8bc2747281b3325cc4c47b702f292e44e80028f98e21ad64ae2e36cd60f8a0": {
       "address": "0x179644e5E5466a599EE85419e91483C27ff1d9c3",
       "txHash": "0xfe871e0f89fd0ad79b86a11449d5f9a8b5c1800a20f3e672e0f6b6e8a6a1ad37",
+=======
+    "b9a1362e8a6123b4cd9fbb732f31152accc61d442efdcc9dd0ed9c70db1e7897": {
+      "address": "0x6B1bDd9B099D130e874e15deE9Bac38B699B3301",
+      "txHash": "0x03c2004f916bd9664ef2afe7ad65ce4d9d16c163ef0bc7654f46bbf274be72de",
+>>>>>>> doidNameService
       "layout": {
         "solcVersion": "0.8.4",
         "storage": [
@@ -27,7 +43,11 @@
             "label": "passReg",
             "offset": 0,
             "slot": "0",
+<<<<<<< HEAD
             "type": "t_contract(IPassRegistry)4391",
+=======
+            "type": "t_contract(IPassRegistry)4067",
+>>>>>>> doidNameService
             "contract": "DoidRegistryStorage",
             "src": "contracts/DoidRegistry.sol:15"
           },
@@ -64,6 +84,7 @@
             "src": "contracts/DoidRegistry.sol:22"
           },
           {
+<<<<<<< HEAD
             "label": "IPNS",
             "offset": 0,
             "slot": "5",
@@ -86,6 +107,14 @@
             "type": "t_array(t_uint256)42_storage",
             "contract": "DoidRegistryStorage",
             "src": "contracts/DoidRegistry.sol:34"
+=======
+            "label": "__gap",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_array(t_uint256)44_storage",
+            "contract": "DoidRegistryStorage",
+            "src": "contracts/DoidRegistry.sol:31"
+>>>>>>> doidNameService
           },
           {
             "label": "_addresses",
@@ -250,10 +279,13 @@
             "label": "bytes32[]",
             "numberOfBytes": "32"
           },
+<<<<<<< HEAD
           "t_array(t_uint256)42_storage": {
             "label": "uint256[42]",
             "numberOfBytes": "1344"
           },
+=======
+>>>>>>> doidNameService
           "t_array(t_uint256)44_storage": {
             "label": "uint256[44]",
             "numberOfBytes": "1408"
@@ -286,7 +318,11 @@
             "label": "bytes",
             "numberOfBytes": "32"
           },
+<<<<<<< HEAD
           "t_contract(IPassRegistry)4391": {
+=======
+          "t_contract(IPassRegistry)4067": {
+>>>>>>> doidNameService
             "label": "contract IPassRegistry",
             "numberOfBytes": "20"
           },
@@ -306,10 +342,13 @@
             "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
           },
+<<<<<<< HEAD
           "t_mapping(t_bytes32,t_address)": {
             "label": "mapping(bytes32 => address)",
             "numberOfBytes": "32"
           },
+=======
+>>>>>>> doidNameService
           "t_mapping(t_bytes32,t_bytes_storage)": {
             "label": "mapping(bytes32 => bytes)",
             "numberOfBytes": "32"
@@ -382,6 +421,7 @@
           }
         }
       }
+<<<<<<< HEAD
     },
     "f6a09ea7a3775179cc22bd971a9942957ccdd9cbeb56f2403a3f6aea9a202861": {
       "address": "0x089630FFf732c1F0BE1A794B26C696d4c4b9cE73",
@@ -1654,6 +1694,8 @@
         },
         "namespaces": {}
       }
+=======
+>>>>>>> doidNameService
     }
   }
 }

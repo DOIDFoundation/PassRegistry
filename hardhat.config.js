@@ -73,6 +73,7 @@ module.exports = {
     },
     ftmtest: {
       url: process.env.NETWORK_INFURA_URL_FTMTEST,
+      chainId: 4002,
       accounts: accounts(),
     },
   },
