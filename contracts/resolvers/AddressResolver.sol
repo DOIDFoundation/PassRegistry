@@ -13,6 +13,8 @@ contract AddressResolverStorage {
     mapping(bytes32 => mapping(uint256 => bytes)) _addresses;
     mapping(bytes32 => EnumerableSetUpgradeable.UintSet) _nameTypes;
     uint256 public constant COIN_TYPE_ETH = 60;
+    // namehash(doid)
+    bytes32 public constant DOID_NODE = 0x6b72dd7f9f8150600ddd5344f1cce104abe98b28da6f4b5bbd65fb0d9541149c;
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
@@ -118,9 +120,15 @@ abstract contract AddressResolver is AddressResolverStorage, IAddressResolver, R
     }
 
     function setAddr(bytes32 node, uint256 coinType, bytes memory a) internal {
-        emit AddressChanged(node, coinType, a);
-        _addresses[node][coinType] = a;
-        _nameTypes[node].add(coinType);
+        bytes32 nodeHash = keccak256(abi.encodePacked(DOID_NODE, node));
+
+        emit AddressChanged(nodeHash, coinType, a);
+        _addresses[nodeHash][coinType] = a;
+        _nameTypes[nodeHash].add(coinType);
+
+        // emit AddressChanged(node, coinType, a);
+        // _addresses[node][coinType] = a;
+        // _nameTypes[node].add(coinType);
     }
 
     function addrs(bytes32 node) public view virtual override returns (TypedAddress[] memory) {

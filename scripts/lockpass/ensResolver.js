@@ -1,65 +1,75 @@
 const hre = require('hardhat')
-const { ethers } = require('ethers')
-const { url } = require('inspector')
+const { ethers, utils } = require('ethers')
 
-async function register() {
-  const accounts = await hre.ethers.getSigners()
-  admin = accounts[0]
-  console.log('admin:', admin.address)
-
-  const contractAddress = '0xDA182b24dE5D8f36b453325Fdd8c2C1cA7C04A12'
-  const proxy = await hre.ethers.getContractAt('DoidRegistry', contractAddress)
-
+async function register_dns(proxy, admin) {
   const name = 'doidtest'
-  const owner = admin.address
-  const secret = ethers.utils.formatBytes32String('secret')
-  const data = []
-  const commit = await proxy.makeCommitment(name, owner, secret, data)
-
-  //commit
-  // const tx = await proxy.commit(commit)
-
   // register
-  await proxy.register(name, admin.address, secret, data)
-
-  const nameHash = await proxy.nameHash(name)
-  console.log('ownerof(namehash)', await proxy.ownerOf(nameHash))
+  console.log('register', name, admin.address)
+  await proxy['register(string,address)'](name, admin.address)
 }
 
 // upgrade contract
 async function main() {
-  await register()
-  return
-  const ftmNetwork = {
-    chainId: 4002,
-    ensAddress: '0xDA182b24dE5D8f36b453325Fdd8c2C1cA7C04A12',
-    name: 'doidnameservicetestnetwork',
-  }
-  const provider = await new hre.ethers.providers.JsonRpcProvider(
-    'https://rpc.testnet.fantom.network/',
-    ftmNetwork,
-  )
-  console.log('network', provider.network)
-  const r = await provider.getResolver('abc')
-  console.log('resolver', r)
-  console.log(
-    'namehahs',
-    ethers.utils.namehash(
-      '5555763613a12d8f3e73be831dff8598089d3dca.addr.reverse',
-    ),
-  )
+  const accounts = await hre.ethers.getSigners()
+  admin = accounts[0]
+  console.log('admin:', admin.address)
 
-  if (r == null) {
-    console.log('error')
+  // const contractAddress = '0x3d0E88068863407ffb073F9D020F7d2E8788ee22'
+  const contractAddress = '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9'
+  const proxy = await hre.ethers.getContractAt('DoidRegistry', contractAddress)
+
+  const register = false
+  if (register) {
+    await register_dns(proxy, admin)
     return
   }
-  console.log('resolver name', r.name)
-  console.log('resolver address', r.address)
-  console.log('resolver avatar', await r.getAvatar())
-  console.log('resolver address', await r.getAddress())
-  console.log('resolver address0', await r.getAddress(0))
-  console.log('resolver contentHash', await r.getContentHash())
-  console.log('resolver get email', await r.getText('email'))
+  const ftmTestProvider = await new ethers.providers.JsonRpcProvider(
+    'https://rpc.testnet.fantom.network/',
+    {
+      chainId: 4002,
+      ensAddress: contractAddress,
+      name: 'doidtest',
+    },
+  )
+  // localhost provider
+  const provider = await new ethers.providers.JsonRpcProvider(
+    'http://127.0.0.1:8545',
+    {
+      chainId: 31337,
+      ensAddress: contractAddress,
+      name: 'doidtest.doid',
+    },
+  )
+  console.log('network', provider.network)
+
+  const name = 'doidtest.doid'
+  // const hash = await proxy.nameHash(name)
+  // console.log(`contract namehash(${name}`, hash)
+  // console.log(`contract namehash(doidtest)`, await proxy.nameHash('doidtest'))
+  // console.log('contract addr', await proxy.addr(hash))
+  // console.log(
+  //   'utils namehash(doidtest.doid)',
+  //   ethers.utils.namehash('doidtest.doid'),
+  // )
+  // console.log(
+  //   'utils namehash(doidtest.doid.eth)',
+  //   ethers.utils.namehash('doidtest.doid.eth'),
+  // )
+  // console.log(
+  //   'utils namehash(doidtest.eth)',
+  //   ethers.utils.namehash('doidtest.eth'),
+  // )
+  // console.log('utils namehash(doidtest)', ethers.utils.namehash('doidtest'))
+  // console.log('utils namehash(doid)', ethers.utils.namehash('doid'))
+  // console.log('namehash(addr.reverse)', ethers.utils.namehash('addr.reverse'))
+
+  // use ethersjs to lookup address of name , and resolveName
+  console.log(
+    'lookupAddress()',
+    await provider.lookupAddress(admin.address),
+    'resolveName()',
+    await provider.resolveName(name),
+  )
 }
 
 main().catch((error) => {

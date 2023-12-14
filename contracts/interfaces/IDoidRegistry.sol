@@ -4,6 +4,7 @@ pragma solidity >=0.8.4;
 interface IDoidRegistry {
     event NameRegistered(uint256 indexed id, string name, address indexed owner);
     event MainAddrChanged(bytes32 indexed node, address indexed newAddress, bytes newIPNS);
+    event SetReverse(address owner, bytes32 reverseNode);
 
     struct DoidInfo {
         uint256 tokenId;

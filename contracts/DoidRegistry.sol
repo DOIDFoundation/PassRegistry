@@ -8,7 +8,10 @@ import "./interfaces/IPassRegistry.sol";
 import "./resolvers/AddressResolver.sol";
 import "./StringUtils.sol";
 
-//import "hardhat/console.sol";
+// import "hardhat/console.sol";
+bytes32 constant lookup = 0x3031323334353637383961626364656600000000000000000000000000000000;
+// namehash of "addr.reverse"
+bytes32 constant ADDR_REVERSE_NODE = 0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2;
 
 contract DoidRegistryStorage {
     // address of passRegistry
@@ -23,6 +26,7 @@ contract DoidRegistryStorage {
 
     mapping(bytes32 => bytes) public IPNS;
     mapping(bytes32 => address) public mainAddress;
+    mapping(bytes32 => string) public reverseNames;
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
@@ -87,8 +91,9 @@ contract DoidRegistry is
         return tokenIds;
     }
 
-    function nameHash(string memory name) public pure override returns (bytes32) {
-        return keccak256(bytes(name));
+    function nameHash(string memory _name) public pure override returns (bytes32) {
+        // return keccak256(bytes(_name));
+        return keccak256(abi.encodePacked(DOID_NODE, keccak256(bytes(_name))));
     }
 
     function _nameOfToken(uint256 id) internal view returns (string memory) {
@@ -264,6 +269,10 @@ contract DoidRegistry is
         bytes32 node = keccak256(bytes(name));
         uint id = uint(node);
         names[node] = bytes(name);
+
+        // register name for address
+        _setNameForAddr(name, owner);
+
         _mint(owner, id);
 
         setAddr(node, COIN_TYPE_ETH, addressToBytes(owner));
@@ -272,6 +281,67 @@ contract DoidRegistry is
 
         emit NameRegistered(id, name, owner);
     }
+
+    function _setNameForAddr(string calldata _name, address _addr) internal{
+        bytes32 labelHash = sha3HexAddress(_addr);
+        bytes32 reverseNode = keccak256(
+            abi.encodePacked(ADDR_REVERSE_NODE, labelHash)
+        );
+        reverseNames[reverseNode] = string(abi.encodePacked(_name, ".doid"));
+
+        emit SetReverse(_addr, reverseNode);
+
+    }
+
+    // ENS Api
+     /**
+     * @dev Returns the node hash for a given account's reverse records.
+     * @param addr The address to hash
+     * @return The ENS node hash.
+     */
+    function node(address addr) public pure returns (bytes32) {
+        return
+            keccak256(
+                abi.encodePacked(ADDR_REVERSE_NODE, sha3HexAddress(addr))
+            );
+    }
+    function name(bytes32 _node) external view returns (string memory){
+        return reverseNames[_node];
+    }
+
+    function resolver(bytes32 ) external view returns (address){
+        return address(this);
+    }
+
+
+    /**
+     * @dev An optimised function to compute the sha3 of the lower-case
+     *      hexadecimal representation of an Ethereum address.
+     * @param addr The address to hash
+     * @return ret The SHA3 hash of the lower-case hexadecimal encoding of the
+     *         input address.
+     */
+    function sha3HexAddress(address addr) private pure returns (bytes32 ret) {
+        assembly {
+            for {
+                let i := 40
+            } gt(i, 0) {
+
+            } {
+                i := sub(i, 1)
+                mstore8(i, byte(and(addr, 0xf), lookup))
+                addr := div(addr, 0x10)
+                i := sub(i, 1)
+                mstore8(i, byte(and(addr, 0xf), lookup))
+                addr := div(addr, 0x10)
+            }
+
+            ret := keccak256(0, 40)
+        }
+    }
+
+
+
 
     using StringsUpgradeable for uint256;
 
@@ -345,24 +415,6 @@ contract DoidRegistry is
     // function name() public pure override returns (string memory) {
     //     return "DOID: Decentralized OpenID";
     // }
-
-    // ENS Api
-    function name(bytes32 _node) external view returns (string memory){
-        return string(names[_node]);
-    }
-
-    // function text(bytes32 _node, string memory _key) external view returns (string memory){
-        // address ret = addr(_node);
-        // return string(ret);
-    // }
-
-    // function contentHash(bytes32 _node) external view returns (string memory){
-    //     return "";
-    // }
- 
-    function resolver(bytes32 _node) external view returns (address){
-        return address(this);
-    }
 
     function symbol() public pure override returns (string memory) {
         return "DOID";
