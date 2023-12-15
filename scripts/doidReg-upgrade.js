@@ -7,6 +7,7 @@
 const hre = require('hardhat')
 
 const DOID_REGISTRY_ADDRESS = {
+  ftmtest: '0x6974201EaAEb277888F6a4028d952E6A59F0baD1',
   sepolia: '0x24256dAb379962842691Eb8bcE11f2b5032bf1b6',
   goerli: '0xAB4d8acb8538e7F2B81a8e0Db6530bBec96678b5',
   online: '0xCB9302Da98405eCc50B1D6D4F9671F05E143B5F7',

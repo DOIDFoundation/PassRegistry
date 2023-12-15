@@ -35,7 +35,7 @@ contract DoidRegistryStorage {
      * contract always adds up to the same number (in this case 50 storage slots).
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
-    uint256[42] private __gap;
+    uint256[41] private __gap;
 }
 
 contract DoidRegistry is
@@ -282,37 +282,31 @@ contract DoidRegistry is
         emit NameRegistered(id, name, owner);
     }
 
-    function _setNameForAddr(string calldata _name, address _addr) internal{
+    function _setNameForAddr(string calldata _name, address _addr) internal {
         bytes32 labelHash = sha3HexAddress(_addr);
-        bytes32 reverseNode = keccak256(
-            abi.encodePacked(ADDR_REVERSE_NODE, labelHash)
-        );
+        bytes32 reverseNode = keccak256(abi.encodePacked(ADDR_REVERSE_NODE, labelHash));
         reverseNames[reverseNode] = string(abi.encodePacked(_name, ".doid"));
 
         emit SetReverse(_addr, reverseNode);
-
     }
 
     // ENS Api
-     /**
+    /**
      * @dev Returns the node hash for a given account's reverse records.
      * @param addr The address to hash
      * @return The ENS node hash.
      */
     function node(address addr) public pure returns (bytes32) {
-        return
-            keccak256(
-                abi.encodePacked(ADDR_REVERSE_NODE, sha3HexAddress(addr))
-            );
+        return keccak256(abi.encodePacked(ADDR_REVERSE_NODE, sha3HexAddress(addr)));
     }
-    function name(bytes32 _node) external view returns (string memory){
+
+    function name(bytes32 _node) external view returns (string memory) {
         return reverseNames[_node];
     }
 
-    function resolver(bytes32 ) external view returns (address){
+    function resolver(bytes32) external view returns (address) {
         return address(this);
     }
-
 
     /**
      * @dev An optimised function to compute the sha3 of the lower-case
@@ -339,9 +333,6 @@ contract DoidRegistry is
             ret := keccak256(0, 40)
         }
     }
-
-
-
 
     using StringsUpgradeable for uint256;
 
