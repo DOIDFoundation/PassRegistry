@@ -5,15 +5,19 @@ var uts46 = require('idna-uts46-hx')
 
 const pathToHashName = 'scripts/reserveNamesHash.txt'
 const pathToValidName = 'scripts/reserveNamesValid.txt'
-const CONTRACT_ADDRESS =
-  // '0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE' //Sepolia
-  // '0xF32950cf48C10431b27EFf888D23cB31615dFCb4' //Goerli
-  '0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F' // Mainnet
+const CONTRACT_ADDRESS = {
+  doidtest: '0x20507b80c92d32DDfd733E81aF255b549421dfd8',
+  ftmtest: '0x9281fD776D35f518B877D726e6a30eff1c7775E9',
+  sepolia: '0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE',
+  goerli: '0xF32950cf48C10431b27EFf888D23cB31615dFCb4',
+  online: '0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F',
+  localhost: '0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F',
+}[hre.network.name]
 
 async function generateNames() {
   let names = {}
 
-  const readStream = fs.createReadStream('scripts/reserveNames.txt')
+  const readStream = fs.createReadStream('scripts/lockpass/reserveNames.txt')
   const writeStream = fs.createWriteStream(pathToValidName)
   const writeHashStream = fs.createWriteStream(pathToHashName)
 
@@ -116,7 +120,7 @@ async function main() {
 
   const proxy = await hre.ethers.getContractAt('PassRegistry', CONTRACT_ADDRESS)
 
-  const chunkSize = 1300
+  const chunkSize = 300
   const start = 0
   for (let i = start; i < hashnames.length; i += chunkSize) {
     console.log('starting', i)

@@ -76,6 +76,11 @@ module.exports = {
       chainId: 4002,
       accounts: accounts(),
     },
+    doidtest: {
+      url: 'https://rpc.testnet.doid.tech',
+      chainId: 0xdddd,
+      accounts: accounts(),
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
