@@ -93,6 +93,14 @@ module.exports = {
           browserURL: 'https://testnet.ftmscan.com',
         },
       },
+      {
+        network: 'doidtest',
+        chainId: 0xdddd,
+        urls: {
+          apiURL: 'https://scout.testnet.doid.tech/api',
+          browserURL: 'https://scan.testnet.doid.tech',
+        },
+      },
     ],
   },
   solidity: {
