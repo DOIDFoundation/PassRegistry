@@ -51,7 +51,7 @@ async function fetchNameList() {
       utils.hexZeroPad(contentVec[index][0], 32),
     )
     console.log(contentVec[index][0], address, contentVec[index][1])
-    const tx = await migrate(contentVec[index][1], address)
+    // const tx = await migrate(contentVec[index][1], address)
     // await getAddress2(contentVec[index])
     // const element = array[index];
     // const id = contentVec[index][0]
