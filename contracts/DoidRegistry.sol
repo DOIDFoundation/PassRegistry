@@ -2,6 +2,7 @@
 pragma solidity >=0.8.4;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import "./interfaces/IDoidRegistry.sol";
 import "./interfaces/IPassRegistry.sol";
@@ -40,6 +41,7 @@ contract DoidRegistryStorage {
 
 contract DoidRegistry is
     DoidRegistryStorage,
+    OwnableUpgradeable,
     ERC721EnumerableUpgradeable,
     AddressResolver,
     IDoidRegistry
@@ -54,13 +56,14 @@ contract DoidRegistry is
         minCommitmentAge = _minCommitmentAge;
         maxCommitmentAge = _maxCommitmentAge;
         passReg = IPassRegistry(passRegistry);
+        __Ownable_init();
     }
 
-    function isAuthorised(bytes32 node) internal view override returns (bool) {
-        address owner = ownerOf(uint256(node));
+    function isAuthorised(bytes32 _node) internal view override returns (bool) {
+        address owner = ownerOf(uint256(_node));
         return
             owner == msg.sender ||
-            mainAddress[node] == msg.sender ||
+            mainAddress[_node] == msg.sender ||
             isApprovedForAll(owner, msg.sender);
     }
 
@@ -100,8 +103,8 @@ contract DoidRegistry is
         return string(names[bytes32(id)]);
     }
 
-    function _nameOfHash(bytes32 node) internal view returns (string memory) {
-        return string(names[node]);
+    function _nameOfHash(bytes32 _node) internal view returns (string memory) {
+        return string(names[_node]);
     }
 
     function valid(string memory _name) public pure override returns (bool) {
@@ -122,9 +125,9 @@ contract DoidRegistry is
     /**
      * @dev Returns true iff the specified name is available for registration.
      */
-    function available(string memory name) public view override returns (bool) {
-        if (_exists(uint256(nameHash(name)))) return false;
-        if (passReserved(name)) {
+    function available(string memory _name) public view override returns (bool) {
+        if (_exists(uint256(nameHash(_name)))) return false;
+        if (passReserved(_name)) {
             return false;
         }
         return true;
@@ -212,66 +215,70 @@ contract DoidRegistry is
         commitments[commitment] = block.timestamp;
     }
 
-    function _consumeCommitment(string memory name, bytes32 commitment) internal {
+    function _consumeCommitment(string memory _name, bytes32 commitment) internal {
         // Require an old enough commitment.
         require(commitments[commitment] + minCommitmentAge <= block.timestamp, "CN");
 
         // If the commitment is too old, or the name is registered, stop
         require(commitments[commitment] + maxCommitmentAge > block.timestamp, "CO");
 
-        require(available(name), "IN");
+        require(available(_name), "IN");
 
         delete (commitments[commitment]);
     }
 
+    function nameMigration(string calldata _name, address owner) external onlyOwner{
+        _register(_name, owner, "");
+    }
+
     /**
      * @dev Register a name.
-     * @param name The address of the tokenId.
+     * @param _name The address of the tokenId.
      * @param owner The address that should own the registration.
      */
     function register(
-        string calldata name,
+        string calldata _name,
         address owner,
         bytes32 secret,
         bytes[] calldata data
     ) external {
         // revert("deprecated");
-        _register(name, owner, secret, data);
+        _register(_name, owner, secret, data);
     }
 
     /**
      * @dev Register a name in one step.
-     * @param name The address of the tokenId.
+     * @param _name The address of the tokenId.
      * @param owner The address that should own the registration.
      */
-    function register(string calldata name, address owner) external override {
-        _register(name, owner, "");
+    function register(string calldata _name, address owner) external override {
+        _register(_name, owner, "");
     }
 
-    function register(string calldata name, address owner, bytes memory ipns) external override {
-        _register(name, owner, ipns);
+    function register(string calldata _name, address owner, bytes memory ipns) external override {
+        _register(_name, owner, ipns);
     }
 
     function _register(
-        string calldata name,
+        string calldata _name,
         address owner,
         bytes32 secret,
         bytes[] calldata data
     ) internal {
-        _consumeCommitment(name, makeCommitment(name, owner, secret, data));
+        _consumeCommitment(_name, makeCommitment(_name, owner, secret, data));
 
-        _register(name, owner, "");
+        _register(_name, owner, "");
     }
 
-    function _register(string calldata name, address owner, bytes memory ipns) internal {
-        require(available(name), "IN");
+    function _register(string calldata _name, address owner, bytes memory ipns) internal {
+        require(available(_name), "IN");
 
-        bytes32 node = keccak256(bytes(name));
+        bytes32 node = keccak256(bytes(_name));
         uint id = uint(node);
-        names[node] = bytes(name);
+        names[node] = bytes(_name);
 
         // register name for address
-        _setNameForAddr(name, owner);
+        _setNameForAddr(_name, owner);
 
         _mint(owner, id);
 
@@ -279,7 +286,7 @@ contract DoidRegistry is
 
         if (ipns.length != 0) setMainAddrAndIPNS(node, owner, ipns);
 
-        emit NameRegistered(id, name, owner);
+        emit NameRegistered(id, _name, owner);
     }
 
     function _setNameForAddr(string calldata _name, address _addr) internal {
