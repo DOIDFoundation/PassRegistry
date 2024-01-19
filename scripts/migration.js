@@ -10,13 +10,28 @@ const { ethers, utils } = require('ethers')
 const assert = require('assert')
 
 const ETH_DOID_ADDR = '0xCB9302Da98405eCc50B1D6D4F9671F05E143B5F7'
-const RIF_DOID_ADDR = '0x4e01ea20AF674020185A01a48f25B83222f0047D'
+// const RIF_DOID_ADDR = '0x4e01ea20AF674020185A01a48f25B83222f0047D'
+const RIF_DOID_ADDR = '0x20507b80c92d32DDfd733E81aF255b549421dfd8'
 const url = 'https://api.studio.thegraph.com/query/38900/as/3'
 
-async function migrate(name, owner) {
+async function migrate() {
   const rif_doid = await hre.ethers.getContractAt('DoidRegistry', RIF_DOID_ADDR)
-  const tx = await rif_doid.nameMigration(name, owner)
-  return await tx.wait()
+  const content = fs.readFileSync('./scripts/migration.data2')
+  const contentArr = content.toString().split(/\r?\n/)
+  for (let index = 0; index < contentArr.length; index++) {
+    const line = contentArr[index]
+    const items = line.split(' ')
+    const addr = items[1]
+    const name = items[2]
+    console.log(`index:${index},addr:${addr}, name:${name}`)
+    try {
+      const tx = await rif_doid.nameMigration(name, addr)
+    } catch (err) {
+      console.log('tx error', err, addr, name)
+      continue
+    }
+    // return await tx.wait()
+  }
 }
 
 async function fetchNameList() {
@@ -117,10 +132,9 @@ async function main() {
   admin = accounts[0]
   console.log('admin:', admin.address)
 
-  // console.log(await migrate('nunocostapt', admin.address))
-  // return
+  console.log(await migrate('nunocostapt', admin.address))
 
-  await fetchNameList()
+  // await fetchNameList()
 }
 
 function hex_to_ascii(str1) {
