@@ -28,7 +28,12 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 task('balance', 'Prints the balance of accounts', async (taskArgs, hre) => {
   const accounts = await hre.ethers.getSigners()
   for (const account of accounts) {
-    console.log(account.address, hre.ethers.utils.formatEther(await account.provider.getBalance(account.address)))
+    console.log(
+      account.address,
+      hre.ethers.utils.formatEther(
+        await account.provider.getBalance(account.address),
+      ),
+    )
   }
 })
 
@@ -79,7 +84,7 @@ module.exports = {
       accounts: accounts(),
     },
     ftmtest: {
-      url: "https://rpc.testnet.fantom.network",
+      url: 'https://rpc.testnet.fantom.network',
       chainId: 4002,
       accounts: accounts(),
     },
@@ -126,15 +131,6 @@ module.exports = {
   solidity: {
     compilers: [
       {
-        version: '0.8.12',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200,
-          },
-        },
-      },
-      {
         version: '0.8.4',
         settings: {
           optimizer: {
@@ -144,5 +140,16 @@ module.exports = {
         },
       },
     ],
+    overrides: {
+      'contracts/Multicall3.sol': {
+        version: '0.8.12',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 10000000,
+          },
+        },
+      },
+    },
   },
 }
