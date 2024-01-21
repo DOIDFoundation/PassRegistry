@@ -12,6 +12,7 @@ const DOID_REGISTRY_ADDRESS = {
   goerli: '0xAB4d8acb8538e7F2B81a8e0Db6530bBec96678b5',
   online: '0xCB9302Da98405eCc50B1D6D4F9671F05E143B5F7',
   doidtest: '0x20507b80c92d32DDfd733E81aF255b549421dfd8',
+  doid: '0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F',
 }[hre.network.name]
 
 async function main() {

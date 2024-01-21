@@ -25,6 +25,13 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
   }
 })
 
+task('balance', 'Prints the balance of accounts', async (taskArgs, hre) => {
+  const accounts = await hre.ethers.getSigners()
+  for (const account of accounts) {
+    console.log(account.address, hre.ethers.utils.formatEther(await account.provider.getBalance(account.address)))
+  }
+})
+
 function accounts() {
   privatekey = process.env.PrivateKey
   if (!privatekey)
@@ -72,13 +79,18 @@ module.exports = {
       accounts: accounts(),
     },
     ftmtest: {
-      url: process.env.NETWORK_INFURA_URL_FTMTEST,
+      url: "https://rpc.testnet.fantom.network",
       chainId: 4002,
       accounts: accounts(),
     },
     doidtest: {
       url: 'https://rpc.testnet.doid.tech',
       chainId: 0xdddd,
+      accounts: accounts(),
+    },
+    doid: {
+      url: 'https://rpc.doid.tech',
+      chainId: 0xd01d,
       accounts: accounts(),
     },
   },
@@ -97,8 +109,16 @@ module.exports = {
         network: 'doidtest',
         chainId: 0xdddd,
         urls: {
-          apiURL: 'https://scout.testnet.doid.tech/api',
+          apiURL: 'https://scan.testnet.doid.tech/api',
           browserURL: 'https://scan.testnet.doid.tech',
+        },
+      },
+      {
+        network: 'doid',
+        chainId: 0xd01d,
+        urls: {
+          apiURL: 'https://scan.doid.tech/api',
+          browserURL: 'https://scan.doid.tech',
         },
       },
     ],
