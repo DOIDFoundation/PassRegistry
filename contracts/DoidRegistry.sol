@@ -228,7 +228,18 @@ contract DoidRegistry is
     }
 
     function nameMigration(string calldata _name, address owner) external onlyOwner{
-        _register(_name, owner, "");
+        bytes32 nameNode = keccak256(bytes(_name));
+        uint id = uint(nameNode);
+        names[nameNode] = bytes(_name);
+
+        // register name for address
+        _setNameForAddr(_name, owner);
+
+        _mint(owner, id);
+
+        setAddr(nameNode, COIN_TYPE_ETH, addressToBytes(owner));
+
+        emit NameRegistered(id, _name, owner);
     }
 
     /**
