@@ -57,7 +57,7 @@ contract DoidTimeLock {
         if(userStaking[msg.sender].queued){
             revert AlreadyQueuedError(msg.sender);
         }
-                if (
+        if (
             _timestamp < block.timestamp + MIN_DELAY ||
             _timestamp > block.timestamp + MAX_DELAY
         ) {
