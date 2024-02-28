@@ -13,7 +13,7 @@ const PASS_REGISTRY_ADDRESS = {
   goerli: '0xF32950cf48C10431b27EFf888D23cB31615dFCb4',
   online: '0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F',
   localhost: '0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F',
-  doid: '0xB16C6b5aCc7786E1Ff60FE9306d90f44B5562F5A',
+  doid: '0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F',
 }[hre.network.name]
 
 async function main() {

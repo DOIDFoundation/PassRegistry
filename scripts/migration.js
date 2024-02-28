@@ -10,8 +10,8 @@ const { ethers, utils } = require('ethers')
 const assert = require('assert')
 
 const ETH_DOID_ADDR = '0xCB9302Da98405eCc50B1D6D4F9671F05E143B5F7'
-// const RIF_DOID_ADDR = '0x4e01ea20AF674020185A01a48f25B83222f0047D'
-const RIF_DOID_ADDR = '0x20507b80c92d32DDfd733E81aF255b549421dfd8'
+const RIF_DOID_ADDR = '0x4e01ea20AF674020185A01a48f25B83222f0047D'
+// const RIF_DOID_ADDR = '0x61412955195691E47c99f1Ca202A0e558db24393'
 const url = 'https://api.studio.thegraph.com/query/38900/as/3'
 
 async function migrate() {
@@ -23,11 +23,11 @@ async function migrate() {
     const items = line.split(' ')
     const addr = items[1]
     const name = items[2]
-    console.log(`index:${index},addr:${addr}, name:${name}`)
     try {
       const tx = await rif_doid.nameMigration(name, addr)
+      console.log(`success migrate index:${index},addr:${addr}, name:${name}`)
     } catch (err) {
-      console.log('tx error', err, addr, name)
+      // console.log('tx error', err, addr, name)
       continue
     }
     // return await tx.wait()
@@ -132,9 +132,10 @@ async function main() {
   admin = accounts[0]
   console.log('admin:', admin.address)
 
-  console.log(await migrate('nunocostapt', admin.address))
+  // console.log(await migrate('nunocostapt', admin.address))
 
   // await fetchNameList()
+  await migrate()
 }
 
 function hex_to_ascii(str1) {

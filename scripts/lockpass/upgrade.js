@@ -7,7 +7,7 @@ async function main() {
     goerli: '0xF32950cf48C10431b27EFf888D23cB31615dFCb4',
     online: '0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F',
     doidtest: '0x20507b80c92d32DDfd733E81aF255b549421dfd8',
-    doid: '0xB16C6b5aCc7786E1Ff60FE9306d90f44B5562F5A',
+    doid: '0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F',
   }[hre.network.name]
   console.log('proxy address', CONTRACT_ADDRESS)
   console.log(
