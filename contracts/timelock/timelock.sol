@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+import "hardhat/console.sol";
 pragma solidity >=0.8.4;
 
 contract TimeLock {
@@ -72,7 +73,7 @@ contract TimeLock {
         string calldata _func,
         bytes calldata _data,
         uint _timestamp
-    ) external onlyOwner returns (bytes32 txId) {
+    ) external payable onlyOwner returns (bytes32 txId) {
         txId = getTxId(_target, _value, _func, _data, _timestamp);
         if (queued[txId]) {
             revert AlreadyQueuedError(txId);
