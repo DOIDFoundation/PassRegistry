@@ -8,6 +8,10 @@ async function main() {
   const DoidTimeLock = await hre.ethers.getContractFactory('DoidTimeLock')
   const timelock = await DoidTimeLock.deploy()
   console.log(`deploy doidTimeLock contract @${timelock.address}`)
+
+  await hre.run('verify:verify', {
+    address: timelock.address,
+  })
 }
 
 // We recommend this pattern to be able to use async/await everywhere
