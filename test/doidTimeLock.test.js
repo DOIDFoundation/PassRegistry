@@ -12,7 +12,7 @@ describe('DoidTimelock', function () {
     bob = accounts[1]
 
     DoidTimeLock = await hre.ethers.getContractFactory('DoidTimeLock')
-    timelock = await DoidTimeLock.deploy()
+    timelock = await upgrades.deployProxy(DoidTimeLock, [])
   })
 
   describe('lock', () => {
@@ -86,6 +86,8 @@ describe('DoidTimelock', function () {
   })
   describe('admin emergency withdraw', () => {
     it('admin withdraw, user cannot use emergency function', async () => {
+      // check owner
+      expect(await timelock.owner()).to.be.equals(admin.address)
       // queue
       const amount = 100000
       const lockTime = 100 * 24 * 3600
@@ -98,7 +100,7 @@ describe('DoidTimelock', function () {
       // execute withdraw with bob
       await expect(
         timelock.connect(bob).emergencyWithdraw(100),
-      ).revertedWithCustomError(DoidTimeLock, 'NotOwnerError')
+      ).to.be.revertedWith("Ownable: caller is not the owner")
       expect(
         Number(await ethers.provider.getBalance(timelock.address)),
       ).to.be.equal(amount)
