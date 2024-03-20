@@ -8,7 +8,6 @@
     "@ensdomains/eth-ens-namehash": "^2.0.15",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.4",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.10",
-    "@nomiclabs/hardhat-etherscan": "^3.1.2",
     "@nomiclabs/hardhat-web3": "^2.0.0",
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
     "@openzeppelin/hardhat-upgrades": "^1.19.0",

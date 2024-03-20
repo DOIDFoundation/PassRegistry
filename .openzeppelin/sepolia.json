@@ -23,6 +23,11 @@
     {
       "address": "0x208ec0Ef36E94F582841296dcA6F6B61d5823fBE",
       "kind": "transparent"
+    },
+    {
+      "address": "0xA3C8451dD22AB4f62e452A6a17Ab24Df04139809",
+      "txHash": "0x153bea59aeb601862623414a80b387430fbc9d7b1530f5e3222573f2b7494dae",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -21404,6 +21409,119 @@
             "numberOfBytes": "1"
           }
         }
+      }
+    },
+    "13d1c7103a861c0dbd98b407bc6e78e15d1c72c86fc9784c5f29c66d060f3a7f": {
+      "address": "0x4F452986d6383E3B8Ba4d58288608ED573d0f30b",
+      "txHash": "0xb9715e4ae2aa7b5061d35b95ff4462bf30b1b5f0fc82d11115bd4a563c7ad08d",
+      "layout": {
+        "solcVersion": "0.8.4",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "userStaking",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_mapping(t_address,t_struct(StakingInfo)684_storage)",
+            "contract": "DoidTimeLock",
+            "src": "contracts/timelock/doidTimeLock.sol:27"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_struct(StakingInfo)684_storage)": {
+            "label": "mapping(address => struct DoidTimeLock.StakingInfo)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(StakingInfo)684_storage": {
+            "label": "struct DoidTimeLock.StakingInfo",
+            "members": [
+              {
+                "label": "queued",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "timestamp",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
       }
     }
   }

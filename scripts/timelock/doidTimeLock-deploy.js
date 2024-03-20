@@ -6,11 +6,19 @@ async function main() {
   console.log('admin:', admin.address)
 
   const DoidTimeLock = await hre.ethers.getContractFactory('DoidTimeLock')
-  const timelock = await DoidTimeLock.deploy()
-  console.log(`deploy doidTimeLock contract @${timelock.address}`)
+  const proxy = await upgrades.deployProxy(DoidTimeLock, [])
+  await proxy.deployed()
 
+  console.log(
+    `✅deploy  ${proxy.address}`
+  );
+
+  console.log(
+    'implementation',
+    await upgrades.erc1967.getImplementationAddress(proxy.address),
+  )
   await hre.run('verify:verify', {
-    address: timelock.address,
+    address: proxy.address,
   })
 }
 
